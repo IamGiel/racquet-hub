@@ -1,0 +1,16 @@
+.greetContainer {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  align-self: stretch;
+  overflow: hidden;
+  color: var(--Slate-Tints-800, #444752);
+  text-overflow: ellipsis;
+
+  /* In-App/text-sm/Medium */
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 142.857% */
+}

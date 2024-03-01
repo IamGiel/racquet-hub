@@ -1,5 +1,10 @@
 .App {
-  text-align: center;
+  text-align: left;
+  font-family: Inter;
+  /* font-size: 14px; */
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 142.857% */
 }
 
 .App-logo {
@@ -26,6 +31,52 @@
 
 .App-link {
   color: #61dafb;
+}
+
+input[type="radio"]:checked::before {
+  background-color: rgb(3, 63, 99) !important;
+}
+
+/* Hide the default radio button */
+input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  outline: none;
+  transition: border-color 0.3s ease-in-out;
+}
+
+/* Create a custom circle for the radio button */
+input[type="radio"]::before {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #fff; /* Set the background color to match your container's background */
+  transition: background-color 0.3s ease-in-out;
+}
+
+/* Change the color on hover */
+input[type="radio"]:hover {
+  border-color: rgb(
+    3,
+    63,
+    99
+  ) !important; /* Change this to your desired hover color */
+}
+
+/* Change the color when checked */
+input[type="radio"]:checked::before {
+  background-color: rgb(
+    3,
+    63,
+    99
+  ) !important; /* Change this to your desired selected color */
 }
 
 @keyframes App-logo-spin {
