@@ -1,0 +1,28 @@
+{
+  "data": {
+    "meta": {
+      "totalItems": 1
+    },
+    "currentQuery": {
+      "marketId": 2,
+      "filters": {
+        "domain": ["callminer.com"]
+      }
+    },
+    "data": [
+      {
+        "dunsNumber": 6463880362,
+        "domain": "callminer.com",
+        "lat": 42.38765335083008,
+        "lng": -71.24144744873047,
+        "fullAddress": "Waltham, MA",
+        "city": "Waltham",
+        "state": "Middlesex County",
+        "country": "United States",
+        "postcode": "02451",
+        "companyName": "CallMiner",
+        "isHeadquarter": true
+      }
+    ]
+  }
+}
