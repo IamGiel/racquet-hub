@@ -202,9 +202,9 @@ export default function ProposalListv2({ proposals }: any) {
     { type: "TYPE_SPORT", filterData: sportTypeFilters },
   ];
 
-  function showPopoverForFiltering() {
+  function showPopoverForFiltering(msg:any) {
     // open popover that allows for filtering this column
-    console.log("column to filter ");
+    console.log("column to filter ", msg);
 
 
     // setShowSportFilter(true);
@@ -256,7 +256,7 @@ export default function ProposalListv2({ proposals }: any) {
                   filterData={filterData}
                   onSelectedItemsChange={handleSelectedItemsChange}
                   selectedItems={selections}
-                  onClick={showPopoverForFiltering}
+                  onClickFilter={showPopoverForFiltering}
                 />
                 
              </div>
