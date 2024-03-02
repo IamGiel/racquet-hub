@@ -16,6 +16,12 @@
   font-size: 45px;
 }
 
+.descriptionTitle {
+  display: flex;
+  gap: 12px;
+  flex-direction: column;
+}
+
 /* If you want a hover effect */
 .playPal:hover {
   /* text-decoration: underline; */

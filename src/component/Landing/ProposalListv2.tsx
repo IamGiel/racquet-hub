@@ -141,7 +141,7 @@ export default function ProposalListv2({ proposals }: any) {
   function handleControl(columnId: string, val?: boolean) {
     console.log("columnId ", columnId);
 
-    handleSort(columnId)
+    handleSort(columnId);
   }
 
   // function handleSelectedItemsChange(itemsSelected:any[]){
@@ -202,20 +202,26 @@ export default function ProposalListv2({ proposals }: any) {
     { type: "TYPE_SPORT", filterData: sportTypeFilters },
   ];
 
-  function showPopoverForFiltering(msg:any) {
+  function showPopoverForFiltering(msg: any) {
     // open popover that allows for filtering this column
     console.log("column to filter ", msg);
 
-
     // setShowSportFilter(true);
     // setFilterData(sportTypeFilters);
-    setFilterData([...sportTypeFilters, ...statusFilters, ...sportCategoryFilters]);
+    setFilterData([
+      ...sportTypeFilters,
+      ...statusFilters,
+      ...sportCategoryFilters,
+    ]);
   }
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
-      <div className="sm:flex sm:items-center">
-        <div className="sm:flex-auto">
+      <div
+        className="sm:flex sm:items-center"
+        style={{ display: "flex", justifyContent: "space-between" }}
+      >
+        <div className={styles.descriptionTitle + " descriptionTitle"}>
           <h1
             className="text-base font-semibold leading-6 text-gray-900"
             style={{
@@ -250,18 +256,19 @@ export default function ProposalListv2({ proposals }: any) {
       <div className="mt-8 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            {listOfProposals.length > 4 && <div className={styles.filtersub + " filtersub"}>
-             <div className={styles.filterPopDiv + ' filterPopDiv'} >
-             <FilterPopover
-                  filterData={filterData}
-                  onSelectedItemsChange={handleSelectedItemsChange}
-                  selectedItems={selections}
-                  onClickFilter={showPopoverForFiltering}
-                />
-                
-             </div>
-            </div>}
-            <hr style={{margin:'24px 0px 0px'}}/>
+            {listOfProposals.length > 4 && (
+              <div className={styles.filtersub + " filtersub"}>
+                <div className={styles.filterPopDiv + " filterPopDiv"}>
+                  <FilterPopover
+                    filterData={filterData}
+                    onSelectedItemsChange={handleSelectedItemsChange}
+                    selectedItems={selections}
+                    onClickFilter={showPopoverForFiltering}
+                  />
+                </div>
+              </div>
+            )}
+            <hr style={{ margin: "24px 0px 0px" }} />
             <table className="min-w-full divide-y divide-gray-300">
               <thead>
                 <tr>
@@ -287,16 +294,16 @@ export default function ProposalListv2({ proposals }: any) {
                           {(column?.id === "name" ||
                             column?.id === "playPlace.distance" ||
                             column?.id === "playTime") && (
-                              <span
-                                className={styles.caretStyle + " caret"}
-                                onClick={(event) => {
-                                  event.preventDefault();
-                                  handleControl(column.id);
-                                }}
-                              >
-                                {renderCaret(column?.id)}
-                              </span>
-                            )}
+                            <span
+                              className={styles.caretStyle + " caret"}
+                              onClick={(event) => {
+                                event.preventDefault();
+                                handleControl(column.id);
+                              }}
+                            >
+                              {renderCaret(column?.id)}
+                            </span>
+                          )}
                         </div>
                       </div>
                     </th>
@@ -380,10 +387,10 @@ export default function ProposalListv2({ proposals }: any) {
                     >
                       {/* {JSON.stringify(proposalItem.playPlace)} */}
                       <div className="location-details">
-                        <span>{proposalItem.playPlace.location}</span>
+                        <span>{proposalItem.playPlace?.location}</span>
                         <span>
-                          {proposalItem.playPlace.distance
-                            ? `, ${proposalItem.playPlace.distance} miles away`
+                          {proposalItem.playPlace?.distance
+                            ? `, ${proposalItem.playPlace?.distance} miles away`
                             : ""}
                         </span>
                       </div>

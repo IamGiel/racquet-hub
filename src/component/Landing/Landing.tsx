@@ -18,10 +18,10 @@ const user = {
     "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
 };
 // const navigation = [
-  // { name: "Dashboard", href: "#", current: true },
-  // { name: "Doubles", href: "#", current: false },
-  // { name: "Singles", href: "#", current: false },
-  // { name: "Random", href: "#", current: false },
+// { name: "Dashboard", href: "#", current: true },
+// { name: "Doubles", href: "#", current: false },
+// { name: "Singles", href: "#", current: false },
+// { name: "Random", href: "#", current: false },
 // ];
 const userNavigation = [
   { name: "Your Profile", href: "#" },
@@ -37,19 +37,18 @@ export default function Landing() {
   const [activeLink, setActiveLink] = useState("Dashboard");
   const [proposalList, setProposalList] = useState([]);
 
-  const appName = "Racquet Hub"
+  const appName = "Racquet Hub";
 
   const fetchData = async () => {
     try {
       await getAllProposals()
         .then((response) => response.json())
         .then((result) => {
-          console.log(result)
-          console.log(typeof result)
+          console.log(result);
+          console.log(typeof result);
           setProposalList(result);
         })
         .catch((error) => console.error(error));
-     
     } catch (error) {
       // Handle errors, e.g., log the error or show a user-friendly message
       console.error("Error fetching proposals:", error);
@@ -59,23 +58,26 @@ export default function Landing() {
     fetchData();
   }, []);
 
-
   return (
     <>
       <div className="min-h-full">
-        <Disclosure as="nav" className="border-b border-gray-200 bg-white">
+        <Disclosure
+          as="nav"
+          className="border-b border-gray-200 bg-white"
+          style={{ padding: "12px 0px" }}
+        >
           {({ open }) => (
             <>
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="flex h-16 justify-between">
                   <div className="flex gap-[12px]">
-                  <div className="flex flex-shrink-0 items-center">
-                    <IconTennisMatch height={`64px`} width={`64px`}/>
+                    <div className="flex flex-shrink-0 items-center">
+                      <IconTennisMatch height={`64px`} width={`64px`} />
                     </div>
                     <div className={styles.playPal + " playPal appName"}>
                       {appName}
                     </div>
-                    
+
                     {/* <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                       {navigation.map((item) => (
                         <a
@@ -262,7 +264,7 @@ export default function Landing() {
               {proposalList && proposalList.length > 0 && (
                 // <ProposalList proposals={proposalList}/>
                 <div className="content-container">
-                  <ProposalListv2 proposals={proposalList}/>
+                  <ProposalListv2 proposals={proposalList} />
                 </div>
               )}
             </div>
