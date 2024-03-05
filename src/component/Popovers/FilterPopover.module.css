@@ -50,3 +50,8 @@
   font-weight: 500;
   line-height: 20px; /* 142.857% */
 }
+
+.hrHeaderTitle {
+  margin: 12px 0px;
+  font-weight: 600;
+}

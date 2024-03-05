@@ -410,7 +410,7 @@ export default function ProposalListv2({ proposals }: any) {
                       }
                     >
                       <a
-                        href="#"
+                        href={`http://localhost:3001`}
                         className="text-indigo-600 hover:text-indigo-900"
                         style={{ color: "rgb(3, 63, 99)" }}
                       >

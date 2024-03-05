@@ -38,6 +38,20 @@ export default function FilterPopover({
     console.log("filterdata ", filterData);
   }, []);
 
+  const getTypeHeader = (type: string): string => {
+    switch (type) {
+      case "TYPE_SPORT":
+        return "Sport Type Options";
+      case "TYPE_CATEGORY":
+        return "Category Type Options";
+      case "TYPE_STATUS":
+        return "Status Type Options";
+      // Add more cases for other types if needed
+      default:
+        return "Options"; // Default header text
+    }
+  };
+
   return (
     <div className={style.componentStyle + " popover-filter-container"}>
       <Popover className="relative">
@@ -82,7 +96,7 @@ export default function FilterPopover({
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-             <Popover.Panel
+              <Popover.Panel
                 className={
                   "absolute left-[65px] z-10 -translate-x-1/2 transform px-4 sm:px-0"
                 }
@@ -99,49 +113,61 @@ export default function FilterPopover({
                     className="relative grid gap-[12px] bg-white p-[12px] lg:grid-cols-2"
                     style={{ display: "flex", flexDirection: "column" }}
                   >
-                    
-                    {/* <span>{JSON.stringify(filterData)}</span> */}
-                    {filterData.map((item: any) => (
-                      <div
-                        key={item?.name}
-                        className={style.subInput + " subInput"}
-                      >
-                        {item.type === "TYPE_SPORT" && (
-                          <>
-                            <input
-                              type="radio"
-                              id={item.name}
-                              name="sportTypeGroup" // Ensure this name is unique to the group
-                              style={{ cursor: "pointer" }}
-                              onChange={() => handleCheckboxChange(item)}
-                            />
-                            <label htmlFor={item.name}>{item.name}</label>
-                          </>
-                        )}
-                        {item.type === "TYPE_CATEGORY" && (
-                          <>
-                            <input
-                              type="radio" // Assuming categories can have multiple selections
-                              id={item.name}
-                              name="sportCategoryGroup" // Unique name for this group
-                              style={{ cursor: "pointer" }}
-                              onChange={() => handleCheckboxChange(item)}
-                            />
-                            <label htmlFor={item.name}>{item.name}</label>
-                          </>
-                        )}
-                        {item.type === "TYPE_STATUS" && (
-                          <>
-                            <input
-                              type="radio" // Assuming statuses can have multiple selections
-                              id={item.name}
-                              name="statusGroup" // Unique name for this group
-                              style={{ cursor: "pointer" }}
-                              onChange={() => handleCheckboxChange(item)}
-                            />
-                            <label htmlFor={item.name}>{item.name}</label>
-                          </>
-                        )}
+                    {filterData.map((item: any, index: number) => (
+                      <div key={item?.name + index}>
+                        {index > 0 &&
+                          filterData[index - 1]?.type !== item.type && (
+                            <hr />
+                          )}{" "}
+                        {/* Render <hr /> when type changes */}
+                        {index === 0 ||
+                        filterData[index - 1]?.type !== item.type ? (
+                          <h3
+                            className={style.hrHeaderTitle + " hrHeaderTitle"}
+                          >
+                            {getTypeHeader(item.type)}
+                          </h3>
+                        ) : null}{" "}
+                        {/* Render header when type changes */}
+                        <div className={style.subInput + " subInput"}>
+                          {/* Input options for each item */}
+                          {item.type === "TYPE_SPORT" && (
+                            <>
+                              <input
+                                type="radio"
+                                id={item.name}
+                                name="sportTypeGroup" // Ensure this name is unique to the group
+                                style={{ cursor: "pointer" }}
+                                onChange={() => handleCheckboxChange(item)}
+                              />
+                              <label htmlFor={item.name}>{item.name}</label>
+                            </>
+                          )}
+                          {item.type === "TYPE_CATEGORY" && (
+                            <>
+                              <input
+                                type="radio" // Assuming categories can have multiple selections
+                                id={item.name}
+                                name="sportCategoryGroup" // Unique name for this group
+                                style={{ cursor: "pointer" }}
+                                onChange={() => handleCheckboxChange(item)}
+                              />
+                              <label htmlFor={item.name}>{item.name}</label>
+                            </>
+                          )}
+                          {item.type === "TYPE_STATUS" && (
+                            <>
+                              <input
+                                type="radio" // Assuming statuses can have multiple selections
+                                id={item.name}
+                                name="statusGroup" // Unique name for this group
+                                style={{ cursor: "pointer" }}
+                                onChange={() => handleCheckboxChange(item)}
+                              />
+                              <label htmlFor={item.name}>{item.name}</label>
+                            </>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -149,7 +175,7 @@ export default function FilterPopover({
               </Popover.Panel>
             </Transition>
           </>
-        )} 
+        )}
       </Popover>
     </div>
   );
