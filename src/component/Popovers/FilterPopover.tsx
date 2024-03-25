@@ -139,6 +139,7 @@ export default function FilterPopover({
                                 name="sportTypeGroup" // Ensure this name is unique to the group
                                 style={{ cursor: "pointer" }}
                                 onChange={() => handleCheckboxChange(item)}
+                                checked={selectedItems.includes(item.name)} // Check if the item is selected
                               />
                               <label htmlFor={item.name}>{item.name}</label>
                             </>
@@ -151,6 +152,7 @@ export default function FilterPopover({
                                 name="sportCategoryGroup" // Unique name for this group
                                 style={{ cursor: "pointer" }}
                                 onChange={() => handleCheckboxChange(item)}
+                                checked={selectedItems.includes(item.name)} // Check if the item is selected
                               />
                               <label htmlFor={item.name}>{item.name}</label>
                             </>
@@ -163,6 +165,7 @@ export default function FilterPopover({
                                 name="statusGroup" // Unique name for this group
                                 style={{ cursor: "pointer" }}
                                 onChange={() => handleCheckboxChange(item)}
+                                checked={selectedItems.includes(item.name)} // Check if the item is selected
                               />
                               <label htmlFor={item.name}>{item.name}</label>
                             </>

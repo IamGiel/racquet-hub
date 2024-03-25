@@ -17,6 +17,7 @@ import { iconFill, iconSize, iconStroke } from "../Configs/Colors";
 
 export default function ProposalListv2({ proposals }: any) {
   const [listOfProposals, setListOfProposals] = useState(proposals || []);
+  const [filteredList, setfilteredList] = useState(proposals || []);
 
   const [showSportFilter, setShowSportFilter] = useState(false);
   const [filterData, setFilterData] = useState<any>([]);
@@ -73,7 +74,7 @@ export default function ProposalListv2({ proposals }: any) {
   };
 
   const sortColumns = (colname: string, direction: string) => {
-    setListOfProposals((prevList: any) => {
+    setfilteredList((prevList: any) => {
       return [...prevList].sort((a, b) => {
         if (colname.includes(".")) {
           // Handle sorting for nested properties
@@ -149,8 +150,26 @@ export default function ProposalListv2({ proposals }: any) {
   //   setSelections(itemsSelected)
   // }
 
-  const handleSelectedItemsChange = (type: string, selectedNames: any) => {
-    setSelections(selectedNames);
+  const handleSelectedItemsChange = (type: string, filterBy: any) => {
+    setSelections(filterBy?.name);
+    setfilteredList(listOfProposals)
+    console.log("listOfPo ", listOfProposals);
+    console.log("type ", type);
+    console.log("filterBy ", filterBy);
+    // create a shallow copy of original data
+    const copyOfList = listOfProposals;
+
+    let filteredList:any = [];
+    if (type === "TYPE_SPORT") {
+      filteredList = copyOfList.filter(
+        (propList: any) =>
+          propList.sport.toLowerCase() === filterBy?.name.toLowerCase()
+      );
+    }
+
+    // filterData.filter((item)=>item===filterBy)
+    setfilteredList((prev: any) => [...filteredList]);
+
   };
 
   const sportTypeFilters = [
@@ -254,20 +273,20 @@ export default function ProposalListv2({ proposals }: any) {
         </div>
       </div>
       <div className="mt-8 flow-root">
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 h-[100vh]">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            {listOfProposals.length > 4 && (
-              <div className={styles.filtersub + " filtersub"}>
-                <div className={styles.filterPopDiv + " filterPopDiv"}>
-                  <FilterPopover
-                    filterData={filterData}
-                    onSelectedItemsChange={handleSelectedItemsChange}
-                    selectedItems={selections}
-                    onClickFilter={showPopoverForFiltering}
-                  />
-                </div>
+            {/* {listOfProposals.length > 0 && ( */}
+            <div className={styles.filtersub + " filtersub"}>
+              <div className={styles.filterPopDiv + " filterPopDiv"}>
+                <FilterPopover
+                  filterData={filterData}
+                  onSelectedItemsChange={handleSelectedItemsChange}
+                  selectedItems={selections}
+                  onClickFilter={showPopoverForFiltering}
+                />
               </div>
-            )}
+            </div>
+            {/* )} */}
             <hr style={{ margin: "24px 0px 0px" }} />
             <table className="min-w-full divide-y divide-gray-300">
               <thead>
@@ -314,7 +333,7 @@ export default function ProposalListv2({ proposals }: any) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {listOfProposals.map((proposalItem: any) => (
+                {filteredList.map((proposalItem: any) => (
                   <tr key={proposalItem.email}>
                     <td
                       className={
