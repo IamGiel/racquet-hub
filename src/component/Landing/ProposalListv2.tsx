@@ -151,25 +151,34 @@ export default function ProposalListv2({ proposals }: any) {
   // }
 
   const handleSelectedItemsChange = (type: string, filterBy: any) => {
+    // Set the current selection
     setSelections(filterBy?.name);
-    setfilteredList(listOfProposals)
-    console.log("listOfPo ", listOfProposals);
-    console.log("type ", type);
-    console.log("filterBy ", filterBy);
-    // create a shallow copy of original data
-    const copyOfList = listOfProposals;
 
-    let filteredList:any = [];
-    if (type === "TYPE_SPORT") {
-      filteredList = copyOfList.filter(
-        (propList: any) =>
-          propList.sport.toLowerCase() === filterBy?.name.toLowerCase()
-      );
-    }
+    // Create a shallow copy of the original data
+    const copyOfList = [...listOfProposals];
 
-    // filterData.filter((item)=>item===filterBy)
-    setfilteredList((prev: any) => [...filteredList]);
+    // Apply all selected filters
+    let filteredList = copyOfList.filter((item: any) => {
+      // Filter by sport type
+      if (type === "TYPE_SPORT") {
+        return item.sport.toLowerCase() === filterBy?.name.toLowerCase();
+      }
+      // Filter by category type
+      if (type === "TYPE_CATEGORY") {
+        return item.type.toLowerCase() === filterBy?.name.toLowerCase();
+      }
+      // Filter by status type
+      if (type === "TYPE_STATUS") {
+        return (
+          item.eventStatus.status.toLowerCase() === filterBy?.name.toLowerCase()
+        );
+      }
+      // Default: no filter applied
+      return true;
+    });
 
+    // Update the filtered list state
+    setfilteredList(filteredList);
   };
 
   const sportTypeFilters = [

@@ -5,7 +5,7 @@ export async function getAllProposals() {
   };
 
   return fetch(
-    "http://localhost:3000/supplier-market-company-result",
+    "http://localhost:3001/supplier-market-company-result",
     requestOptions
   );
 }

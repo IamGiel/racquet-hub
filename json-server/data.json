@@ -649,7 +649,7 @@
       "_id": "6554ddb9bcd9a51e703f6eb7",
       "sport": "pickleball",
       "type": "singles",
-      "eventStatus": { "status": "closed" },
+      "eventStatus": { "status": "open" },
       "marketId": "6554ddb8bcd9a51e703f6eb5",
       "domain": "bellwethercorp.com",
       "logoURL": "https://logo.clearbit.com/bellwethercorp.com",
@@ -1934,8 +1934,8 @@
     {
       "_id": "6554ddb9bcd9a51e703f6eba",
       "sport": "tennis",
-      "type": "singles",
-      "eventStatus": { "status": "closed" },
+      "type": "doubles",
+      "eventStatus": { "status": "open" },
       "marketId": "6554ddb8bcd9a51e703f6eb5",
       "domain": "gep.com",
       "logoURL": "https://logo.clearbit.com/gep.com",
@@ -2359,7 +2359,7 @@
     },
     {
       "sport": "tennis",
-      "type": "singles",
+      "type": "doubles",
       "eventStatus": { "status": "closed" },
       "_id": "6554ddb9bcd9a51e703f6ebb",
       "marketId": "6554ddb8bcd9a51e703f6eb5",
