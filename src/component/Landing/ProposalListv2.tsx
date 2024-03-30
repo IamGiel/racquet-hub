@@ -74,34 +74,35 @@ export default function ProposalListv2({ proposals }: any) {
   };
 
   const sortColumns = (colname: string, direction: string) => {
-    setfilteredList((prevList: any) => {
-      return [...prevList].sort((a, b) => {
-        if (colname.includes(".")) {
-          // Handle sorting for nested properties
-          const keys = colname.split(".");
-          const aValue = keys.reduce((obj, key) => obj[key], a);
-          const bValue = keys.reduce((obj, key) => obj[key], b);
+    console.log();
+    // setfilteredList((prevList: any) => {
+    //   return [...prevList].sort((a, b) => {
+    //     if (colname.includes(".")) {
+    //       // Handle sorting for nested properties
+    //       const keys = colname.split(".");
+    //       const aValue = keys.reduce((obj, key) => obj[key], a);
+    //       const bValue = keys.reduce((obj, key) => obj[key], b);
 
-          if (typeof aValue === "string" && typeof bValue === "string") {
-            return direction === "asc"
-              ? aValue.localeCompare(bValue)
-              : bValue.localeCompare(aValue);
-          } else {
-            return direction === "asc" ? aValue - bValue : bValue - aValue;
-          }
-        } else if (colname === "time") {
-          const aTime = new Date(a[colname]).getTime();
-          const bTime = new Date(b[colname]).getTime();
-          return direction === "asc" ? aTime - bTime : bTime - aTime;
-        } else {
-          // Handle sorting for other columns
-          // Modify this part based on your specific column sorting logic
-          return direction === "asc"
-            ? String(a[colname]).localeCompare(String(b[colname]))
-            : String(b[colname]).localeCompare(String(a[colname]));
-        }
-      });
-    });
+    //       if (typeof aValue === "string" && typeof bValue === "string") {
+    //         return direction === "asc"
+    //           ? aValue.localeCompare(bValue)
+    //           : bValue.localeCompare(aValue);
+    //       } else {
+    //         return direction === "asc" ? aValue - bValue : bValue - aValue;
+    //       }
+    //     } else if (colname === "time") {
+    //       const aTime = new Date(a[colname]).getTime();
+    //       const bTime = new Date(b[colname]).getTime();
+    //       return direction === "asc" ? aTime - bTime : bTime - aTime;
+    //     } else {
+    //       // Handle sorting for other columns
+    //       // Modify this part based on your specific column sorting logic
+    //       return direction === "asc"
+    //         ? String(a[colname]).localeCompare(String(b[colname]))
+    //         : String(b[colname]).localeCompare(String(a[colname]));
+    //     }
+    //   });
+    // });
   };
 
   const renderCaret = (key: any) => {
@@ -145,37 +146,59 @@ export default function ProposalListv2({ proposals }: any) {
     handleSort(columnId);
   }
 
-  // function handleSelectedItemsChange(itemsSelected:any[]){
-  //   console.log('items selected passed to parent ', itemsSelected)
-  //   setSelections(itemsSelected)
-  // }
-
-  const handleSelectedItemsChange = (type: string, filterBy: any) => {
+  const handleSelectedItemsChange = (filterBy: IFilter[]) => {
     // Set the current selection
-    setSelections(filterBy?.name);
-
-    // Create a shallow copy of the original data
+    // setSelections(filterBy?.name);
+    console.log("filterBy ", filterBy);
+    const namesOfFilters: any = [];
+    let filteredList: any = [];
     const copyOfList = [...listOfProposals];
 
-    // Apply all selected filters
-    let filteredList = copyOfList.filter((item: any) => {
-      // Filter by sport type
-      if (type === "TYPE_SPORT") {
-        return item.sport.toLowerCase() === filterBy?.name.toLowerCase();
+    filterBy.forEach((aFilter: IFilter) => {
+      namesOfFilters.push(aFilter?.name);
+      if (aFilter?.type === "TYPE_SPORT") {
+        filteredList = copyOfList.filter((listItem: any) => {
+          console.log("list item ", listItem);
+          console.log("aFilter ", aFilter);
+
+          return listItem.sport.toLowerCase() === aFilter?.name.toLowerCase();
+        });
       }
-      // Filter by category type
-      if (type === "TYPE_CATEGORY") {
-        return item.type.toLowerCase() === filterBy?.name.toLowerCase();
+      if (aFilter?.type === "TYPE_CATEGORY") {
+        filteredList = copyOfList.filter((listItem: any) => {
+          console.log("list item ", listItem);
+          console.log("aFilter ", aFilter);
+
+          return listItem.type.toLowerCase() === aFilter?.name.toLowerCase();
+        });
       }
-      // Filter by status type
-      if (type === "TYPE_STATUS") {
-        return (
-          item.eventStatus.status.toLowerCase() === filterBy?.name.toLowerCase()
-        );
-      }
-      // Default: no filter applied
-      return true;
     });
+    // console.log("a namesOfFilters ", namesOfFilters);
+    setSelections(namesOfFilters);
+
+    // Create a shallow copy of the original data
+
+    // console.log("copyOfList ", copyOfList);
+
+    // Apply all selected filters
+    // let filteredList = copyOfList.filter((item: IFilter) => {
+    //   // Filter by sport type
+    //   if (filterBy?.type === "TYPE_SPORT") {
+    //     return item.sport.toLowerCase() === filterBy?.name.toLowerCase();
+    //   }
+    //   // Filter by category type
+    //   if (filterBy?.type === "TYPE_CATEGORY") {
+    //     return item.type.toLowerCase() === filterBy?.name.toLowerCase();
+    //   }
+    //   // Filter by status type
+    //   if (filterBy?.type === "TYPE_STATUS") {
+    //     return (
+    //       item.eventStatus.status.toLowerCase() === filterBy?.name.toLowerCase()
+    //     );
+    //   }
+    //   // Default: no filter applied
+    //   return true;
+    // });
 
     // Update the filtered list state
     setfilteredList(filteredList);
@@ -297,6 +320,8 @@ export default function ProposalListv2({ proposals }: any) {
             </div>
             {/* )} */}
             <hr style={{ margin: "24px 0px 0px" }} />
+            {/* <pre>{JSON.stringify(filteredList, null, 4)}</pre> */}
+            {/* <pre>{JSON.stringify(proposals, null, 4)}</pre> */}
             <table className="min-w-full divide-y divide-gray-300">
               <thead>
                 <tr>
@@ -343,7 +368,7 @@ export default function ProposalListv2({ proposals }: any) {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {filteredList.map((proposalItem: any) => (
-                  <tr key={proposalItem.email}>
+                  <tr key={proposalItem.domain}>
                     <td
                       className={
                         styles.tdAlignment +
@@ -358,7 +383,7 @@ export default function ProposalListv2({ proposals }: any) {
                       <span>
                         <Avatar
                           size={40}
-                          name={proposalItem.name}
+                          name={proposalItem.domain}
                           square={true}
                           variant="beam"
                           colors={[

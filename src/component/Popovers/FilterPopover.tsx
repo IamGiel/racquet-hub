@@ -23,20 +23,40 @@ export default function FilterPopover({
   onClickFilter,
 }: {
   filterData?: any[]; // Adjust the type if filterData has a specific type
-  onSelectedItemsChange: (type: string, selectedItems: IFilter) => void;
+  // onSelectedItemsChange: (type: string, selectedItems: IFilter) => void;
+  onSelectedItemsChange: (selectedItems: IFilter[]) => void;
   selectedItems: any[];
   onClickFilter: (action: any) => void;
 }) {
-  // const [selectedItems, setSelectedItems] = useState<string[]>(filterData);
+  const [collectedFilters, setCollectedFilters] = useState<any>([]);
 
   const handleCheckboxChange = (item: IFilter) => {
-    // we need to pass the parent the selected item
-    onSelectedItemsChange(item?.type, item);
+    const existingFilterIndex = collectedFilters.findIndex(
+      (filter: any) => filter?.type === item?.type
+    );
+    console.log("existingFilterIndex ", existingFilterIndex);
+    // check if collectedFilters has item
+    const inCollectedFilters = collectedFilters.some(
+      (filter: any) => filter?.type === item?.type
+    );
+
+    if (existingFilterIndex !== -1) {
+      // means that a filter with the same type exists, so we replace it with the new item in the updated state
+      setCollectedFilters((prev: any) => {
+        const updatedFilters = [...prev];
+        updatedFilters[existingFilterIndex] = item;
+        return updatedFilters;
+      });
+    } else {
+      setCollectedFilters((prev: any) => [...prev, item]);
+    }
+    // onSelectedItemsChange(item?.type, item);
   };
 
   useEffect(() => {
-    console.log("filterdata ", filterData);
-  }, []);
+    console.log("collectedFilters ", collectedFilters);
+    onSelectedItemsChange(collectedFilters);
+  }, [collectedFilters]);
 
   const getTypeHeader = (type: string): string => {
     switch (type) {
@@ -109,6 +129,7 @@ export default function FilterPopover({
                   >
                     Category Filters:
                   </div>
+                  {/* <pre>{JSON.stringify(collectedFilters, null, 4)}</pre> */}
                   <div
                     className="relative grid gap-[12px] bg-white p-[12px] lg:grid-cols-2"
                     style={{ display: "flex", flexDirection: "column" }}
