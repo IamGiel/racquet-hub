@@ -151,56 +151,42 @@ export default function ProposalListv2({ proposals }: any) {
     // setSelections(filterBy?.name);
     console.log("filterBy ", filterBy);
     const namesOfFilters: any = [];
-    let filteredList: any = [];
     const copyOfList = [...listOfProposals];
 
+    // Initialize the filtered list with the original list of items
+    let filteredList = [...copyOfList];
+
+    // Iterate through each filter
     filterBy.forEach((aFilter: IFilter) => {
       namesOfFilters.push(aFilter?.name);
-      if (aFilter?.type === "TYPE_SPORT") {
-        filteredList = copyOfList.filter((listItem: any) => {
-          console.log("list item ", listItem);
-          console.log("aFilter ", aFilter);
 
+      // Apply the current filter to the filtered list
+      if (aFilter?.type === "TYPE_SPORT") {
+        filteredList = filteredList.filter((listItem: any) => {
           return listItem.sport.toLowerCase() === aFilter?.name.toLowerCase();
         });
       }
-      if (aFilter?.type === "TYPE_CATEGORY") {
-        filteredList = copyOfList.filter((listItem: any) => {
-          console.log("list item ", listItem);
-          console.log("aFilter ", aFilter);
 
+      if (aFilter?.type === "TYPE_CATEGORY") {
+        filteredList = filteredList.filter((listItem: any) => {
           return listItem.type.toLowerCase() === aFilter?.name.toLowerCase();
         });
       }
+
+      if (aFilter?.type === "TYPE_STATUS") {
+        filteredList = filteredList.filter((listItem: any) => {
+          return (
+            listItem.eventStatus.status.toLowerCase() ===
+            aFilter?.name.toLowerCase()
+          );
+        });
+      }
+
+      // Add more conditions for other filter types if needed
     });
+
     // console.log("a namesOfFilters ", namesOfFilters);
     setSelections(namesOfFilters);
-
-    // Create a shallow copy of the original data
-
-    // console.log("copyOfList ", copyOfList);
-
-    // Apply all selected filters
-    // let filteredList = copyOfList.filter((item: IFilter) => {
-    //   // Filter by sport type
-    //   if (filterBy?.type === "TYPE_SPORT") {
-    //     return item.sport.toLowerCase() === filterBy?.name.toLowerCase();
-    //   }
-    //   // Filter by category type
-    //   if (filterBy?.type === "TYPE_CATEGORY") {
-    //     return item.type.toLowerCase() === filterBy?.name.toLowerCase();
-    //   }
-    //   // Filter by status type
-    //   if (filterBy?.type === "TYPE_STATUS") {
-    //     return (
-    //       item.eventStatus.status.toLowerCase() === filterBy?.name.toLowerCase()
-    //     );
-    //   }
-    //   // Default: no filter applied
-    //   return true;
-    // });
-
-    // Update the filtered list state
     setfilteredList(filteredList);
   };
 

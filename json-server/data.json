@@ -35,7 +35,7 @@
       "name": "Tate",
       "sport": "tennis",
       "type": "singles",
-      "eventStatus": { "status": "closed" },
+      "eventStatus": { "status": "open" },
       "playPlace": { "location": "Raleigh", "distance": 12 },
       "playTime": "12 May 2024",
       "domain": "gep4.com"
