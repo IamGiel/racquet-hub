@@ -1,28 +1,21 @@
 import Avatar from "boring-avatars";
 import styles from "./Landing.module.css";
-import { useEffect, useState } from "react";
-import {
-  AdjustmentsHorizontalIcon,
-  ArrowDownIcon,
-  ArrowUpIcon,
-  ChevronDoubleDownIcon,
-  ChevronDoubleUpIcon,
-  ChevronUpDownIcon,
-} from "@heroicons/react/24/outline";
+import { useState } from "react";
+import { ChevronUpDownIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 
-import FilterSection from "../Filters/FilterSection";
 import FilterPopover, { IFilter } from "../Popovers/FilterPopover";
 import { iconFill, iconSize, iconStroke } from "../Configs/Colors";
+import { useDialogService } from "../Service/DialogService";
+import ProposeComponent from "../Dialogs/ProposeComponent.dialog";
 
 export default function ProposalListv2({ proposals }: any) {
   const [listOfProposals, setListOfProposals] = useState(proposals || []);
   const [filteredList, setfilteredList] = useState(proposals || []);
-
-  const [showSportFilter, setShowSportFilter] = useState(false);
   const [filterData, setFilterData] = useState<any>([]);
-  // const [selections, setSelections] = useState<any[]>([]);
   const [selections, setSelections] = useState<any>([]);
+
+  const { openDialog } = useDialogService();
 
   const [sortConfig, setSortConfig] = useState<any>({
     key: "playtime",
@@ -239,11 +232,16 @@ export default function ProposalListv2({ proposals }: any) {
     { type: "TYPE_SPORT", filterData: sportTypeFilters },
   ];
 
+  const handleMakeProposal = (event: any) => {
+    event.preventDefault();
+    console.log(event);
+    openDialog(<ProposeComponent />);
+  };
+
   function showPopoverForFiltering(msg: any) {
     // open popover that allows for filtering this column
     console.log("column to filter ", msg);
 
-    // setShowSportFilter(true);
     // setFilterData(sportTypeFilters);
     setFilterData([
       ...sportTypeFilters,
@@ -285,6 +283,7 @@ export default function ProposalListv2({ proposals }: any) {
             type="button"
             className="block rounded-md px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             style={{ background: "rgb(3, 63, 99)" }}
+            onClick={handleMakeProposal}
           >
             Propose an Event
           </button>

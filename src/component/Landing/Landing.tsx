@@ -10,6 +10,7 @@ import ProposalListv2 from "./ProposalListv2";
 import { Court_Floor } from "../../assets/svgs/Court_Floor";
 import { IconTennisMatch } from "../../assets/svgs/🦆 icon _tennis match_";
 import FilterSection from "../Filters/FilterSection";
+import { DialogService } from "../Service/DialogService";
 
 const user = {
   name: "Tom Cook",
@@ -264,7 +265,9 @@ export default function Landing() {
               {proposalList && proposalList.length > 0 && (
                 // <ProposalList proposals={proposalList}/>
                 <div className="content-container">
-                  <ProposalListv2 proposals={proposalList} />
+                  <DialogService>
+                    <ProposalListv2 proposals={proposalList} />
+                  </DialogService>
                 </div>
               )}
             </div>

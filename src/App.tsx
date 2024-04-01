@@ -1,11 +1,11 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { Greet } from './component/Greet/Greet';
-import Landing from './component/Landing/Landing';
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { Greet } from "./component/Greet/Greet";
+import Landing from "./component/Landing/Landing";
 
-import { Provider } from 'react-redux';
-import store from './store';
+import { Provider } from "react-redux";
+import store from "./store";
 
 function App() {
   return (

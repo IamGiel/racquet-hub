@@ -76,6 +76,7 @@ export default function FilterPopover({
     console.log(event);
     event.preventDefault();
     onSelectedItemsChange([]);
+    setCollectedFilters([]);
   };
 
   return (
