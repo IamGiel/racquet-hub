@@ -308,101 +308,105 @@ export default function ProposalListv2({ proposals }: any) {
             <hr style={{ margin: "24px 0px 0px" }} />
             {/* <pre>{JSON.stringify(filteredList, null, 4)}</pre> */}
             {/* <pre>{JSON.stringify(proposals, null, 4)}</pre> */}
-            <table className="min-w-full divide-y divide-gray-300">
-              <thead>
-                <tr>
-                  {columns.map((column) => (
+            {filteredList && filteredList.length > 0 && (
+              <table className="min-w-full divide-y divide-gray-300">
+                <thead>
+                  <tr>
+                    {columns.map((column) => (
+                      <th
+                        key={column.id}
+                        scope="col"
+                        className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
+                        style={{ maxWidth: "300px" }}
+                      >
+                        <div
+                          className="col-label-container"
+                          style={{
+                            display: "flex",
+                            gap: "12px",
+                            alignItems: "center",
+                          }}
+                        >
+                          <span className="colLabel capitalize text-[#023047]">
+                            {column.label}
+                          </span>{" "}
+                          <div className="controller-container">
+                            {(column?.id === "name" ||
+                              column?.id === "playPlace.distance" ||
+                              column?.id === "playTime") && (
+                              <span
+                                className={styles.caretStyle + " caret"}
+                                onClick={(event) => {
+                                  event.preventDefault();
+                                  handleControl(column.id);
+                                }}
+                              >
+                                {renderCaret(column?.id)}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </th>
+                    ))}
                     <th
-                      key={column.id}
                       scope="col"
-                      className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
-                      style={{ maxWidth: "300px" }}
+                      className="relative py-3.5 pl-3 pr-4 sm:pr-0"
                     >
-                      <div
-                        className="col-label-container"
+                      <span className="sr-only">Edit</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {filteredList.map((proposalItem: any) => (
+                    <tr key={proposalItem.domain}>
+                      <td
+                        className={
+                          styles.tdAlignment +
+                          " tdAlignment whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0"
+                        }
                         style={{
                           display: "flex",
                           gap: "12px",
                           alignItems: "center",
                         }}
                       >
-                        <span className="colLabel capitalize text-[#023047]">
-                          {column.label}
-                        </span>{" "}
-                        <div className="controller-container">
-                          {(column?.id === "name" ||
-                            column?.id === "playPlace.distance" ||
-                            column?.id === "playTime") && (
-                            <span
-                              className={styles.caretStyle + " caret"}
-                              onClick={(event) => {
-                                event.preventDefault();
-                                handleControl(column.id);
-                              }}
-                            >
-                              {renderCaret(column?.id)}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </th>
-                  ))}
-                  <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                    <span className="sr-only">Edit</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredList.map((proposalItem: any) => (
-                  <tr key={proposalItem.domain}>
-                    <td
-                      className={
-                        styles.tdAlignment +
-                        " tdAlignment whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0"
-                      }
-                      style={{
-                        display: "flex",
-                        gap: "12px",
-                        alignItems: "center",
-                      }}
-                    >
-                      <span>
-                        <Avatar
-                          size={40}
-                          name={proposalItem.domain}
-                          square={true}
-                          variant="beam"
-                          colors={[
-                            // #033f63 // #28666e // #7c9885 // #b5b682 // #fedc97
-                            "#033f63",
-                            "#28666e",
-                            "#7c9885",
-                            "#b5b682",
-                            "#fedc97",
-                          ]}
-                        />
-                      </span>
-                      <span className="td_info text-[#023047]">
-                        {proposalItem.name}
-                      </span>
-                    </td>
-                    <td
-                      className={
-                        styles.tdAlignment +
-                        " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
-                      }
-                    >
-                      {proposalItem.sport}
-                    </td>
-                    <td
-                      className={
-                        styles.tdAlignment +
-                        " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
-                      }
-                    >
-                      {proposalItem.type}
-                    </td>
-                    {/* <td
+                        <span>
+                          <Avatar
+                            size={40}
+                            name={proposalItem.domain}
+                            square={true}
+                            variant="beam"
+                            colors={[
+                              // #033f63 // #28666e // #7c9885 // #b5b682 // #fedc97
+                              "#033f63",
+                              "#28666e",
+                              "#7c9885",
+                              "#b5b682",
+                              "#fedc97",
+                            ]}
+                          />
+                        </span>
+                        <span className="td_info text-[#023047]">
+                          {proposalItem.name}
+                        </span>
+                      </td>
+                      <td
+                        className={
+                          styles.tdAlignment +
+                          " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
+                        }
+                      >
+                        {proposalItem.sport}
+                      </td>
+                      <td
+                        className={
+                          styles.tdAlignment +
+                          " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
+                        }
+                      >
+                        {proposalItem.type}
+                      </td>
+                      {/* <td
                       className={
                         styles.tdAlignment +
                         " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
@@ -410,57 +414,63 @@ export default function ProposalListv2({ proposals }: any) {
                     >
                       {proposalItem.email}
                     </td> */}
-                    <td
-                      className={
-                        styles.tdAlignment +
-                        " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
-                      }
-                    >
-                      {makeReadableTimePlace(proposalItem.playTime)}
-                    </td>
-                    <td
-                      className={
-                        styles.tdAlignment +
-                        " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
-                      }
-                    >
-                      {/* {JSON.stringify(proposalItem.playPlace)} */}
-                      <div className="location-details">
-                        <span>{proposalItem.playPlace?.location}</span>
-                        <span>
-                          {proposalItem.playPlace?.distance
-                            ? `, ${proposalItem.playPlace?.distance} miles away`
-                            : ""}
-                        </span>
-                      </div>
-                    </td>
-                    <td
-                      className={
-                        styles.tdAlignment +
-                        " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
-                      }
-                    >
-                      {proposalItem.eventStatus?.status}
-                    </td>
-                    <td
-                      className={
-                        styles.tdAlignment +
-                        " tdAlignment relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
-                      }
-                    >
-                      <a
-                        href={`http://localhost:3001`}
-                        className="text-indigo-600 hover:text-indigo-900"
-                        style={{ color: "rgb(3, 63, 99)" }}
+                      <td
+                        className={
+                          styles.tdAlignment +
+                          " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
+                        }
                       >
-                        Edit
-                        <span className="sr-only">, {proposalItem.name}</span>
-                      </a>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                        {makeReadableTimePlace(proposalItem.playTime)}
+                      </td>
+                      <td
+                        className={
+                          styles.tdAlignment +
+                          " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
+                        }
+                      >
+                        {/* {JSON.stringify(proposalItem.playPlace)} */}
+                        <div className="location-details">
+                          <span>{proposalItem.playPlace?.location}</span>
+                          <span>
+                            {proposalItem.playPlace?.distance
+                              ? `, ${proposalItem.playPlace?.distance} miles away`
+                              : ""}
+                          </span>
+                        </div>
+                      </td>
+                      <td
+                        className={
+                          styles.tdAlignment +
+                          " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
+                        }
+                      >
+                        {proposalItem.eventStatus?.status}
+                      </td>
+                      <td
+                        className={
+                          styles.tdAlignment +
+                          " tdAlignment relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
+                        }
+                      >
+                        <a
+                          href={`http://localhost:3001`}
+                          className="text-indigo-600 hover:text-indigo-900"
+                          style={{ color: "rgb(3, 63, 99)" }}
+                        >
+                          Edit
+                          <span className="sr-only">, {proposalItem.name}</span>
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+            {filteredList && filteredList.length === 0 && (
+              <div className={styles.noProposalsFound + " no-proposla-found"}>
+                NO PROPOSALS FOUND
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -41,3 +41,14 @@
   display: flex;
   flex-direction: row;
 }
+
+.noProposalsFound {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 35px;
+  padding: 35px;
+  color: #023047;
+  font-weight: 600;
+}
