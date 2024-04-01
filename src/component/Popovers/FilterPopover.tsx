@@ -72,6 +72,12 @@ export default function FilterPopover({
     }
   };
 
+  const handleRestFilters = (event: any) => {
+    console.log(event);
+    event.preventDefault();
+    onSelectedItemsChange([]);
+  };
+
   return (
     <div className={style.componentStyle + " popover-filter-container"}>
       <Popover className="relative">
@@ -194,6 +200,15 @@ export default function FilterPopover({
                         </div>
                       </div>
                     ))}
+                  </div>
+                  <div className={style.resetFilter + " reset-filters"}>
+                    <hr />
+                    <button
+                      className={style.btnReset + " btnReset"}
+                      onClick={handleRestFilters}
+                    >
+                      RESET
+                    </button>
                   </div>
                 </div>
               </Popover.Panel>
