@@ -5,12 +5,8 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import styles from "./Landing.module.css";
 import Avatar from "boring-avatars";
 import { getAllProposals } from "../../apis/fetch";
-import ProposalList from "./ProposalList";
 import ProposalListv2 from "./ProposalListv2";
-import { Court_Floor } from "../../assets/svgs/Court_Floor";
 import { IconTennisMatch } from "../../assets/svgs/🦆 icon _tennis match_";
-import FilterSection from "../Filters/FilterSection";
-import { DialogService } from "../Service/DialogService";
 
 const user = {
   name: "Tom Cook",
@@ -265,9 +261,7 @@ export default function Landing() {
               {proposalList && proposalList.length > 0 && (
                 // <ProposalList proposals={proposalList}/>
                 <div className="content-container">
-                  <DialogService>
-                    <ProposalListv2 proposals={proposalList} />
-                  </DialogService>
+                  <ProposalListv2 proposals={proposalList} />
                 </div>
               )}
             </div>

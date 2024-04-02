@@ -6,11 +6,15 @@ import Landing from "./component/Landing/Landing";
 
 import { Provider } from "react-redux";
 import store from "./store";
+import { DialogLoader } from "./component/Services/dialog-service";
 
 function App() {
   return (
     <div className="App">
       <Landing />
+      <div>
+        <DialogLoader />
+      </div>
     </div>
   );
 }

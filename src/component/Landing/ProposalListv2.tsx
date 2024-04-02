@@ -6,16 +6,20 @@ import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 
 import FilterPopover, { IFilter } from "../Popovers/FilterPopover";
 import { iconFill, iconSize, iconStroke } from "../Configs/Colors";
-import { useDialogService } from "../Service/DialogService";
-import ProposeComponent from "../Dialogs/ProposeComponent.dialog";
+import { ProposeComponent } from "/Users/alphagiel/Work/FULL STACKS/racquet-hub/src/component/Dialogs/ProposeComponent.dialog";
+import {
+  sportCategoryFilters,
+  sportTypeFilters,
+  statusFilters,
+} from "../Configs/Options";
+import { ProposalForm } from "../Form/ProposalForm";
+import { dialogService } from "../Services/dialog-service";
 
 export default function ProposalListv2({ proposals }: any) {
   const [listOfProposals, setListOfProposals] = useState(proposals || []);
   const [filteredList, setfilteredList] = useState(proposals || []);
   const [filterData, setFilterData] = useState<any>([]);
   const [selections, setSelections] = useState<any>([]);
-
-  const { openDialog } = useDialogService();
 
   const [sortConfig, setSortConfig] = useState<any>({
     key: "playtime",
@@ -183,59 +187,12 @@ export default function ProposalListv2({ proposals }: any) {
     setfilteredList(filteredList);
   };
 
-  const sportTypeFilters = [
-    {
-      name: "Pickleball",
-      description: "Sunt aute tempor laboris aliquip exercitation.",
-      href: "##",
-      type: "TYPE_SPORT",
-    },
-    {
-      name: "Tennis",
-      description: "Sunt aute tempor laboris aliquip exercitation.",
-      href: "##",
-      type: "TYPE_SPORT",
-    },
-  ];
-  const sportCategoryFilters = [
-    {
-      name: "Singles",
-      description: "Sunt aute tempor laboris aliquip exercitation.",
-      href: "##",
-      type: "TYPE_CATEGORY",
-    },
-    {
-      name: "Doubles",
-      description: "Sunt aute tempor laboris aliquip exercitation.",
-      href: "##",
-      type: "TYPE_CATEGORY",
-    },
-  ];
-  const statusFilters = [
-    {
-      name: "Open",
-      description: "Sunt aute tempor laboris aliquip exercitation.",
-      href: "##",
-      type: "TYPE_STATUS",
-    },
-    {
-      name: "Closed",
-      description: "Sunt aute tempor laboris aliquip exercitation.",
-      href: "##",
-      type: "TYPE_STATUS",
-    },
-  ];
-
-  const filterTypes = [
-    { type: "TYPE_STATUS", filterData: statusFilters },
-    { type: "TYPE_CATEGORY", filterData: sportCategoryFilters },
-    { type: "TYPE_SPORT", filterData: sportTypeFilters },
-  ];
-
   const handleMakeProposal = (event: any) => {
     event.preventDefault();
     console.log(event);
-    openDialog(<ProposeComponent />);
+    dialogService.openDialog(ProposeComponent, {
+      data: "testing data transfer",
+    });
   };
 
   function showPopoverForFiltering(msg: any) {
