@@ -6,7 +6,7 @@ import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 
 import FilterPopover, { IFilter } from "../Popovers/FilterPopover";
 import { iconFill, iconSize, iconStroke } from "../Configs/Colors";
-import { ProposeComponent } from "/Users/alphagiel/Work/FULL STACKS/racquet-hub/src/component/Dialogs/ProposeComponent.dialog";
+// import { ProposeComponent } from "/Users/alphagiel/Work/FULL STACKS/racquet-hub/src/component/Dialogs/ProposeComponent.dialog";
 import {
   sportCategoryFilters,
   sportTypeFilters,
@@ -14,6 +14,7 @@ import {
 } from "../Configs/Options";
 import { ProposalForm } from "../Form/ProposalForm";
 import { dialogService } from "../Services/dialog-service";
+import { ProposeComponent } from "../Dialogs/ProposeComponent.dialog";
 
 export default function ProposalListv2({ proposals }: any) {
   const [listOfProposals, setListOfProposals] = useState(proposals || []);
