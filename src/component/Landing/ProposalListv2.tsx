@@ -15,6 +15,7 @@ import {
 import { ProposalForm } from "../Form/ProposalForm";
 import { dialogService } from "../Services/dialog-service";
 import { ProposeComponent } from "../Dialogs/ProposeComponent.dialog";
+import { DatePicker } from "../Form/DatePicker";
 
 export default function ProposalListv2({ proposals }: any) {
   const [listOfProposals, setListOfProposals] = useState(proposals || []);
@@ -423,6 +424,7 @@ export default function ProposalListv2({ proposals }: any) {
                 </tbody>
               </table>
             )}
+            
             {filteredList && filteredList.length === 0 && (
               <div className={styles.noProposalsFound + " no-proposla-found"}>
                 NO PROPOSALS FOUND

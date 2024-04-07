@@ -98,7 +98,7 @@ export default function FilterPopover({
               }
             >
               {/* <ServiceIcon height={`24px`} width={`24px`}/> */}
-              <button className="inline-flex w-full justify-center rounded-md bg-[#B5B782] px-4 py-2 text-sm font-medium text-[#013F62] hover:text-[#013F62] hover:bg-[#FEDC97] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
+              <span className="inline-flex w-full justify-center rounded-md bg-[#B5B782] px-4 py-2 text-sm font-medium text-[#013F62] hover:text-[#013F62] hover:bg-[#FEDC97] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
                 Filter
                 <ChevronDownIcon
                   fill="#013F62"
@@ -111,7 +111,7 @@ export default function FilterPopover({
                   }
                   aria-hidden="true"
                 />
-              </button>
+              </span>
             </Popover.Button>
 
             <Transition

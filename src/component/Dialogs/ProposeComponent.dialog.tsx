@@ -1,8 +1,19 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
+import { InputSelection } from "../Form/InputSelection";
+import { sportCategoryFilters, sportTypeFilters } from "../Configs/Options";
+import { ListBoxOptions } from "../Form/ListBoxOptions";
+import { DatePicker } from "../Form/DatePicker";
+import { GenPurposePopover } from "../Popovers/GenPurposePopover";
 
 export const ProposeComponent = ({ close, data }: any) => {
   let [isOpen, setIsOpen] = useState(true);
+  let [showDatePicker, setShowDatePicker] = useState(false);
+
+  function showDatePickerFunc(val: boolean) {
+    // e.preventDefault()
+    setShowDatePicker(val);
+  }
 
   function closeModal() {
     setIsOpen(false);
@@ -10,6 +21,11 @@ export const ProposeComponent = ({ close, data }: any) => {
 
   function openModal() {
     setIsOpen(true);
+  }
+
+  function handleSubmitProposal(event: any) {
+    event.preventDefault();
+    console.log("submitting proposal ");
   }
 
   return (
@@ -45,29 +61,73 @@ export const ProposeComponent = ({ close, data }: any) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel
+                className="w-full h-[550px] max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
+                style={{ overflowY: "scroll" }}
+              >
                 <Dialog.Title
                   as="h3"
                   className="text-lg font-medium leading-6 text-gray-900"
                 >
-                  Payment successful
+                  Propose an Event
                 </Dialog.Title>
                 <div className="mt-2">
                   <p className="text-sm text-gray-500">
-                    Your payment has been successfully submitted. We’ve sent you
-                    an email with all of the details of your order.
+                    Select the sport, location, day and time.
                   </p>
                 </div>
 
-                <div className="mt-4">
+                <div className="form-container mt-4 flex flex-col gap-[12px] justify-center ">
+                  <form
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "12px",
+                    }}
+                  >
+                    <div className="input-for-sportType">
+                      <ListBoxOptions
+                        label="Select a Sport"
+                        selections={sportTypeFilters}
+                      />
+                    </div>
+                    <div className="input-for-sportType">
+                      <ListBoxOptions
+                        label="Select a Category"
+                        selections={sportCategoryFilters}
+                      />
+                    </div>
+                    <div className="input-for-sportType">
+                      <GenPurposePopover
+                        openPopover={showDatePickerFunc}
+                        key={"datePicker"}
+                        popoverBtnLabel={`Select a date`}
+                      >
+                        {<DatePicker />}
+                      </GenPurposePopover>
+                    </div>
+                  </form>
+                </div>
+
+                <div className="mt-4 flex flex-row gap-[12px] justify-center ">
                   <button
                     type="button"
                     className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                    onClick={() => {
+                    onClick={(event: any) => {
+                      event.preventDefault();
                       close();
                     }}
                   >
-                    Got it, thanks!
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    onClick={(event) => {
+                      handleSubmitProposal(event);
+                    }}
+                  >
+                    Submit
                   </button>
                 </div>
               </Dialog.Panel>

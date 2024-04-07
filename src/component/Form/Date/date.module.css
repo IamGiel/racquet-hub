@@ -1,0 +1,49 @@
+/* Calendar Container */
+.calendar-container {
+  width: 300px; /* Adjust width as needed */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+/* Weekday List */
+.weekdays {
+  list-style-type: none;
+  display: flex;
+  justify-content: space-around;
+  padding: 0;
+}
+
+.weekdays li {
+  width: calc(100% / 7);
+  text-align: center;
+}
+
+/* Days List */
+.days {
+  list-style-type: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.day {
+  display: inline-block;
+  width: calc(100% / 7);
+  text-align: center;
+}
+
+/* Day Button */
+.day-button {
+  width: 100%;
+  padding: 5px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+/* Styling for Selected Day */
+.day-button.selected {
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 50%;
+}
