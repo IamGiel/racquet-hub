@@ -1,0 +1,70 @@
+.eventDate {
+  color: var(--slate-2, #4b4e5e);
+
+  /* In-App/text-sm/Regular */
+  font-family: Inter;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
+  display: flex;
+  align-items: center;
+}
+
+.cancelBtn {
+  display: flex;
+  padding: 9px 17px;
+  justify-content: center;
+  align-items: center;
+
+  color: var(--Slate-Tints-400, #bac1d8);
+
+  /* In-App/text-sm/Medium */
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 142.857% */
+}
+
+.submitBtn {
+  border-radius: 6px;
+  background: var(--Slate-Tints-200, #dde0eb);
+
+  /* shadow/sm */
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+
+  color: var(--Primary-Colors-White, #fff);
+  display: flex;
+  padding: 9px 17px;
+  justify-content: center;
+  align-items: center;
+
+  /* In-App/text-sm/Medium */
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 142.857% */
+}
+
+.submitBtn:hover {
+  border-radius: 6px;
+  background: #b5b782;
+
+  /* shadow/sm */
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+}
+
+.proposalIntro {
+  color: var(--slate-2, #4b4e5e);
+
+  /* In-App/text-sm/Regular */
+  font-family: Inter;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
+  display: flex;
+  align-items: center;
+}

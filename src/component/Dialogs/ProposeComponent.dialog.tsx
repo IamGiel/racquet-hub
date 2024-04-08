@@ -5,10 +5,13 @@ import { sportCategoryFilters, sportTypeFilters } from "../Configs/Options";
 import { ListBoxOptions } from "../Form/ListBoxOptions";
 import { DatePicker } from "../Form/DatePicker";
 import { GenPurposePopover } from "../Popovers/GenPurposePopover";
+import moment from "moment";
+import styles from './ProposeComponent.dialog.module.css';
 
 export const ProposeComponent = ({ close, data }: any) => {
   let [isOpen, setIsOpen] = useState(true);
   let [showDatePicker, setShowDatePicker] = useState(false);
+  let [eventDate, setEventDate] = useState<any>(null);
 
   function showDatePickerFunc(val: boolean) {
     // e.preventDefault()
@@ -26,6 +29,10 @@ export const ProposeComponent = ({ close, data }: any) => {
   function handleSubmitProposal(event: any) {
     event.preventDefault();
     console.log("submitting proposal ");
+  }
+  function handleSelectedDate(dateSelected: any) {
+    console.log("dateSelected  ", dateSelected);
+    setEventDate(moment(dateSelected[0]).format('dddd, MMM D YYYY'))
   }
 
   return (
@@ -72,7 +79,7 @@ export const ProposeComponent = ({ close, data }: any) => {
                   Propose an Event
                 </Dialog.Title>
                 <div className="mt-2">
-                  <p className="text-sm text-gray-500">
+                  <p className={styles.proposalIntro + " porposalIntro"}>
                     Select the sport, location, day and time.
                   </p>
                 </div>
@@ -97,22 +104,23 @@ export const ProposeComponent = ({ close, data }: any) => {
                         selections={sportCategoryFilters}
                       />
                     </div>
-                    <div className="input-for-sportType">
+                    <div className="input-for-sportType flex gap-[12px]">
                       <GenPurposePopover
                         openPopover={showDatePickerFunc}
                         key={"datePicker"}
                         popoverBtnLabel={`Select a date`}
                       >
-                        {<DatePicker />}
+                        {<DatePicker onSelectDate={handleSelectedDate}/>}
                       </GenPurposePopover>
+                      <div className={styles.eventDate + " date-selectedLabel"}>{eventDate}</div>
                     </div>
                   </form>
                 </div>
 
-                <div className="mt-4 flex flex-row gap-[12px] justify-center ">
+                <div className="mt-4 flex flex-row gap-[12px] justify-center absolute bottom-[12px]">
                   <button
                     type="button"
-                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    className={styles.cancelBtn + ` cancelBtn`}
                     onClick={(event: any) => {
                       event.preventDefault();
                       close();
@@ -122,7 +130,7 @@ export const ProposeComponent = ({ close, data }: any) => {
                   </button>
                   <button
                     type="button"
-                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    className={styles.submitBtn + " subitBtn"}
                     onClick={(event) => {
                       handleSubmitProposal(event);
                     }}
