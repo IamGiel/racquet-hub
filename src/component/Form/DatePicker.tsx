@@ -46,7 +46,7 @@ function Root() {
   );
 }
 
-export const DatePicker = ({ onSelectDate }: any) => {
+export const DatePicker = ({ id, onSelectDate }: any) => {
   const [selectedDates, onDatesChange] = useState<Date[]>([]);
 
   const handleDatesChange = (newDates: Date[]) => {

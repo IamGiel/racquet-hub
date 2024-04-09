@@ -61,7 +61,7 @@ export default function ProposalListv2({ proposals }: any) {
   }
 
   const handleSort = (key: any) => {
-    console.log("handle sort key ", key);
+    // console.log("handle sort key ", key);
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
       direction = "desc";
@@ -73,7 +73,7 @@ export default function ProposalListv2({ proposals }: any) {
   };
 
   const sortColumns = (colname: string, direction: string) => {
-    console.log();
+    // console.log();
     // setfilteredList((prevList: any) => {
     //   return [...prevList].sort((a, b) => {
     //     if (colname.includes(".")) {
@@ -140,7 +140,7 @@ export default function ProposalListv2({ proposals }: any) {
   };
 
   function handleControl(columnId: string, val?: boolean) {
-    console.log("columnId ", columnId);
+    // console.log("columnId ", columnId);
 
     handleSort(columnId);
   }
@@ -148,7 +148,7 @@ export default function ProposalListv2({ proposals }: any) {
   const handleSelectedItemsChange = (filterBy: IFilter[]) => {
     // Set the current selection
     // setSelections(filterBy?.name);
-    console.log("filterBy ", filterBy);
+    // console.log("filterBy ", filterBy);
     const namesOfFilters: any = [];
     const copyOfList = [...listOfProposals];
 
@@ -191,7 +191,7 @@ export default function ProposalListv2({ proposals }: any) {
 
   const handleMakeProposal = (event: any) => {
     event.preventDefault();
-    console.log(event);
+    // console.log(event);
     dialogService.openDialog(ProposeComponent, {
       data: "testing data transfer",
     });
@@ -199,7 +199,7 @@ export default function ProposalListv2({ proposals }: any) {
 
   function showPopoverForFiltering(msg: any) {
     // open popover that allows for filtering this column
-    console.log("column to filter ", msg);
+    // console.log("column to filter ", msg);
 
     // setFilterData(sportTypeFilters);
     setFilterData([

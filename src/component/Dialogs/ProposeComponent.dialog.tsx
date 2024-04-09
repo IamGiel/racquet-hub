@@ -6,7 +6,20 @@ import { ListBoxOptions } from "../Form/ListBoxOptions";
 import { DatePicker } from "../Form/DatePicker";
 import { GenPurposePopover } from "../Popovers/GenPurposePopover";
 import moment from "moment";
-import styles from './ProposeComponent.dialog.module.css';
+import styles from "./ProposeComponent.dialog.module.css";
+import StepperComponent from "../Stepper/StepperComponent";
+import { InputText } from "../Form/InputText";
+
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
+interface IValues {
+  sportType: string;
+  SportCategory: string;
+  location: string;
+  date: string;
+  time: string;
+}
 
 export const ProposeComponent = ({ close, data }: any) => {
   let [isOpen, setIsOpen] = useState(true);
@@ -32,8 +45,64 @@ export const ProposeComponent = ({ close, data }: any) => {
   }
   function handleSelectedDate(dateSelected: any) {
     console.log("dateSelected  ", dateSelected);
-    setEventDate(moment(dateSelected[0]).format('dddd, MMM D YYYY'))
+    setEventDate(moment(dateSelected[0]).format("dddd, MMM D YYYY"));
   }
+
+  const formik = useFormik({
+    initialValues: {
+      commodityName: "", // Empty string as initial value
+      modeOfTransport: "", // Empty string
+      origin: "", // Empty string
+      destination: "", // Empty string
+      childForm: "",
+      isChildFormValid: false,
+      isTHCOriginIncluded: false,
+      isTHCDestinationIncluded: false,
+    },
+    validationSchema: Yup.object({
+      modeOfTransport: Yup.string()
+        .typeError("Please select a mode of transport")
+        .required("Mode of transport is required"),
+      origin: Yup.object()
+        .shape({
+          name: Yup.string().required("Please select from options"),
+          type: Yup.string(),
+          longitude: Yup.string(),
+          latitude: Yup.string(),
+          "country-name": Yup.string(),
+          "country-code": Yup.string(),
+          code: Yup.string(),
+        })
+        .required("Please select from the list"),
+      destination: Yup.object()
+        .shape({
+          name: Yup.string().required("Please select from options"),
+          type: Yup.string(),
+          longitude: Yup.string(),
+          latitude: Yup.string(),
+          "country-name": Yup.string(),
+          "country-code": Yup.string(),
+          code: Yup.string(),
+        })
+        .required("Please select from the list"),
+      isChildFormValid: Yup.boolean()
+        .default(true)
+        .typeError(
+          "The selected mode of transport has provided new questions - please provide missing information"
+        )
+        .required(
+          "Please complete the form associated with the mode of trasnport you selected"
+        ),
+    }),
+    onSubmit(values, { resetForm }) {
+      console.log("ONSUBMIT FORM Form values:", values);
+
+      // Revalidate the form if it's dirty
+      if (formik.dirty) {
+        formik.validateForm();
+      }
+    },
+  });
 
   return (
     <>
@@ -69,8 +138,8 @@ export const ProposeComponent = ({ close, data }: any) => {
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel
-                className="w-full h-[550px] max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
-                style={{ overflowY: "scroll" }}
+                className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
+                style={{ overflowY: "scroll", minHeight: "800px" }}
               >
                 <Dialog.Title
                   as="h3"
@@ -85,7 +154,9 @@ export const ProposeComponent = ({ close, data }: any) => {
                 </div>
 
                 <div className="form-container mt-4 flex flex-col gap-[12px] justify-center ">
+                  <StepperComponent />
                   <form
+                    onSubmit={formik.handleSubmit}
                     style={{
                       display: "flex",
                       flexDirection: "column",
@@ -94,49 +165,68 @@ export const ProposeComponent = ({ close, data }: any) => {
                   >
                     <div className="input-for-sportType">
                       <ListBoxOptions
+                        id="sportType"
                         label="Select a Sport"
                         selections={sportTypeFilters}
                       />
                     </div>
                     <div className="input-for-sportType">
+                      <InputText
+                        id="location"
+                        type="text"
+                        label="Provide a location"
+                      />
+                    </div>
+                    <div className="input-for-sportType">
                       <ListBoxOptions
+                        id="categoryType"
                         label="Select a Category"
                         selections={sportCategoryFilters}
                       />
                     </div>
-                    <div className="input-for-sportType flex gap-[12px]">
+                    <div className="input-for-sportType flex gap-[12px]" style={{display:'flex', flexDirection:'column'}}>
                       <GenPurposePopover
                         openPopover={showDatePickerFunc}
                         key={"datePicker"}
                         popoverBtnLabel={`Select a date`}
                       >
-                        {<DatePicker onSelectDate={handleSelectedDate}/>}
+                        {
+                          <>
+                            <DatePicker
+                              id={`date`}
+                              onSelectDate={handleSelectedDate}
+                            />
+                          </>
+                        }
                       </GenPurposePopover>
-                      <div className={styles.eventDate + " date-selectedLabel"}>{eventDate}</div>
+                      <div className={styles.eventDate + " date-selectedLabel"}>
+                        {/* {eventDate} */}
+                        <input
+                              type="text"
+                              className={styles.proposalDateInput + ' proposalDateInput'}
+                              placeholder={eventDate??'Select a date'}
+                            />
+                      </div>
+                    </div>
+                    <div className="mt-4 flex flex-row gap-[12px] justify-center absolute bottom-[12px]">
+                      <button
+                        type="button"
+                        className={styles.cancelBtn + ` cancelBtn`}
+                        onClick={(event: any) => {
+                          event.preventDefault();
+                          close();
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className={styles.submitBtn + " subitBtn"}
+                      >
+                        Submit
+                      </button>
                     </div>
                   </form>
-                </div>
-
-                <div className="mt-4 flex flex-row gap-[12px] justify-center absolute bottom-[12px]">
-                  <button
-                    type="button"
-                    className={styles.cancelBtn + ` cancelBtn`}
-                    onClick={(event: any) => {
-                      event.preventDefault();
-                      close();
-                    }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.submitBtn + " subitBtn"}
-                    onClick={(event) => {
-                      handleSubmitProposal(event);
-                    }}
-                  >
-                    Submit
-                  </button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

@@ -8,11 +8,11 @@ export const DialogLoader = () => {
   }, []);
   React.useEffect(() => {
     const closedDialogs = dialogs.filter((f: Dialog) => !f.isOpen);
-    console.log('dialogs', dialogs);
-    console.log(
-      'open dialogs',
-      dialogs.filter((f: Dialog) => f.isOpen)
-    );
+    // console.log('dialogs', dialogs);
+    // console.log(
+    //   'open dialogs',
+    //   dialogs.filter((f: Dialog) => f.isOpen)
+    // );
     closedDialogs.map((m: Dialog) => m.callback(m.closeData));
   }, [dialogs]);
   return (

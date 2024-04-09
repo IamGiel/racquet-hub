@@ -48,7 +48,7 @@ export const GenPurposePopover = ({
         leaveFrom="opacity-100 translate-y-0"
         leaveTo="opacity-0 translate-y-1"
       >
-        <Popover.Panel className="absolute left-1/2 z-10 flex w-[350px] -translate-x-1/2 top-[25%]">
+        <Popover.Panel className="absolute left-1/2 z-10 flex w-[350px] -translate-x-1/2 ">
           <div className="w-screen max-w-md flex-auto overflow-hidden rounded-3xl bg-white text-sm leading-6 shadow-lg ring-1 ring-gray-900/5">
             {children}
           </div>

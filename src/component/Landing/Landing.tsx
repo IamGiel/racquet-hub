@@ -41,8 +41,8 @@ export default function Landing() {
       await getAllProposals()
         .then((response) => response.json())
         .then((result) => {
-          console.log(result);
-          console.log(typeof result);
+          // console.log(result);
+          // console.log(typeof result);
           setProposalList(result);
         })
         .catch((error) => console.error(error));

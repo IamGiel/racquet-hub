@@ -33,8 +33,8 @@ export const Calendar: FC<CalendarProps> = ({
         {nextButton || <div />}
       </SectionHeader>
       <div className="grid grid-cols-7 gap-y-2 mb-2 items-center h-8">
-        {weekDays.map((d) => (
-          <p className="text-xs text-center">{d}</p>
+        {weekDays.map((d, dId) => (
+          <p key={dId} className="text-xs text-center">{d}</p>
         ))}
       </div>
       <main className="grid grid-cols-7 gap-y-2">
@@ -49,7 +49,7 @@ export const Calendar: FC<CalendarProps> = ({
           >
             {d.day}
           </button>
-          <div>{""}</div>
+          <div key={dId}>{""}</div>
           </div>
         ))}
       </main>

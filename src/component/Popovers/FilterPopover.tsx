@@ -34,7 +34,7 @@ export default function FilterPopover({
     const existingFilterIndex = collectedFilters.findIndex(
       (filter: any) => filter?.type === item?.type
     );
-    console.log("existingFilterIndex ", existingFilterIndex);
+    // console.log("existingFilterIndex ", existingFilterIndex);
     // check if collectedFilters has item
     const inCollectedFilters = collectedFilters.some(
       (filter: any) => filter?.type === item?.type
@@ -54,7 +54,7 @@ export default function FilterPopover({
   };
 
   useEffect(() => {
-    console.log("collectedFilters ", collectedFilters);
+    // console.log("collectedFilters ", collectedFilters);
     onSelectedItemsChange(collectedFilters);
   }, [collectedFilters]);
 
@@ -73,7 +73,7 @@ export default function FilterPopover({
   };
 
   const handleRestFilters = (event: any) => {
-    console.log(event);
+    // console.log(event);
     event.preventDefault();
     onSelectedItemsChange([]);
     setCollectedFilters([]);
@@ -86,7 +86,7 @@ export default function FilterPopover({
           <>
             <Popover.Button
               onClick={() => {
-                console.log("Button clicked!");
+                // console.log("Button clicked!");
                 onClickFilter("filter_clicked");
               }}
               className={

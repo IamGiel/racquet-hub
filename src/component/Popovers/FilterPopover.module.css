@@ -51,6 +51,10 @@
   line-height: 20px; /* 142.857% */
 }
 
+.selectDate {
+  outline: "none";
+}
+
 .hrHeaderTitle {
   margin: 12px 0px;
   font-weight: 600;
