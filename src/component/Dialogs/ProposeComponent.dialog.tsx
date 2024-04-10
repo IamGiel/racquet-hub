@@ -12,7 +12,7 @@ import { InputText } from "../Form/InputText";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import _ from 'lodash';
+import _ from "lodash";
 
 import { FlatPickerDate } from "../Form/FlatPicker/FlatPickerDate";
 import { getZipcode } from "../../apis/fetch";
@@ -54,10 +54,10 @@ export const ProposeComponent = ({ close, data }: any) => {
 
   const formik = useFormik({
     initialValues: {
-      sportType: "", // Empty string as initial value
-      categoryType: "", // Empty string
-      location: "", // Empty string
-      date: "", // Empty string
+      sportType: null,
+      categoryType: null,
+      location: null,
+      date: null,
     },
     validationSchema: Yup.object({
       sportType: Yup.string()
@@ -70,41 +70,40 @@ export const ProposeComponent = ({ close, data }: any) => {
         .typeError("Please select a location type")
         .required("Location type is required"),
       date: Yup.string()
-        .typeError("Please select a date")
-        .required("Date is required"),
-     
+        .typeError("Please select a date and time")
+        .required("Date and time is required"),
     }),
     onSubmit(values, { resetForm }) {
       console.log("ONSUBMIT FORM Form values:", values);
 
       // Revalidate the form if it's dirty
       if (formik.dirty) {
-        formik.validateForm();
+        // This line should be changed
+        formik.validateForm(); // This line should be changed
       }
     },
   });
 
-  function handleSelectedSportType(selection:any) {
-    console.log('sporttype here ', selection)
-    formik.setFieldValue('sportType', selection?.name)
+  function handleSelectedSportType(selection: any) {
+    console.log("sporttype here ", selection);
+    formik.setFieldValue("sportType", selection?.name);
   }
-  function handleSelectedCategoryType(selection:any) {
-    console.log('category here ', selection)
-    formik.setFieldValue('categoryType',  selection?.name)
+  function handleSelectedCategoryType(selection: any) {
+    console.log("category here ", selection);
+    formik.setFieldValue("categoryType", selection?.name);
   }
-  function handleSelectedDateTime(dateTime:any) {
-    console.log('dateTime here ', dateTime)
-    formik.setFieldValue('date',  dateTime)
+  function handleSelectedDateTime(dateTime: any) {
+    console.log("dateTime here ", dateTime);
+    formik.setFieldValue("date", dateTime);
   }
 
   const debouncedHandleLocationChange = _.debounce((loc: string) => {
-    console.log('location here ', loc);
-    if(loc.length >= 2) {
-      formik.setFieldValue('location', loc);
+    console.log("location here ", loc);
+    if (loc.length >= 2) {
+      formik.setFieldValue("location", loc);
     }
-    
   }, 3000); // Adjust the debounce delay as needed (e.g., 500 milliseconds)
-  
+
   const handleLocationChange = (loc: string) => {
     debouncedHandleLocationChange(loc);
   };
@@ -115,7 +114,7 @@ export const ProposeComponent = ({ close, data }: any) => {
         console.log(res);
       })
       .catch((err) => console.log(err));
-      console.log('formik ', formik)
+    console.log("formik ", formik);
   }, [formik?.values?.location]);
 
   return (
@@ -162,7 +161,7 @@ export const ProposeComponent = ({ close, data }: any) => {
                   Propose an Event
                 </Dialog.Title>
                 <div className="mt-2">
-                  <p className={styles.proposalIntro + " porposalIntro"}>
+                  <p className={styles.proposalIntro + " porposalIntro "}>
                     Select the sport, location, day and time.
                   </p>
                 </div>
@@ -184,6 +183,11 @@ export const ProposeComponent = ({ close, data }: any) => {
                         selections={sportTypeFilters}
                         onSelect={handleSelectedSportType}
                       />
+                      {formik.errors.sportType && (
+                        <p className={styles.errorMessge + " sportype-err-msg"}>
+                          {formik.errors.sportType}
+                        </p>
+                      )}
                     </div>
                     <div className="input-for-sportType">
                       <ListBoxOptions
@@ -192,6 +196,11 @@ export const ProposeComponent = ({ close, data }: any) => {
                         selections={sportCategoryFilters}
                         onSelect={handleSelectedCategoryType}
                       />
+                      {formik.errors.categoryType && (
+                        <p className={styles.errorMessge + " sportype-err-msg"}>
+                          {formik.errors.categoryType}
+                        </p>
+                      )}
                     </div>
                     <div className="input-for-sportType">
                       <InputText
@@ -201,42 +210,22 @@ export const ProposeComponent = ({ close, data }: any) => {
                         placeholder="Provide a location"
                         onChange={handleLocationChange}
                       />
+                      {formik.errors.location && (
+                        <p className={styles.errorMessge + " sportype-err-msg"}>
+                          {formik.errors.location}
+                        </p>
+                      )}
                     </div>
                     <div className="input-for-sportType">
                       <FlatPickerDate onDateSelect={handleSelectedDateTime} />
+                      {formik.errors.date && (
+                        <p className={styles.errorMessge + " sportype-err-msg"}>
+                          {formik.errors.date}
+                        </p>
+                      )}
                     </div>
 
-                    <pre>{JSON.stringify(formik,null,4)}</pre>
-
-                    {/* <div
-                      className="input-for-sportType flex gap-[12px]"
-                      style={{ display: "flex", flexDirection: "column" }}
-                    >
-                      <GenPurposePopover
-                        openPopover={showDatePickerFunc}
-                        key={"datePicker"}
-                        popoverBtnLabel={`Select a date`}
-                      >
-                        {
-                          <>
-                            <DatePicker
-                              id={`date`}
-                              onSelectDate={handleSelectedDate}
-                            />
-                          </>
-                        }
-                      </GenPurposePopover>
-                      <div className={styles.eventDate + " date-selectedLabel"}>
-                        <input
-                          type="text"
-                          className={
-                            styles.proposalDateInput + " proposalDateInput"
-                          }
-                          placeholder={eventDate ?? "Select a date"}
-                          readOnly
-                        />
-                      </div>
-                    </div> */}
+                    {/* <pre>{JSON.stringify(formik, null, 4)}</pre> */}
 
                     <div className="my-8 flex flex-row gap-[12px] justify-center relative bottom-[12px]">
                       <button
@@ -251,7 +240,12 @@ export const ProposeComponent = ({ close, data }: any) => {
                       </button>
                       <button
                         type="submit"
-                        className={styles.submitBtn + " subitBtn"}
+                        className={`rounded-lg shadow-sm flex justify-center items-center font-inter font-medium text-sm px-4 py-2 ${
+                          formik.isValid ? "bg-[#b5b782]" : "bg-[#dde0eb]"
+                        } text-white ${
+                          !formik.isValid ? "opacity-50 cursor-not-allowed" : ""
+                        }`}
+                        disabled={!formik.isValid}
                       >
                         Submit
                       </button>

@@ -12,15 +12,17 @@ export async function getAllProposals() {
     requestOptions
   );
 }
-export async function getZipcode(term:string) {
+export async function getZipcode(term: any) {
   const requestOptions: any = {
     method: "GET",
     redirect: "follow",
   };
-  if(!term) return;
+  if (!term) return;
 
   return fetch(
-    `http://api.geonames.org/searchJSON?q=${term ?? ''}&maxRows=10&username=${username}`,
+    `http://api.geonames.org/searchJSON?q=${
+      term ?? ""
+    }&maxRows=10&username=${username}`,
     requestOptions
   );
 }
