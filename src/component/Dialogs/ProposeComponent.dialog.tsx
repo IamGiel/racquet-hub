@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { InputSelection } from "../Form/InputSelection";
 import { sportCategoryFilters, sportTypeFilters } from "../Configs/Options";
 import { ListBoxOptions } from "../Form/ListBoxOptions";
@@ -12,6 +12,10 @@ import { InputText } from "../Form/InputText";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import _ from 'lodash';
+
+import { FlatPickerDate } from "../Form/FlatPicker/FlatPickerDate";
+import { getZipcode } from "../../apis/fetch";
 
 interface IValues {
   sportType: string;
@@ -50,49 +54,25 @@ export const ProposeComponent = ({ close, data }: any) => {
 
   const formik = useFormik({
     initialValues: {
-      commodityName: "", // Empty string as initial value
-      modeOfTransport: "", // Empty string
-      origin: "", // Empty string
-      destination: "", // Empty string
-      childForm: "",
-      isChildFormValid: false,
-      isTHCOriginIncluded: false,
-      isTHCDestinationIncluded: false,
+      sportType: "", // Empty string as initial value
+      categoryType: "", // Empty string
+      location: "", // Empty string
+      date: "", // Empty string
     },
     validationSchema: Yup.object({
-      modeOfTransport: Yup.string()
-        .typeError("Please select a mode of transport")
-        .required("Mode of transport is required"),
-      origin: Yup.object()
-        .shape({
-          name: Yup.string().required("Please select from options"),
-          type: Yup.string(),
-          longitude: Yup.string(),
-          latitude: Yup.string(),
-          "country-name": Yup.string(),
-          "country-code": Yup.string(),
-          code: Yup.string(),
-        })
-        .required("Please select from the list"),
-      destination: Yup.object()
-        .shape({
-          name: Yup.string().required("Please select from options"),
-          type: Yup.string(),
-          longitude: Yup.string(),
-          latitude: Yup.string(),
-          "country-name": Yup.string(),
-          "country-code": Yup.string(),
-          code: Yup.string(),
-        })
-        .required("Please select from the list"),
-      isChildFormValid: Yup.boolean()
-        .default(true)
-        .typeError(
-          "The selected mode of transport has provided new questions - please provide missing information"
-        )
-        .required(
-          "Please complete the form associated with the mode of trasnport you selected"
-        ),
+      sportType: Yup.string()
+        .typeError("Please select a sport type")
+        .required("Sport type is required"),
+      categoryType: Yup.string()
+        .typeError("Please select a category type")
+        .required("Category type is required"),
+      location: Yup.string()
+        .typeError("Please select a location type")
+        .required("Location type is required"),
+      date: Yup.string()
+        .typeError("Please select a date")
+        .required("Date is required"),
+     
     }),
     onSubmit(values, { resetForm }) {
       console.log("ONSUBMIT FORM Form values:", values);
@@ -103,6 +83,40 @@ export const ProposeComponent = ({ close, data }: any) => {
       }
     },
   });
+
+  function handleSelectedSportType(selection:any) {
+    console.log('sporttype here ', selection)
+    formik.setFieldValue('sportType', selection?.name)
+  }
+  function handleSelectedCategoryType(selection:any) {
+    console.log('category here ', selection)
+    formik.setFieldValue('categoryType',  selection?.name)
+  }
+  function handleSelectedDateTime(dateTime:any) {
+    console.log('dateTime here ', dateTime)
+    formik.setFieldValue('date',  dateTime)
+  }
+
+  const debouncedHandleLocationChange = _.debounce((loc: string) => {
+    console.log('location here ', loc);
+    if(loc.length >= 2) {
+      formik.setFieldValue('location', loc);
+    }
+    
+  }, 3000); // Adjust the debounce delay as needed (e.g., 500 milliseconds)
+  
+  const handleLocationChange = (loc: string) => {
+    debouncedHandleLocationChange(loc);
+  };
+
+  useEffect(() => {
+    getZipcode(formik?.values?.location)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
+      console.log('formik ', formik)
+  }, [formik?.values?.location]);
 
   return (
     <>
@@ -168,13 +182,7 @@ export const ProposeComponent = ({ close, data }: any) => {
                         id="sportType"
                         label="Select a Sport"
                         selections={sportTypeFilters}
-                      />
-                    </div>
-                    <div className="input-for-sportType">
-                      <InputText
-                        id="location"
-                        type="text"
-                        label="Provide a location"
+                        onSelect={handleSelectedSportType}
                       />
                     </div>
                     <div className="input-for-sportType">
@@ -182,9 +190,28 @@ export const ProposeComponent = ({ close, data }: any) => {
                         id="categoryType"
                         label="Select a Category"
                         selections={sportCategoryFilters}
+                        onSelect={handleSelectedCategoryType}
                       />
                     </div>
-                    <div className="input-for-sportType flex gap-[12px]" style={{display:'flex', flexDirection:'column'}}>
+                    <div className="input-for-sportType">
+                      <InputText
+                        id="location"
+                        type="text"
+                        label="Provide a location"
+                        placeholder="Provide a location"
+                        onChange={handleLocationChange}
+                      />
+                    </div>
+                    <div className="input-for-sportType">
+                      <FlatPickerDate onDateSelect={handleSelectedDateTime} />
+                    </div>
+
+                    <pre>{JSON.stringify(formik,null,4)}</pre>
+
+                    {/* <div
+                      className="input-for-sportType flex gap-[12px]"
+                      style={{ display: "flex", flexDirection: "column" }}
+                    >
                       <GenPurposePopover
                         openPopover={showDatePickerFunc}
                         key={"datePicker"}
@@ -200,15 +227,18 @@ export const ProposeComponent = ({ close, data }: any) => {
                         }
                       </GenPurposePopover>
                       <div className={styles.eventDate + " date-selectedLabel"}>
-                        {/* {eventDate} */}
                         <input
-                              type="text"
-                              className={styles.proposalDateInput + ' proposalDateInput'}
-                              placeholder={eventDate??'Select a date'}
-                            />
+                          type="text"
+                          className={
+                            styles.proposalDateInput + " proposalDateInput"
+                          }
+                          placeholder={eventDate ?? "Select a date"}
+                          readOnly
+                        />
                       </div>
-                    </div>
-                    <div className="mt-4 flex flex-row gap-[12px] justify-center absolute bottom-[12px]">
+                    </div> */}
+
+                    <div className="my-8 flex flex-row gap-[12px] justify-center relative bottom-[12px]">
                       <button
                         type="button"
                         className={styles.cancelBtn + ` cancelBtn`}

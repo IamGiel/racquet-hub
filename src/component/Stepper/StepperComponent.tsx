@@ -9,8 +9,8 @@ const StepperComponent = () => {
   // const numSteps = ["Sport", "Cate", "Date", "Time"];
   const numSteps = [
     { name: "Sport", icon: <RacketSportIcon /> },
-    { name: "Location", icon: <LocationIcon /> },
     { name: "Category", icon: <SportCategoryIcon /> },
+    { name: "Location", icon: <LocationIcon /> },
     { name: "Date", icon: <EventCalendar /> },
     { name: "Time", icon: <ClockIcon /> },
   ];
@@ -42,6 +42,7 @@ const StepperComponent = () => {
             "after:inline-block": stepItemId !== numSteps.length - 1,
             "after:absolute": stepItemId !== numSteps.length - 1,
             "lg:after:top-5": stepItemId !== numSteps.length - 1,
+            ":after:top-[12px]": stepItemId !== numSteps.length - 1,
           })}
           style={{ width: stepperItemWidth }} // Set the width dynamically
         >

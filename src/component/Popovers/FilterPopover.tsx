@@ -6,7 +6,7 @@ import {
 import { Fragment, useEffect, useState } from "react";
 import { iconFill, iconSize, iconStroke } from "../Configs/Colors";
 import { AdjustmentsVerticalIcon } from "@heroicons/react/20/solid";
-import style from "./FilterPopover.module.css";
+import style from "./Popover.module.css";
 import { ServiceIcon } from "./serviceIcon";
 
 export interface IFilter {
