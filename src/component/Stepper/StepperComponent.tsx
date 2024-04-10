@@ -42,6 +42,7 @@ const StepperComponent = ({status}:any) => {
             "after:absolute": stepItemId !== numSteps.length - 1,
             "lg:after:top-5": stepItemId !== numSteps.length - 1,
             ":after:top-[12px]": stepItemId !== numSteps.length - 1,
+            // if formik.values[stepItem?id] let the color for this stepper change to green
           })}
           style={{ width: stepperItemWidth }} // Set the width dynamically
         >
