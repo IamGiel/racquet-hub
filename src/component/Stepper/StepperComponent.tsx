@@ -5,14 +5,13 @@ import { SportCategoryIcon } from "../../assets/svgs/SportCategoryIcon";
 import { EventCalendar } from "../../assets/svgs/EventCalendar";
 import { LocationIcon } from "../../assets/svgs/Location";
 
-const StepperComponent = () => {
+const StepperComponent = ({status}:any) => {
   // const numSteps = ["Sport", "Cate", "Date", "Time"];
   const numSteps = [
-    { name: "Sport", icon: <RacketSportIcon /> },
-    { name: "Category", icon: <SportCategoryIcon /> },
-    { name: "Location", icon: <LocationIcon /> },
-    { name: "Date", icon: <EventCalendar /> },
-    { name: "Time", icon: <ClockIcon /> },
+    { id:"sportType", name: "Sport", icon: <RacketSportIcon /> },
+    { id:"categoryType", name: "Category", icon: <SportCategoryIcon /> },
+    { id:"location", name: "Location", icon: <LocationIcon /> },
+    { id:"date", name: "Date", icon: <EventCalendar /> },
   ];
   const totalSteps = numSteps.length;
 
@@ -33,7 +32,7 @@ const StepperComponent = () => {
     >
       {numSteps.map((stepItem, stepItemId) => (
         <li
-          key={stepItemId}
+          key={stepItem?.id}
           className={classNames("flex", "relative", "text-indigo-600", {
             "after:content-['']": stepItemId !== numSteps.length - 1,
             "after:w-full": stepItemId !== numSteps.length - 1,
@@ -57,6 +56,7 @@ const StepperComponent = () => {
           </div>
         </li>
       ))}
+      <pre>{JSON.stringify(status, null, 4)}</pre>
     </ol>
   );
 };

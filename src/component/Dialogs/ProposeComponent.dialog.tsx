@@ -167,7 +167,7 @@ export const ProposeComponent = ({ close, data }: any) => {
                 </div>
 
                 <div className="form-container mt-4 flex flex-col gap-[12px] justify-center ">
-                  <StepperComponent />
+                  <StepperComponent status={formik}/>
                   <form
                     onSubmit={formik.handleSubmit}
                     style={{
