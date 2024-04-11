@@ -12,7 +12,6 @@ import {
   sportTypeFilters,
   statusFilters,
 } from "../Configs/Options";
-import { ProposalForm } from "../Form/ProposalForm";
 import { dialogService } from "../Services/dialog-service";
 import { ProposeComponent } from "../Dialogs/ProposeComponent.dialog";
 
