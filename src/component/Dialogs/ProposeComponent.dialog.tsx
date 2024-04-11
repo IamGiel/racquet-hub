@@ -17,6 +17,7 @@ import _ from "lodash";
 import { FlatPickerDate } from "../Form/FlatPicker/FlatPickerDate";
 import { getZipcode } from "../../apis/fetch";
 import { Time } from "../Form/Date/Time";
+import { ReactDatePicker } from "../Form/ReactDatePicker/ReactDatePicker";
 
 interface IValues {
   sportType: string;
@@ -217,8 +218,16 @@ export const ProposeComponent = ({ close, data }: any) => {
                         </p>
                       )}
                     </div>
-                    <div className="input-for-sportType">
+                    {/* <div className="input-for-sportType">
                       <FlatPickerDate onDateSelect={handleSelectedDateTime} />
+                      {formik.errors.date && (
+                        <p className={styles.errorMessge + " sportype-err-msg"}>
+                          {formik.errors.date}
+                        </p>
+                      )}
+                    </div> */}
+                    <div className="input-for-sportType">
+                      <ReactDatePicker onDateSelect={handleSelectedDateTime} />
                       {/* <DatePicker onSelectDate={handleSelectedDateTime} /> */}
                       {formik.errors.date && (
                         <p className={styles.errorMessge + " sportype-err-msg"}>
