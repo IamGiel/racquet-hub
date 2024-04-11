@@ -3,7 +3,7 @@ import { Fragment, useEffect, useState } from "react";
 import { InputSelection } from "../Form/InputSelection";
 import { sportCategoryFilters, sportTypeFilters } from "../Configs/Options";
 import { ListBoxOptions } from "../Form/ListBoxOptions";
-import { DatePicker } from "../Form/DatePicker";
+// import { DatePicker } from "../Form/DatePicker";
 import { GenPurposePopover } from "../Popovers/GenPurposePopover";
 import moment from "moment";
 import styles from "./ProposeComponent.dialog.module.css";
@@ -16,6 +16,7 @@ import _ from "lodash";
 
 import { FlatPickerDate } from "../Form/FlatPicker/FlatPickerDate";
 import { getZipcode } from "../../apis/fetch";
+import { Time } from "../Form/Date/Time";
 
 interface IValues {
   sportType: string;
@@ -167,7 +168,7 @@ export const ProposeComponent = ({ close, data }: any) => {
                 </div>
 
                 <div className="form-container mt-4 flex flex-col gap-[12px] justify-center ">
-                  <StepperComponent status={formik}/>
+                  <StepperComponent status={formik} />
                   <form
                     onSubmit={formik.handleSubmit}
                     style={{
@@ -218,6 +219,7 @@ export const ProposeComponent = ({ close, data }: any) => {
                     </div>
                     <div className="input-for-sportType">
                       <FlatPickerDate onDateSelect={handleSelectedDateTime} />
+                      {/* <DatePicker onSelectDate={handleSelectedDateTime} /> */}
                       {formik.errors.date && (
                         <p className={styles.errorMessge + " sportype-err-msg"}>
                           {formik.errors.date}

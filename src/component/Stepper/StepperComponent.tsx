@@ -5,18 +5,42 @@ import { SportCategoryIcon } from "../../assets/svgs/SportCategoryIcon";
 import { EventCalendar } from "../../assets/svgs/EventCalendar";
 import { LocationIcon } from "../../assets/svgs/Location";
 
-const StepperComponent = ({status}:any) => {
+const StepperComponent = ({ status }: any) => {
   // const numSteps = ["Sport", "Cate", "Date", "Time"];
   const numSteps = [
-    { id:"sportType", name: "Sport", icon: <RacketSportIcon /> },
-    { id:"categoryType", name: "Category", icon: <SportCategoryIcon /> },
-    { id:"location", name: "Location", icon: <LocationIcon /> },
-    { id:"date", name: "Date", icon: <EventCalendar /> },
+    {
+      id: "sportType",
+      name: "Sport",
+      icon: <RacketSportIcon />,
+      status: status.values.sportType,
+    },
+    {
+      id: "categoryType",
+      name: "Category",
+      icon: <SportCategoryIcon />,
+      status: status.values.categoryType,
+    },
+    {
+      id: "location",
+      name: "Location",
+      icon: <LocationIcon />,
+      status: status.values.location,
+    },
+    {
+      id: "date",
+      name: "Date",
+      icon: <EventCalendar />,
+      status: status.values.date,
+    },
   ];
   const totalSteps = numSteps.length;
 
   // Calculate the width of each stepper item dynamically
   const stepperItemWidth = `${100 / totalSteps}%`;
+
+  // create a list of objects that includes the form fields
+  // e.g, [{id:sportType, status:formik.values.sportType}, {id:categoryType, status:formik.values.sportType}]
+  // this list we will add to numSteps
 
   return (
     <ol
@@ -49,15 +73,16 @@ const StepperComponent = ({status}:any) => {
           <div className="block whitespace-nowrap z-10">
             <span
               className="w-6 h-6 border-2 border-transparent rounded-full flex justify-center items-center mx-auto mb-3 text-sm text-white lg:w-10 lg:h-10"
-              style={{ background: "#bfbfbf" }}
+              style={{
+                background: stepItem?.status ? "#033f63" : "#bfbfbf",
+              }}
             >
               {stepItem.icon}
             </span>{" "}
-            {/* {stepItem} */}
           </div>
         </li>
       ))}
-      <pre>{JSON.stringify(status, null, 4)}</pre>
+      {/* <pre>{JSON.stringify(status, null, 4)}</pre> */}
     </ol>
   );
 };

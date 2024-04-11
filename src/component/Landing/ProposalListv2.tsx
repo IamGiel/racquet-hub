@@ -15,7 +15,6 @@ import {
 import { ProposalForm } from "../Form/ProposalForm";
 import { dialogService } from "../Services/dialog-service";
 import { ProposeComponent } from "../Dialogs/ProposeComponent.dialog";
-import { DatePicker } from "../Form/DatePicker";
 
 export default function ProposalListv2({ proposals }: any) {
   const [listOfProposals, setListOfProposals] = useState(proposals || []);
@@ -81,7 +80,6 @@ export default function ProposalListv2({ proposals }: any) {
     //       const keys = colname.split(".");
     //       const aValue = keys.reduce((obj, key) => obj[key], a);
     //       const bValue = keys.reduce((obj, key) => obj[key], b);
-
     //       if (typeof aValue === "string" && typeof bValue === "string") {
     //         return direction === "asc"
     //           ? aValue.localeCompare(bValue)
@@ -424,7 +422,7 @@ export default function ProposalListv2({ proposals }: any) {
                 </tbody>
               </table>
             )}
-            
+
             {filteredList && filteredList.length === 0 && (
               <div className={styles.noProposalsFound + " no-proposla-found"}>
                 NO PROPOSALS FOUND
