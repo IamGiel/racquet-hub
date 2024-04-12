@@ -235,7 +235,6 @@ export const ProposeComponent = ({ close, data }: any) => {
                         </p>
                       )}
                     </div>
-
                     {/* <pre>{JSON.stringify(formik, null, 4)}</pre> */}
 
                     <div className="my-8 flex flex-row gap-[12px] justify-center relative bottom-[12px]">
