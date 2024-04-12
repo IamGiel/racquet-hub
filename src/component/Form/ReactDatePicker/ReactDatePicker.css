@@ -19,3 +19,10 @@
   outline: none;
   font-size: 14px;
 }
+
+.react-datepicker__time-container
+  .react-datepicker__time
+  .react-datepicker__time-box,
+.react-datepicker__time-container {
+  width: 120px !important;
+}
