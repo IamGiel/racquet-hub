@@ -1,11 +1,15 @@
 import React from "react";
 
-export const IconTennisMatch: React.FC<any> = ({ height, width, fill = '#023047' }) => {
+export const IconTennisMatch: React.FC<any> = ({
+  height,
+  width,
+  fill = "#023047",
+}) => {
   interface IconTennisMatchProps {
     height: number;
     width: number;
   }
-  
+
   return (
     <svg
       width={width}

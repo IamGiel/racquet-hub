@@ -7,6 +7,9 @@ import Avatar from "boring-avatars";
 import { getAllProposals } from "../../apis/fetch";
 import ProposalListv2 from "./ProposalListv2";
 import { IconTennisMatch } from "../../assets/svgs/🦆 icon _tennis match_";
+import { useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../store";
+import { getSession } from "../../reducers/userAuthSlice";
 
 const user = {
   name: "Tom Cook",
@@ -24,6 +27,7 @@ const userNavigation = [
   { name: "Your Profile", href: "#" },
   { name: "Settings", href: "#" },
   { name: "Sign out", href: "#" },
+  { name: "Sign in", href: "#" },
 ];
 
 function classNames(...classes: any) {
@@ -34,6 +38,10 @@ export default function Landing() {
   const [activeLink, setActiveLink] = useState("Dashboard");
   const [proposalList, setProposalList] = useState([]);
 
+  const dispatch = useAppDispatch();
+  const isAuthenticated = useAppSelector(
+    (state) => state.userAuth.isAuthenticated
+  );
   const appName = "Racquet Hub";
 
   const fetchData = async () => {
@@ -51,12 +59,25 @@ export default function Landing() {
       console.error("Error fetching proposals:", error);
     }
   };
+
+  useEffect(() => {
+    // Dispatch the getSession action with the username and password
+    const username = "tester@mail.com";
+    const password = "Test#4321!";
+    const cred: Promise<any> = dispatch(getSession({ username, password }));
+    cred.then((res) => {
+      console.log(res);
+      // setCredentials(res)
+    });
+  }, [dispatch]);
+
   useEffect(() => {
     fetchData();
   }, []);
 
   return (
     <>
+      {/* <pre>test</pre> */}
       <div className="min-h-full">
         <Disclosure
           as="nav"
@@ -153,7 +174,12 @@ export default function Landing() {
                                     "block px-4 py-2 text-sm text-gray-700"
                                   )}
                                 >
-                                  {item.name}
+                                  {item.name === "Sign out" && isAuthenticated
+                                    ? "Sign out"
+                                    : item.name === "Sign in" &&
+                                      !isAuthenticated
+                                    ? "Sign in"
+                                    : null}
                                 </a>
                               )}
                             </Menu.Item>

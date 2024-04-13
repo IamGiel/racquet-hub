@@ -7,14 +7,19 @@ import Landing from "./component/Landing/Landing";
 import { Provider } from "react-redux";
 import store from "./store";
 import { DialogLoader } from "./component/Services/dialog-service";
+import getStore from "./store";
 
 function App() {
+  const store = getStore();
+
   return (
     <div className="App">
-      <Landing />
-      <div>
-        <DialogLoader />
-      </div>
+      <Provider store={store}>
+        <Landing />
+        <div>
+          <DialogLoader />
+        </div>
+      </Provider>
     </div>
   );
 }
