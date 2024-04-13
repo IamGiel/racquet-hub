@@ -101,10 +101,8 @@ export const ProposeComponent = ({ close, data }: any) => {
 
   const debouncedHandleLocationChange = _.debounce((loc: string) => {
     console.log("location here ", loc);
-    if (loc.length >= 2) {
-      formik.setFieldValue("location", loc);
-    }
-  }, 3000); // Adjust the debounce delay as needed (e.g., 500 milliseconds)
+    formik.setFieldValue("location", loc);
+  }, 800); // Adjust the debounce delay as needed (e.g., 500 milliseconds)
 
   const handleLocationChange = (loc: string) => {
     debouncedHandleLocationChange(loc);
@@ -185,7 +183,7 @@ export const ProposeComponent = ({ close, data }: any) => {
                         selections={sportTypeFilters}
                         onSelect={handleSelectedSportType}
                       />
-                      {formik.errors.sportType && (
+                      {formik.errors.sportType && formik.touched.sportType &&(
                         <p className={styles.errorMessge + " sportype-err-msg"}>
                           {formik.errors.sportType}
                         </p>
@@ -198,7 +196,7 @@ export const ProposeComponent = ({ close, data }: any) => {
                         selections={sportCategoryFilters}
                         onSelect={handleSelectedCategoryType}
                       />
-                      {formik.errors.categoryType && (
+                      {formik.errors.categoryType && formik.touched.categoryType && (
                         <p className={styles.errorMessge + " sportype-err-msg"}>
                           {formik.errors.categoryType}
                         </p>
@@ -212,7 +210,7 @@ export const ProposeComponent = ({ close, data }: any) => {
                         placeholder="Provide a location"
                         onChange={handleLocationChange}
                       />
-                      {formik.errors.location && (
+                      {formik.errors.location && formik.touched.location && (
                         <p className={styles.errorMessge + " sportype-err-msg"}>
                           {formik.errors.location}
                         </p>
@@ -229,7 +227,7 @@ export const ProposeComponent = ({ close, data }: any) => {
                     <div className="input-for-sportType">
                       <ReactDatePicker onDateSelect={handleSelectedDateTime} />
                       {/* <DatePicker onSelectDate={handleSelectedDateTime} /> */}
-                      {formik.errors.date && (
+                      {formik.errors.date && formik.touched.date && (
                         <p className={styles.errorMessge + " sportype-err-msg"}>
                           {formik.errors.date}
                         </p>
