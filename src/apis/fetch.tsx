@@ -15,6 +15,7 @@ export async function getAllProposals() {
 export async function loginApi(credentials: {
   username: string;
   password: string;
+  isAuthenticated: string;
 }) {
   const requestOptions: RequestInit = {
     method: "POST",

@@ -13,14 +13,15 @@ const initialState: UserAuthState = {
 };
 
 // Define the type for the credentials argument
-interface Credentials {
+export interface ICredentials {
   username: string;
   password: string;
+  isAuthenticated:string;
 }
 // Create an async thunk to handle the login process
 export const getSession = createAsyncThunk(
   "userAuth/getSession",
-  async (credentials: Credentials, { rejectWithValue }) => {
+  async (credentials: ICredentials, { rejectWithValue }) => {
     try {
       // Call the login API with the provided credentials
       const response = await loginApi(credentials);
@@ -38,6 +39,7 @@ const userAuthSlice = createSlice({
   initialState,
   reducers: {
     login(state) {
+      console.log('login reducer called ')
       state.isAuthenticated = true;
     },
     logout(state) {

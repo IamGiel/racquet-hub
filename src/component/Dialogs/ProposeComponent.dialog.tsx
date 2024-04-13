@@ -8,7 +8,6 @@ import { GenPurposePopover } from "../Popovers/GenPurposePopover";
 import moment from "moment";
 import styles from "./ProposeComponent.dialog.module.css";
 import StepperComponent from "../Stepper/StepperComponent";
-import { InputText } from "../Form/InputText";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -18,6 +17,7 @@ import { FlatPickerDate } from "../Form/FlatPicker/FlatPickerDate";
 import { getZipcode } from "../../apis/fetch";
 import { Time } from "../Form/Date/Time";
 import { ReactDatePicker } from "../Form/ReactDatePicker/ReactDatePicker";
+import { InputText } from "../Form/InputText";
 
 interface IValues {
   sportType: string;

@@ -9,7 +9,9 @@ import ProposalListv2 from "./ProposalListv2";
 import { IconTennisMatch } from "../../assets/svgs/🦆 icon _tennis match_";
 import { useSelector } from "react-redux";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { getSession } from "../../reducers/userAuthSlice";
+import { ICredentials, getSession, login, logout } from "../../reducers/userAuthSlice";
+import { dialogService } from "../Services/dialog-service";
+import { Login } from "../Login/Login";
 
 const user = {
   name: "Tom Cook",
@@ -37,7 +39,8 @@ function classNames(...classes: any) {
 export default function Landing() {
   const [activeLink, setActiveLink] = useState("Dashboard");
   const [proposalList, setProposalList] = useState([]);
-
+  const [credentials, setCredentials] = useState<any>(null);
+  
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector(
     (state) => state.userAuth.isAuthenticated
@@ -60,15 +63,32 @@ export default function Landing() {
     }
   };
 
+  const callToAuth = (actionToCall:any) => {
+    console.log('action to call ', actionToCall)
+    if(actionToCall === 'logout'){
+      dispatch(logout()); // Dispatch the logout action
+    }
+    if(actionToCall === 'login'){
+      dialogService.openDialog(Login)
+      // dispatch(login()); // Dispatch the login action
+    }
+  }
+  
+
   useEffect(() => {
     // Dispatch the getSession action with the username and password
-    const username = "tester@mail.com";
-    const password = "Test#4321!";
-    const cred: Promise<any> = dispatch(getSession({ username, password }));
-    cred.then((res) => {
-      console.log(res);
-      // setCredentials(res)
-    });
+    // const username = "tester@mail.com";
+    // const password = "Test#4321!";
+    // const isAuthenticated = "false";
+    // console.log('what is isAuthenticated ', isAuthenticated)
+    // const cred: Promise<any> = dispatch(getSession({ username, password, isAuthenticated }));
+    // cred.then((res) => {
+    //   console.log('is auth ', res?.meta.arg);
+    //   login(res?.meta.arg)
+    //   setCredentials(res?.meta?.arg)
+    // });
+    console.log('dispatch called ', isAuthenticated)
+    console.log('dispatch called isAuthenticated  = ', isAuthenticated)
   }, [dispatch]);
 
   useEffect(() => {
@@ -163,27 +183,37 @@ export default function Landing() {
                         leaveTo="transform opacity-0 scale-95"
                       >
                         <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                          {userNavigation.map((item) => (
-                            <Menu.Item key={item.name}>
-                              {({ active }) => (
-                                <a
-                                  href={item.href}
-                                  onClick={() => setActiveLink(item.name)}
-                                  className={classNames(
-                                    active ? "bg-gray-100" : "",
-                                    "block px-4 py-2 text-sm text-gray-700"
-                                  )}
-                                >
-                                  {item.name === "Sign out" && isAuthenticated
-                                    ? "Sign out"
-                                    : item.name === "Sign in" &&
-                                      !isAuthenticated
-                                    ? "Sign in"
-                                    : null}
-                                </a>
-                              )}
-                            </Menu.Item>
-                          ))}
+                          {isAuthenticated && <Menu.Item>
+                            {({ active }) => (
+                              <a
+                                href={`#`}
+                                onClick={() => setActiveLink("profile")}
+                                className={classNames(
+                                  active ? "bg-gray-100" : "",
+                                  "block px-4 py-2 text-sm text-gray-700"
+                                )}
+                              >
+                                Profile
+                              </a>
+                            )}
+                          </Menu.Item>}
+                          <Menu.Item>
+                            {({ active }) => (
+                              <a
+                                href={`#`}
+                                onClick={() => {
+                                  setActiveLink(`${isAuthenticated === true ? 'logout' : 'login'}` )
+                                  callToAuth(`${isAuthenticated === true ? 'logout' : 'login'}` )
+                                }}
+                                className={classNames(
+                                  active ? "bg-gray-100" : "",
+                                  "block px-4 py-2 text-sm text-gray-700"
+                                )}
+                              >
+                                {`${isAuthenticated === true ? 'logout' : 'Your Logged out - login'}`}
+                              </a>
+                            )}
+                          </Menu.Item>
                         </Menu.Items>
                       </Transition>
                     </Menu>
@@ -208,66 +238,6 @@ export default function Landing() {
                   </div>
                 </div>
               </div>
-
-              {/* <Disclosure.Panel className="sm:hidden">
-                <div className="space-y-1 pb-3 pt-2">
-                  {navigation.map((item) => (
-                    <Disclosure.Button
-                      key={item.name}
-                      as="a"
-                      href={item.href}
-                      className={classNames(
-                        item.current
-                          ? "border-indigo-500 bg-indigo-50 text-indigo-700"
-                          : "border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800",
-                        "block border-l-4 py-2 pl-3 pr-4 text-base font-medium"
-                      )}
-                      aria-current={item.current ? "page" : undefined}
-                    >
-                      {item.name}
-                    </Disclosure.Button>
-                  ))}
-                </div>
-                <div className="border-t border-gray-200 pb-3 pt-4">
-                  <div className="flex items-center px-4">
-                    <div className="flex-shrink-0">
-                      <img
-                        className="h-10 w-10 rounded-full"
-                        src={user.imageUrl}
-                        alt=""
-                      />
-                    </div>
-                    <div className="ml-3">
-                      <div className="text-base font-medium text-gray-800">
-                        {user.name}
-                      </div>
-                      <div className="text-sm font-medium text-gray-500">
-                        {user.email}
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >
-                      <span className="absolute -inset-1.5" />
-                      <span className="sr-only">View notifications</span>
-                      <BellIcon className="h-6 w-6" aria-hidden="true" />
-                    </button>
-                  </div>
-                  <div className="mt-3 space-y-1">
-                    {userNavigation.map((item) => (
-                      <Disclosure.Button
-                        key={item.name}
-                        as="a"
-                        href={item.href}
-                        className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
-                      >
-                        {item.name}
-                      </Disclosure.Button>
-                    ))}
-                  </div>
-                </div>
-              </Disclosure.Panel> */}
             </>
           )}
         </Disclosure>

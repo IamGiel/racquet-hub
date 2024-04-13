@@ -14,6 +14,7 @@ import {
 } from "../Configs/Options";
 import { dialogService } from "../Services/dialog-service";
 import { ProposeComponent } from "../Dialogs/ProposeComponent.dialog";
+import { useAppDispatch, useAppSelector } from "../../store";
 
 export default function ProposalListv2({ proposals }: any) {
   const [listOfProposals, setListOfProposals] = useState(proposals || []);
@@ -42,6 +43,11 @@ export default function ProposalListv2({ proposals }: any) {
       sortValue: `eventStatus.status`,
     },
   ];
+
+  const dispatch = useAppDispatch();
+  const isAuthenticated = useAppSelector(
+    (state) => state.userAuth.isAuthenticated
+  );
 
   const mainFontColor = `#023047`;
 
@@ -238,8 +244,9 @@ export default function ProposalListv2({ proposals }: any) {
           <button
             type="button"
             className="block rounded-md px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            style={{ background: "rgb(3, 63, 99)" }}
+            style={{ background: isAuthenticated ? "rgb(3, 63, 99)" : 'lightGrey'  }}
             onClick={handleMakeProposal}
+            disabled={isAuthenticated ? false : true}
           >
             Propose an Event
           </button>
@@ -317,7 +324,7 @@ export default function ProposalListv2({ proposals }: any) {
                       <td
                         className={
                           styles.tdAlignment +
-                          " tdAlignment whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0"
+                          " tdAlignment whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0" 
                         }
                         style={{
                           display: "flex",
@@ -410,7 +417,12 @@ export default function ProposalListv2({ proposals }: any) {
                         <a
                           href={`http://localhost:3001`}
                           className="text-indigo-600 hover:text-indigo-900"
-                          style={{ color: "rgb(3, 63, 99)" }}
+                          style={{
+                            display: isAuthenticated ? "flex" : 'none',
+                            gap: "12px",
+                            alignItems: "center",
+                            color: "rgb(3, 63, 99)"
+                          }}
                         >
                           Edit
                           <span className="sr-only">, {proposalItem.name}</span>
