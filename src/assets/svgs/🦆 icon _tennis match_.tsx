@@ -9,7 +9,7 @@ export const IconTennisMatch: React.FC<any> = ({
     height: number;
     width: number;
   }
-
+        
   return (
     <svg
       width={width}

@@ -8,19 +8,29 @@ import { Provider } from "react-redux";
 import store from "./store";
 import { DialogLoader } from "./component/Services/dialog-service";
 import getStore from "./store";
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { Profile } from "./component/Profile/Profile";
+import { Header } from "./component/Header/Header";
 
 function App() {
   const store = getStore();
 
   return (
     <div className="App">
-      <Provider store={store}>
-        <Landing />
-        <div>
-          <DialogLoader />
-        </div>
-      </Provider>
-    </div>
+    
+    <Provider store={store}>
+      <Router>
+        <Header/>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/profile" element={<Profile />} />
+        </Routes>
+      </Router>
+      <div>
+        <DialogLoader />
+      </div>
+    </Provider>
+  </div>
   );
 }
 

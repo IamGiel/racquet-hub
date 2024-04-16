@@ -29,8 +29,8 @@ export const InputText: React.FC<InputTextProps> = ({
           autoComplete="off"
           type={type}
           name={type}
-          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-          style={{ color: "#181818" }}
+          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-md ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" 
+          style={{ color: "#181818", padding:'10px 12px', borderRadius:'6px' }}
           placeholder={placeholder}
           onChange={(event) => {
             console.log("event on input change ", event);

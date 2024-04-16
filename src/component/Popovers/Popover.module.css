@@ -63,8 +63,9 @@
   line-height: 20px; /* 142.857% */
 }
 
-.selectDate {
-  outline: "none";
+.selectDate:focus-visible,
+.genPopover:focus-visible {
+  outline: none; /* Remove the quotes */
 }
 
 .hrHeaderTitle {

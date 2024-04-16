@@ -6,7 +6,7 @@
       "sport": "tennis",
       "type": "singles",
       "eventStatus": { "status": "closed" },
-      "playPlace": { "location": "Cary", "distance": 9 },
+      "location": { "location": "Cary", "distance": 9 },
       "playTime": "12 May 2024",
       "domain": "gep1.com"
     },
@@ -16,7 +16,7 @@
       "sport": "pickleball",
       "type": "singles",
       "eventStatus": { "status": "closed" },
-      "playPlace": { "location": "Apex", "distance": 10 },
+      "location": { "location": "Apex", "distance": 10 },
       "playTime": "12 May 2024",
       "domain": "gep2.com"
     },
@@ -26,7 +26,7 @@
       "sport": "tennis",
       "type": "doubles",
       "eventStatus": { "status": "closed" },
-      "playPlace": { "location": "North Hills", "distance": 11 },
+      "location": { "location": "North Hills", "distance": 11 },
       "playTime": "12 May 2024",
       "domain": "gep3.com"
     },
@@ -36,7 +36,7 @@
       "sport": "tennis",
       "type": "singles",
       "eventStatus": { "status": "open" },
-      "playPlace": { "location": "Raleigh", "distance": 12 },
+      "location": { "location": "Raleigh", "distance": 12 },
       "playTime": "12 May 2024",
       "domain": "gep4.com"
     }

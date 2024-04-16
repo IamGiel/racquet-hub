@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { login } from "../../reducers/userAuthSlice";
+import styles from './Login.module.css';
 
 export const Login = () => {
   const [open, setOpen] = useState(true);
@@ -72,7 +73,7 @@ export const Login = () => {
                             type="email"
                             autoComplete="email"
                             required
-                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            className={styles.loginInput + " loginInput block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"}
                           />
                         </div>
                       </div>
@@ -101,7 +102,7 @@ export const Login = () => {
                             type="password"
                             autoComplete="current-password"
                             required
-                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            className={styles.loginInput + " loginInput block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"}
                           />
                         </div>
                       </div>

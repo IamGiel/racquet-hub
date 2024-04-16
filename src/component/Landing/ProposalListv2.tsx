@@ -1,7 +1,10 @@
 import Avatar from "boring-avatars";
 import styles from "./Landing.module.css";
 import { useState } from "react";
-import { ChevronUpDownIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronUpDownIcon,
+  InformationCircleIcon,
+} from "@heroicons/react/24/outline";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 
 import FilterPopover, { IFilter } from "../Popovers/FilterPopover";
@@ -15,6 +18,8 @@ import {
 import { dialogService } from "../Services/dialog-service";
 import { ProposeComponent } from "../Dialogs/ProposeComponent.dialog";
 import { useAppDispatch, useAppSelector } from "../../store";
+import { GenPurposePopover } from "../Popovers/GenPurposePopover";
+import { ProposalStatus } from "../ProposalStatus/ProposalStatus";
 
 export default function ProposalListv2({ proposals }: any) {
   const [listOfProposals, setListOfProposals] = useState(proposals || []);
@@ -33,9 +38,9 @@ export default function ProposalListv2({ proposals }: any) {
     { id: `type`, label: `Type`, sortValue: `type` },
     { id: `playTime`, label: `Time`, sortValue: `playTime` },
     {
-      id: `playPlace.distance`,
+      id: `location.distance`,
       label: `Place`,
-      sortValue: `playPlace.distance`,
+      sortValue: `location.distance`,
     },
     {
       id: `eventStatus.status`,
@@ -212,15 +217,18 @@ export default function ProposalListv2({ proposals }: any) {
     ]);
   }
 
+  function onOpenStatusInfo(status: any) {
+    console.log(`on open status `, status);
+  }
+
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <div
-        className="sm:flex sm:items-center"
-        style={{ display: "flex", justifyContent: "space-between" }}
+        className={styles.eventsIntro + " eventsIntro sm:flex sm:items-center"}
       >
         <div className={styles.descriptionTitle + " descriptionTitle"}>
           <h1
-            className="text-base font-semibold leading-6 text-gray-900"
+            className="text-base font-semibold text-gray-900"
             style={{
               fontWeight: "700",
               fontSize: "30px",
@@ -244,7 +252,9 @@ export default function ProposalListv2({ proposals }: any) {
           <button
             type="button"
             className="block rounded-md px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            style={{ background: isAuthenticated ? "rgb(3, 63, 99)" : 'lightGrey'  }}
+            style={{
+              background: isAuthenticated ? "rgb(3, 63, 99)" : "lightGrey",
+            }}
             onClick={handleMakeProposal}
             disabled={isAuthenticated ? false : true}
           >
@@ -294,7 +304,7 @@ export default function ProposalListv2({ proposals }: any) {
                           </span>{" "}
                           <div className="controller-container">
                             {(column?.id === "name" ||
-                              column?.id === "playPlace.distance" ||
+                              column?.id === "location.distance" ||
                               column?.id === "playTime") && (
                               <span
                                 className={styles.caretStyle + " caret"}
@@ -324,7 +334,7 @@ export default function ProposalListv2({ proposals }: any) {
                       <td
                         className={
                           styles.tdAlignment +
-                          " tdAlignment whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0" 
+                          " tdAlignment whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0"
                         }
                         style={{
                           display: "flex",
@@ -377,12 +387,10 @@ export default function ProposalListv2({ proposals }: any) {
                       {proposalItem.email}
                     </td> */}
                       <td
-                        className={
-                          styles.tdAlignment +
-                          " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
-                        }
+                        className={`${styles.tdAlignment} tdAlignment whitespace-nowrap py-4 text-sm text-gray-500`}
+                        style={{ maxWidth: "200px" }}
                       >
-                        {makeReadableTimePlace(proposalItem.playTime)}
+                       {makeReadableTimePlace(proposalItem.playTime)}
                       </td>
                       <td
                         className={
@@ -390,12 +398,12 @@ export default function ProposalListv2({ proposals }: any) {
                           " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
                         }
                       >
-                        {/* {JSON.stringify(proposalItem.playPlace)} */}
+                        {/* {JSON.stringify(proposalItem)} */}
                         <div className="location-details">
-                          <span>{proposalItem.playPlace?.location}</span>
+                          <span>{proposalItem.location?.location}</span>
                           <span>
-                            {proposalItem.playPlace?.distance
-                              ? `, ${proposalItem.playPlace?.distance} miles away`
+                            {proposalItem.location?.distance
+                              ? `, ${proposalItem.location?.distance} miles away`
                               : ""}
                           </span>
                         </div>
@@ -403,10 +411,24 @@ export default function ProposalListv2({ proposals }: any) {
                       <td
                         className={
                           styles.tdAlignment +
-                          " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
+                          " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500 flex gap-[8px]"
                         }
+                        style={{display:'flex', justifyContent:'left', alignItems:'center', marginBottom:'22px'}}
                       >
-                        {proposalItem.eventStatus?.status}
+                        <div>{proposalItem.eventStatus?.status}{" "}</div>
+                        <div><GenPurposePopover
+                            popoverBtnLabel=""
+                            openPopover={onOpenStatusInfo}
+                            children={<ProposalStatus />}
+                            icon={
+                              <InformationCircleIcon
+                                height={`24px`}
+                                width={`24px`}
+                                stroke="#a89b9b"
+                              />
+                            }
+                            topPosition="40%"
+                          /></div>
                       </td>
                       <td
                         className={
@@ -416,15 +438,25 @@ export default function ProposalListv2({ proposals }: any) {
                       >
                         <a
                           href={`http://localhost:3001`}
-                          className="text-indigo-600 hover:text-indigo-900"
+                          className={styles["join-button"] + " join-button"}
                           style={{
-                            display: isAuthenticated ? "flex" : 'none',
+                            display: isAuthenticated ? "flex" : "none",
                             gap: "12px",
                             alignItems: "center",
-                            color: "rgb(3, 63, 99)"
+                            background:
+                              proposalItem.eventStatus?.status === "closed"
+                                ? "lightgrey"
+                                : "",
+                            pointerEvents:
+                              proposalItem.eventStatus?.status === "closed"
+                                ? "none"
+                                : undefined,
+                            justifyContent: "center",
                           }}
                         >
-                          Edit
+                          {proposalItem.eventStatus?.status === "closed"
+                            ? "full"
+                            : "Join"}
                           <span className="sr-only">, {proposalItem.name}</span>
                         </a>
                       </td>

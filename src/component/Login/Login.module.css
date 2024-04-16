@@ -1,0 +1,10 @@
+.loginInput {
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.loginInput:focus-visible {
+  padding: 12px;
+  border-radius: 6px;
+  outline: none;
+}
