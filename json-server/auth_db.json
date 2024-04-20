@@ -1,0 +1,72 @@
+{
+  "username": "TesterJester",
+  "fullName": "Tester Jester",
+  "email": "tester@mail.com",
+  "password": "password",
+  "about": "Sunt esse amet sunt elit mollit enim nostrud culpa irure ut aliquip quis.",
+  "isAuthenticated": "true",
+  "tennisRanking": "4.0 USTA / 6 UTR",
+  "pickleballRanking": "4.0 USPA",
+  "tennisDetails": {
+    "totalWins": "12",
+    "totalLosses": "12",
+    "history": [
+      { "y2021": { "wins": "2", "loss": "5" } },
+      { "y2021": { "wins": "2", "loss": "5" } },
+      { "y2021": { "wins": "2", "loss": "5" } }
+    ]
+  },
+  "pickleballDetails": {
+    "totalWins": "1",
+    "totalLosses": "2",
+    "history": [
+      { "y2021": { "wins": "2", "loss": "5" } },
+      { "y2021": { "wins": "2", "loss": "5" } },
+      { "y2021": { "wins": "2", "loss": "5" } }
+    ]
+  },
+  "proposals": [
+    {
+      "proposalId": "123",
+      "sport": "tennis",
+      "type": "singles",
+      "opponent": "Jerome Val",
+      "time": "May 12, 2024 pm",
+      "status": "closed",
+      "result": "L",
+      "score": "1-6, 3-6"
+    }
+  ],
+  "matchesPlayed": [
+    {
+      "proposalId": "123",
+      "sport": "tennis",
+      "type": "singles",
+      "opponent": "Mike Esp",
+      "time": "May 12, 2024 pm",
+      "status": "closed",
+      "result": "L",
+      "score": "1-6, 3-6"
+    },
+    {
+      "proposalId": "123",
+      "sport": "tennis",
+      "type": "singles",
+      "opponent": "Karl Ivanovich",
+      "time": "May 14, 2024 pm",
+      "status": "closed",
+      "result": "W",
+      "score": "6-4, 3-6, 1-0"
+    },
+    {
+      "proposalId": "123",
+      "sport": "tennis",
+      "type": "singles",
+      "opponent": "James Freol",
+      "time": "May 23, 2024 pm",
+      "status": "closed",
+      "result": "W",
+      "score": "6-4, 6-3"
+    }
+  ]
+}

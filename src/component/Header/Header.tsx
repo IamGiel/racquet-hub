@@ -9,6 +9,7 @@ import { Login } from '../Login/Login'
 import { dialogService } from '../Services/dialog-service'
 import { logout } from '../../reducers/userAuthSlice'
 import { IconTennisMatch } from '../../../src/assets/svgs/🦆 icon _tennis match_'
+import { Register } from '../Login/Register'
 
 export const Header = () => {
   const [activeLink, setActiveLink] = useState("Dashboard");
@@ -43,7 +44,7 @@ export const Header = () => {
       <>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 justify-between">
-            <div className="flex gap-[12px]">
+            <div className="flex gap-[12px] cursor-pointer" onClick={()=>navigateTo("/")}>
               <div className="flex flex-shrink-0 items-center">
                 <IconTennisMatch height={`64px`} width={`64px`} />
               </div>
@@ -152,8 +153,30 @@ export const Header = () => {
                         >
                           {`${isAuthenticated === true ? 'logout' : 'Your Logged out - login'}`}
                         </a>
+                        
                       )}
                     </Menu.Item>
+                    {!isAuthenticated && <Menu.Item>
+                      {({ active }) => (
+                        <a
+                          
+                          onClick={(event) => {
+                            event.preventDefault()
+                            console.log('open it here')
+                            // setActiveLink("profile")
+                            dialogService.openDialog(Register)
+                          }}
+                          className={classNames(
+                            active ? "bg-gray-100" : "",
+                            "block px-4 py-2 text-sm text-gray-700"
+                          )}
+                          style={{cursor:'pointer'}}
+                        >
+                          Register
+                        </a>
+                      )}
+                    </Menu.Item>}
+                  
                   </Menu.Items>
                 </Transition>
               </Menu>

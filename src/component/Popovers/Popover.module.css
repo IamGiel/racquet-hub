@@ -68,6 +68,11 @@
   outline: none; /* Remove the quotes */
 }
 
+.selectDate:hover {
+  fill: #181818;
+  color: #181818;
+}
+
 .hrHeaderTitle {
   margin: 12px 0px;
   font-weight: 600;

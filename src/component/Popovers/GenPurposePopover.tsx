@@ -18,6 +18,9 @@ export const GenPurposePopover = ({
   icon,
   topPosition
 }: IGenPurposePopover) => {
+
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
     <Popover className={styles.genPopover + ` genPopover`}>
       <Popover.Button
@@ -41,8 +44,12 @@ export const GenPurposePopover = ({
             fill="#444752"
           />
         </svg>{" "} */}
-        {icon}
-      </Popover.Button>
+        {React.cloneElement(icon, {
+          // Apply inline styles to change icon fill color on hover
+          style: { stroke: isHovered ? 'black' : 'lightgrey' },
+          onMouseEnter: () => setIsHovered(true),
+          onMouseLeave: () => setIsHovered(false),
+        })}      </Popover.Button>
 
       <Transition
         as={Fragment}

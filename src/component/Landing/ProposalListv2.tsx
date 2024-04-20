@@ -415,7 +415,7 @@ export default function ProposalListv2({ proposals }: any) {
                         }
                         style={{display:'flex', justifyContent:'left', alignItems:'center', marginBottom:'22px'}}
                       >
-                        <div>{proposalItem.eventStatus?.status}{" "}</div>
+                        <div className="status w-[75px]">{proposalItem.eventStatus?.status}{" "}</div>
                         <div><GenPurposePopover
                             popoverBtnLabel=""
                             openPopover={onOpenStatusInfo}
