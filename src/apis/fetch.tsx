@@ -1,3 +1,5 @@
+import { API_PATH } from "../api/apiPaths";
+
 // Access the environment variable
 const username = process.env.REACT_APP_USERNAME;
 
@@ -54,4 +56,28 @@ export async function getZipcode(term: any) {
     }&maxRows=10&username=${username}`,
     requestOptions
   );
+}
+
+export async function loginApiv2(userDets: any) {
+  const raw = JSON.stringify(userDets);
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  console.log('raw ', raw)
+
+  const requestOptions: any = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+  if (!userDets) return;
+
+  return fetch("http://localhost:5000/api/login", requestOptions)
+    .then((response) => response.text())
+    .then((result) => {
+      console.log(result)
+      return result
+    })
+    .catch((error) => console.error('error in api/login ', error));
 }

@@ -6,6 +6,8 @@ import styles from "./Login.module.css";
 import { dialogService } from "../Services/dialog-service";
 import { Login } from "./Login";
 import { IconTennisMatch } from "../../assets/svgs/🦆 icon _tennis match_";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 export const Register = () => {
   const [open, setOpen] = useState(true);
@@ -17,7 +19,32 @@ export const Register = () => {
     event.preventDefault(); // Prevent the default form submission behavior
     dispatch(login()); // Dispatch the login action
     setOpen(false);
-  };
+  };  
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+      date:`${new Date()}`
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .typeError("Please provide valid email")
+        .required("Valid email is required"),
+      password: Yup.string()
+        .typeError("Please provide a password")
+        .required("Password required"),
+    }),
+    onSubmit(values, { resetForm }) {
+      console.log("ONSUBMIT FORM Form values:", values);
+
+      // Revalidate the form if it's dirty
+      if (formik.dirty) {
+        // This line should be changed
+        formik.validateForm(); // This line should be changed
+      }
+    },
+  });
 
   return (
     <Transition.Root show={open} as={React.Fragment}>
@@ -80,6 +107,8 @@ export const Register = () => {
                             name="email"
                             type="email"
                             autoComplete="email"
+                            value={formik.values.email}
+                            onChange={formik.handleChange}
                             required
                             className={
                               styles.loginInput +
@@ -105,6 +134,8 @@ export const Register = () => {
                             type="password"
                             autoComplete="current-password"
                             required
+                            value={formik.values.password}
+                            onChange={formik.handleChange}
                             className={
                               styles.loginInput +
                               " loginInput block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -149,6 +180,9 @@ export const Register = () => {
                         </button>
                       </div>
                     </form>
+
+                    <pre>{JSON.stringify(formik, null,4)}</pre>
+
 
                     <p className="mt-10 text-center text-sm text-gray-500">
                       Already a member?{" "}

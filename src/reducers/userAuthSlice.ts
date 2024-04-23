@@ -1,14 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import { loginApi } from "../apis/fetch";
+import { loginApi, loginApiv2 } from "../apis/fetch";
 
 interface UserAuthState {
   isAuthenticated: boolean;
+  payload: any;
   // Add more authentication-related state here if needed
 }
 
 const initialState: UserAuthState = {
   isAuthenticated: false,
+  payload: null,
   // Initialize additional state if needed
 };
 
@@ -16,7 +18,7 @@ const initialState: UserAuthState = {
 export interface ICredentials {
   username: string;
   password: string;
-  isAuthenticated:string;
+  date: string;
 }
 // Create an async thunk to handle the login process
 export const getSession = createAsyncThunk(
@@ -24,8 +26,9 @@ export const getSession = createAsyncThunk(
   async (credentials: ICredentials, { rejectWithValue }) => {
     try {
       // Call the login API with the provided credentials
-      const response = await loginApi(credentials);
-      return response.data;
+      // const response = await loginApi(credentials);
+      const response = await loginApiv2(credentials);
+      return response;
     } catch (error: any) {
       console.error("Failed to fetch session:", error);
       // Return the error message as the payload
@@ -39,8 +42,9 @@ const userAuthSlice = createSlice({
   initialState,
   reducers: {
     login(state) {
-      console.log('login reducer called ')
-      state.isAuthenticated = true;
+      console.log("login reducer called ", state);
+      // do i call getSession here to login user ?
+      // state.isAuthenticated = true;
     },
     logout(state) {
       state.isAuthenticated = false;
@@ -51,13 +55,21 @@ const userAuthSlice = createSlice({
     builder
       .addCase(getSession.pending, (state) => {
         // Handle pending state
+        console.log("pending getSession State ", state);
       })
-      .addCase(getSession.fulfilled, (state, action) => {
+      .addCase(getSession.fulfilled, (state, action: any) => {
         // Handle fulfilled state
-        state.isAuthenticated = true;
+        console.log("fullfilled getSession State ", state);
+        console.log("fullfilled getSession action ", action);
+        return {
+          ...state,
+          isAuthenticated: true,
+          payload: action.payload,
+        };
       })
       .addCase(getSession.rejected, (state, action) => {
         // Handle rejected state
+        console.log("rejected getSession State ", state);
         state.isAuthenticated = false;
         // Reset any additional state if needed
       });

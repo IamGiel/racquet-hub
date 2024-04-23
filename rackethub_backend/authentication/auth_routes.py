@@ -1,15 +1,51 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Blueprint
 from pymongo import MongoClient
 import bcrypt
 import re
 from bson import ObjectId
+import os
+import jwt
+from datetime import datetime, timedelta
 
-app = Flask(__name__)
+
+auth_app = Blueprint('auth_app', __name__)
 
 # MongoDB connection
 client = MongoClient("mongodb://localhost:27017/")
 db = client["racquethub_db"]
 users_collection = db["users"]
+
+JWT_SECRET_KEY = "your_secret_key"
+JWT_EXPIRATION_DELTA = timedelta(
+    days=1,
+    seconds=0,
+    microseconds=0,
+    milliseconds=0,
+    minutes=0,
+    hours=0,
+    weeks=0
+)
+
+# Get the current UTC date and time
+current_time_utc = datetime.now()
+
+# Calculate the expiration time by adding the expiration delta
+expiration_time = current_time_utc + JWT_EXPIRATION_DELTA
+
+
+# Generate JWT token
+def generate_token(user_id, email):
+  payload = {
+      'user_id': str(user_id),
+      'email': email,
+      'exp': expiration_time
+  }
+  token = jwt.encode(payload, JWT_SECRET_KEY, algorithm='HS256')
+  return token
+
+
+# Token invalidation (dummy implementation, you may store invalidated tokens in a database)
+invalid_tokens = set()
 
 def is_valid_password(password):
     # Check if password is at least 8 characters long
@@ -30,12 +66,11 @@ def is_valid_password(password):
 
     return True
 
-@app.route('/api/register', methods=['POST'])
+@auth_app.route('/api/register', methods=['POST'])
 def register():
     # Get data from request body
     data = request.json
     email = data.get('email')
-    username = data.get('username')
     password = data.get('password')
     confirmPassword = data.get('confirmPassword')
     
@@ -43,7 +78,7 @@ def register():
         return jsonify({'error': 'Passwords do not match'}), 400
 
     # Validate request data
-    if not email or not username or not password:
+    if not email or not password:
         return jsonify({'error': 'Missing required fields'}), 400
 
     # Check if the email is already registered
@@ -61,20 +96,19 @@ def register():
     # Insert the new user into the database
     users_collection.insert_one({
         'email': email,
-        'username': username,
         'password': hashed_password
     })
 
     return jsonify({'message': 'User registered successfully'}), 201
 
 
-@app.route('/api/login', methods=['POST'])
+@auth_app.route('/api/login', methods=['POST'])
 def login():
     # Get data from request body
     data = request.json
-    email = data.get('email')
+    print(data)
+    email = data.get('username')
     password = data.get('password')
-    
 
     # Validate request data
     if not email or not password:
@@ -94,21 +128,17 @@ def login():
 
     # Convert ObjectId to string for JSON serialization
     user['_id'] = str(user['_id'])
+
+    # Generate JWT token
+    token = generate_token(user['_id'], email)
+
+    # Return the token in the response
+    return jsonify({'token': token, "data":user}), 200
+ 
+@auth_app.route('/api/logout', methods=['POST'])
+def logout():
+    # You may perform any additional logout logic here, such as invalidating tokens or session management
+    # For this example, let's assume a simple success message
     
-     # Return the user information along with the success message
-    return jsonify({
-        'message': 'Login successful',
-        'user': {
-            '_id': user['_id'],
-            'email': user['email'],
-            'username': user['username'],
-            'about': user.get('about'),
-            'isAuthenticated': user.get('isAuthenticated'),
-            'tennisRanking': user.get('tennisRanking'),
-            'pickleballRanking': user.get('pickleballRanking'),
-            'tennisDetails': user.get('tennisDetails')
-        }
-    }), 200
-  
-if __name__ == '__main__':
-    app.run(debug=True)
+    return jsonify({'message': 'Logout successful'}), 200
+

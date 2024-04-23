@@ -44,11 +44,11 @@ export const Header = () => {
       <>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 justify-between">
-            <div className="flex gap-[12px] cursor-pointer" onClick={()=>navigateTo("/")}>
+            <div className="flex gap-[12px] cursor-pointer" onClick={()=>navigateTo("/")} style={{opacity:isAuthenticated ? '1' : '0.7'}}>
               <div className="flex flex-shrink-0 items-center">
                 <IconTennisMatch height={`64px`} width={`64px`} />
               </div>
-              <div className={styles.playPal + " playPal appName"}>
+              <div className={styles.playPal + " playPal appName"} >
                 {appName}
               </div>
 

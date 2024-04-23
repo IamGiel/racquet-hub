@@ -95,7 +95,7 @@ export default function Landing() {
   }, [dispatch]);
 
   useEffect(() => {
-    fetchData();
+    // fetchData();
   }, []);
 
   return (

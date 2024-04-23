@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { login } from "../../reducers/userAuthSlice";
+import { ICredentials, getSession, login } from "../../reducers/userAuthSlice";
 import styles from './Login.module.css';
 import { dialogService } from "../Services/dialog-service";
 import { Register } from "./Register";
 import { IconTennisMatch } from "../../assets/svgs/🦆 icon _tennis match_";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 export const Login = () => {
   const [open, setOpen] = useState(true);
@@ -14,10 +16,45 @@ export const Login = () => {
     (state) => state.userAuth.isAuthenticated
   );
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    console.log('event ', event)
     event.preventDefault(); // Prevent the default form submission behavior
-    dispatch(login()); // Dispatch the login action
+    // dispatch(login()); // Dispatch the login action
+
+    const data:ICredentials = {
+      username:formik.values.username,
+      password:formik.values.password,
+      date:formik.values.date
+    }
+
+    console.log('data ', data)
+    dispatch(getSession(data)); // Dispatch the login action
     setOpen(false)
   };
+
+  const formik = useFormik({
+    initialValues: {
+      username: "",
+      password: "",
+      date:`${new Date()}`
+    },
+    validationSchema: Yup.object({
+      username: Yup.string()
+        .typeError("Please enter your email")
+        .required("Email is required"),
+      password: Yup.string()
+        .typeError("Please enter your password")
+        .required("Password required"),
+    }),
+    onSubmit(values, { resetForm }) {
+      console.log("ONSUBMIT FORM Form values:", values);
+
+      // Revalidate the form if it's dirty
+      if (formik.dirty) {
+        // This line should be changed
+        formik.validateForm(); // This line should be changed
+      }
+    },
+  });
 
   return (
     <Transition.Root show={open} as={React.Fragment}>
@@ -62,17 +99,19 @@ export const Login = () => {
                     <form className="space-y-6" onSubmit={handleFormSubmit}>
                       <div>
                         <label
-                          htmlFor="email"
+                          htmlFor="username"
                           className="block text-sm text-left font-medium leading-6 text-gray-900"
                         >
                           Email address
                         </label>
                         <div className="mt-2">
                           <input
-                            id="email"
-                            name="email"
-                            type="email"
+                            id="username"
+                            name="username"
+                            type="username"
                             autoComplete="off"
+                            value={formik.values.username} // Add value attribute
+                            onChange={formik.handleChange} // Add onChange handler
                             required
                             className={styles.loginInput + " loginInput block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"}
                           />
@@ -102,6 +141,8 @@ export const Login = () => {
                             name="password"
                             type="password"
                             autoComplete="off"
+                            value={formik.values.password} // Add value attribute
+                            onChange={formik.handleChange} // Add onChange handler
                             required
                             className={styles.loginInput + " loginInput block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"}
                           />
@@ -114,13 +155,19 @@ export const Login = () => {
                           className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                           onSubmit={()=>{
                             // submit form 
-                            setOpen(false)
+                            const payload:ICredentials = {
+                              date:String(new Date()),
+                              password:formik.values.password,
+                              username:formik.values.username
+                            }
+                            dispatch(getSession(payload))
                           }}
                        >
                           Sign in
                         </button>
                       </div>
                     </form>
+
 
                     <p className="mt-10 text-center text-sm text-gray-500">
                       Not a member?{" "}
