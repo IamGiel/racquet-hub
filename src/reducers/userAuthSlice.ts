@@ -5,12 +5,14 @@ import { loginApi, loginApiv2 } from "../apis/fetch";
 interface UserAuthState {
   isAuthenticated: boolean;
   payload: any;
+  authToken:any
   // Add more authentication-related state here if needed
 }
 
 const initialState: UserAuthState = {
   isAuthenticated: false,
   payload: null,
+  authToken: null
   // Initialize additional state if needed
 };
 
@@ -25,9 +27,9 @@ export const getSession = createAsyncThunk(
   "userAuth/getSession",
   async (credentials: ICredentials, { rejectWithValue }) => {
     try {
-      // Call the login API with the provided credentials
-      // const response = await loginApi(credentials);
-      const response = await loginApiv2(credentials);
+      const response:any = await loginApiv2(credentials);
+      const responseObj = JSON.parse(response)
+      localStorage.setItem('authToken', `${responseObj?.token}`);
       return response;
     } catch (error: any) {
       console.error("Failed to fetch session:", error);
@@ -47,7 +49,10 @@ const userAuthSlice = createSlice({
       // state.isAuthenticated = true;
     },
     logout(state) {
+      console.log('logout state ', state)
       state.isAuthenticated = false;
+      localStorage.clear()
+      console.log('locastorate should have been cleared')
       // Reset any additional state if needed
     },
   },

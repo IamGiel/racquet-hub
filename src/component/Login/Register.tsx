@@ -17,7 +17,7 @@ export const Register = () => {
   );
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Prevent the default form submission behavior
-    dispatch(login()); // Dispatch the login action
+    // dispatch(login()); // Dispatch the login action
     setOpen(false);
   };  
 

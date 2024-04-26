@@ -26,7 +26,8 @@ export const Header = () => {
   const callToAuth = (actionToCall:any) => {
     console.log('action to call ', actionToCall)
     if(actionToCall === 'logout'){
-      dispatch(logout()); // Dispatch the logout action
+      localStorage.removeItem('authToken')
+      dispatch(logout())
     }
     if(actionToCall === 'login'){
       dialogService.openDialog(Login)

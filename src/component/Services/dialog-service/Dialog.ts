@@ -20,10 +20,10 @@ export class Dialog {
   }
   public callback: (data?: any) => void = (data) => {};
   public close(data?: any) {
-    console.log("index ", this.index);
+    // console.log("index ", this.index);
     dialogService.setState[1]((currentDialogs: Dialog[]) => {
       return currentDialogs.map((m: Dialog) => {
-        console.log("this ", this, m);
+        // console.log("this ", this, m);
         if (m.index === this.index) {
           m.closeData = data;
           m.isOpen = false;

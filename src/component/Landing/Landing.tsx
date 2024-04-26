@@ -95,7 +95,7 @@ export default function Landing() {
   }, [dispatch]);
 
   useEffect(() => {
-    // fetchData();
+    fetchData();
   }, []);
 
   return (
@@ -115,6 +115,7 @@ export default function Landing() {
           <main>
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
               {/* Your content */}
+              <span>proposals </span>
 
               {proposalList && proposalList.length > 0 && (
                 // <ProposalList proposals={proposalList}/>

@@ -1,3 +1,4 @@
+import json
 from flask import Flask, request, jsonify, Blueprint
 from pymongo import MongoClient
 import bcrypt
@@ -6,6 +7,8 @@ from bson import ObjectId
 import os
 import jwt
 from datetime import datetime, timedelta
+from bson import json_util
+from utiils.helper import verify_token
 
 
 proposal_app = Blueprint('proposal_app', __name__)
@@ -15,6 +18,9 @@ JWT_SECRET_KEY = "your_secret_key"
 client = MongoClient("mongodb://localhost:27017/")
 db = client["racquethub_db"]
 proposals_collection = db["proposals"]
+
+invalidated_tokens = set()
+
 
 def get_user_by_email(email):
     print(f'user id {email}')
@@ -79,4 +85,28 @@ def create_proposal():
     except jwt.ExpiredSignatureError:
         return jsonify({'error': 'Token expired'}), 401
     except jwt.InvalidTokenError:
+        return jsonify({'error': 'Invalid token'}), 401
+
+# Route for fetching all proposals
+@proposal_app.route('/api/proposals', methods=['GET'])
+def get_all_proposals():
+    token = request.headers.get('Authorization')
+    print(f'What is token: {token}')
+
+    # Verify the token
+    decoded_token = verify_token(token)
+    
+    if decoded_token:
+        # Extract user_id from the decoded token
+        user_id = decoded_token.get('user_id')
+
+        # Fetch all proposals associated with the authenticated user
+        user_proposals = proposals_collection.find({'user_id': user_id})
+
+        # Serialize MongoDB documents to JSON format
+        serialized_proposals = json.loads(json_util.dumps(user_proposals))
+
+        return jsonify(serialized_proposals), 200
+    else:
+        # Token is invalid
         return jsonify({'error': 'Invalid token'}), 401

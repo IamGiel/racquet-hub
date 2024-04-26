@@ -6,6 +6,8 @@ from bson import ObjectId
 import os
 import jwt
 from datetime import datetime, timedelta
+from utiils.helper import is_valid_password, token_required, generate_token
+from functools import wraps
 
 
 auth_app = Blueprint('auth_app', __name__)
@@ -15,56 +17,15 @@ client = MongoClient("mongodb://localhost:27017/")
 db = client["racquethub_db"]
 users_collection = db["users"]
 
-JWT_SECRET_KEY = "your_secret_key"
-JWT_EXPIRATION_DELTA = timedelta(
-    days=1,
-    seconds=0,
-    microseconds=0,
-    milliseconds=0,
-    minutes=0,
-    hours=0,
-    weeks=0
-)
+# Set to store invalidated tokens
+invalidated_tokens = set()
 
-# Get the current UTC date and time
-current_time_utc = datetime.now()
-
-# Calculate the expiration time by adding the expiration delta
-expiration_time = current_time_utc + JWT_EXPIRATION_DELTA
-
-
-# Generate JWT token
-def generate_token(user_id, email):
-  payload = {
-      'user_id': str(user_id),
-      'email': email,
-      'exp': expiration_time
-  }
-  token = jwt.encode(payload, JWT_SECRET_KEY, algorithm='HS256')
-  return token
-
-
-# Token invalidation (dummy implementation, you may store invalidated tokens in a database)
-invalid_tokens = set()
-
-def is_valid_password(password):
-    # Check if password is at least 8 characters long
-    if len(password) < 8:
-        return False
-    
-    # Check if password contains at least one special character
-    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
-        return False
-
-    # Check if password contains at least one capital letter
-    if not re.search(r'[A-Z]', password):
-        return False
-
-    # Check if password contains at least one small letter
-    if not re.search(r'[a-z]', password):
-        return False
-
-    return True
+# Add protected routes here and use the token_required decorator
+@auth_app.route('/api/protected', methods=['GET'])
+@token_required
+def protected_route():
+    # The JWT token is valid, proceed with the protected logic
+    return jsonify({'message': 'This is a protected route'})
 
 @auth_app.route('/api/register', methods=['POST'])
 def register():
@@ -101,21 +62,27 @@ def register():
 
     return jsonify({'message': 'User registered successfully'}), 201
 
-
 @auth_app.route('/api/login', methods=['POST'])
 def login():
     # Get data from request body
     data = request.json
     print(data)
-    email = data.get('username')
+    username = data.get('username')
     password = data.get('password')
+    token = data.get('token')
+    
+    print(f"here is token {token}")
 
     # Validate request data
-    if not email or not password:
-        return jsonify({'error': 'Missing required fields'}), 400
+    if not username:
+        print("Missing 'username' field")
+        return jsonify({'error': 'Missing username field'}), 400
+    if not password:
+        print("Missing 'password' field")
+        return jsonify({'error': 'Missing password field'}), 400
 
     # Check if the user exists in the database
-    user = users_collection.find_one({'email': email})
+    user = users_collection.find_one({'username': username})
     if not user:
         return jsonify({'error': 'User not found'}), 404
 
@@ -130,15 +97,24 @@ def login():
     user['_id'] = str(user['_id'])
 
     # Generate JWT token
-    token = generate_token(user['_id'], email)
+    token = generate_token(user['_id'], username)
 
     # Return the token in the response
     return jsonify({'token': token, "data":user}), 200
  
 @auth_app.route('/api/logout', methods=['POST'])
+@token_required
 def logout():
-    # You may perform any additional logout logic here, such as invalidating tokens or session management
-    # For this example, let's assume a simple success message
-    
+    print('logging out api')
+    # Invalidate the token by adding it to the set
+    token = request.headers.get('Authorization')
+    print(f'what is token ==================== {token}')
+    if token:
+        invalidated_tokens.add(token)
+        print(f'invalidated token {token}')
+
+    # Clearing local storage can also be done here if necessary
+    # localStorage.clear()
+
     return jsonify({'message': 'Logout successful'}), 200
 
