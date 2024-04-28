@@ -34,6 +34,7 @@ def register():
     email = data.get('email')
     password = data.get('password')
     confirmPassword = data.get('confirmPassword')
+    user_name = data.get('name')
     
     if password != confirmPassword:
         return jsonify({'error': 'Passwords do not match'}), 400
@@ -57,7 +58,8 @@ def register():
     # Insert the new user into the database
     users_collection.insert_one({
         'email': email,
-        'password': hashed_password
+        'password': hashed_password,
+        'name': user_name
     })
 
     return jsonify({'message': 'User registered successfully'}), 201
@@ -66,23 +68,22 @@ def register():
 def login():
     # Get data from request body
     data = request.json
-    print(data)
-    username = data.get('username')
+    print(f'data here api/login ===== {data}')
+    email = data.get('email')
     password = data.get('password')
-    token = data.get('token')
     
-    print(f"here is token {token}")
+    print(f'this is data ===== {data}')
 
     # Validate request data
-    if not username:
-        print("Missing 'username' field")
-        return jsonify({'error': 'Missing username field'}), 400
+    if not email:
+        print("Missing 'email' field")
+        return jsonify({'error': 'Missing email field'}), 400
     if not password:
         print("Missing 'password' field")
         return jsonify({'error': 'Missing password field'}), 400
 
     # Check if the user exists in the database
-    user = users_collection.find_one({'username': username})
+    user = users_collection.find_one({'email': email})
     if not user:
         return jsonify({'error': 'User not found'}), 404
 
@@ -97,7 +98,7 @@ def login():
     user['_id'] = str(user['_id'])
 
     # Generate JWT token
-    token = generate_token(user['_id'], username)
+    token = generate_token(email)
 
     # Return the token in the response
     return jsonify({'token': token, "data":user}), 200

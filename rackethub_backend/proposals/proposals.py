@@ -7,8 +7,8 @@ from bson import ObjectId
 import os
 import jwt
 from datetime import datetime, timedelta
-from bson import json_util
-from utiils.helper import verify_token
+from bson import json_util, ObjectId
+from utiils.helper import verify_token, token_required
 
 
 proposal_app = Blueprint('proposal_app', __name__)
@@ -28,85 +28,238 @@ def get_user_by_email(email):
     user_details = db['users'].find_one({'email': email})
     return user_details
 
-# Route for creating a new proposal
+# Route for creating a new proposal CREATE
 @proposal_app.route('/api/proposals', methods=['POST'])
-def create_proposal():
-    # Extract user_id from the request or any other relevant source
-    user_email = request.json.get('email')
-
-    # Fetch user details based on user_id
-    user_details = get_user_by_email(user_email)
-
-    # Check if the Authorization header is present
-    if 'Authorization' not in request.headers:
-        return jsonify({'error': 'Unauthorized'}), 401
-
-    # Extract the JWT token from the Authorization header
-    auth_header = request.headers.get('Authorization')
-    token = auth_header.split(" ")[1]
-
-    try:
-        # Verify the JWT token
-        decoded_token = jwt.decode(token, JWT_SECRET_KEY, algorithms=['HS256'])
-
-        # Extract user_id and email from the decoded token
-        user_id = decoded_token.get('user_id')
-        email = decoded_token.get('email')
-
-        # Extract data from the request
-        data = request.json
-        name = data.get('name')
-        sport = data.get('sport')
-        proposal_type = data.get('type')
-        location = data.get('location')
-        play_time = data.get('playTime')
-        domain = data.get('domain')
-
-        # Validate the data
-        if not sport or not proposal_type or not location or not play_time or not domain:
-            return jsonify({'error': 'Missing required fields'}), 400
-
-        # Insert the proposal into the database
-        proposal_id = proposals_collection.insert_one({
-            'user': user_details,
-            'sport': sport,
-            'type': proposal_type,
-            'location': location,
-            'playTime': play_time,
-            'domain': domain,
-            'user_id': user_id  # Associate the proposal with the authenticated user
-        }).inserted_id
-
-        # Return the newly created proposal
-        new_proposal = proposals_collection.find_one({'_id': proposal_id})
-        new_proposal['_id'] = str(new_proposal['_id'])  # Convert ObjectId to string for JSON serialization
-        return jsonify(new_proposal), 201
-
-    except jwt.ExpiredSignatureError:
-        return jsonify({'error': 'Token expired'}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({'error': 'Invalid token'}), 401
-
-# Route for fetching all proposals
-@proposal_app.route('/api/proposals', methods=['GET'])
-def get_all_proposals():
+@token_required
+def create_proposal(current_user):
     token = request.headers.get('Authorization')
     print(f'What is token: {token}')
-
+    
     # Verify the token
     decoded_token = verify_token(token)
+    if not decoded_token:
+        return jsonify({'error': 'Invalid or expired token'}), 401
+      
+    print(f'decoded token ========== {decoded_token}')
     
-    if decoded_token:
-        # Extract user_id from the decoded token
-        user_id = decoded_token.get('user_id')
+    # Extract user_id and email from the decoded token
+    user_id = decoded_token.get('user_id')
+    email = decoded_token.get('email')
+    name = decoded_token.get('name')
+    
+    # Get the current timestamp
+    current_time = datetime.utcnow()
+    
+    # Retrieve data from the request body
+    data = request.json
+    
+    # Check if required fields are present
+    if not data.get('sport') or not data.get('type') or not data.get('playTime'):
+        return jsonify({'error': 'Missing required fields'}), 400
+    
+    # Include user details from the token payload
+    user_details = {
+        'user_id': user_id,
+        'email': email,
+        'name': name
+    }
+    
+    
+    # Merge user details with the proposal data
+    proposal_data = {
+        **data,  # Include all data from the request body
+        'user_details': user_details,
+        'createdAt':current_time
+    }
+    
+    print(f'this is user details {proposal_data}')
 
-        # Fetch all proposals associated with the authenticated user
-        user_proposals = proposals_collection.find({'user_id': user_id})
+    
+    # Insert the document into the proposals collection
+    result = proposals_collection.insert_one(proposal_data)
+    
+    # Create the proposal in the database (example)
+    # Replace this with your actual database logic
+    print(f'proposal data {proposal_data}')
+    
+    # Return a success response
+    return jsonify({'message': 'Proposal created successfully', 'result':str(result)}), 201
 
-        # Serialize MongoDB documents to JSON format
-        serialized_proposals = json.loads(json_util.dumps(user_proposals))
+# Route for fetching all proposals GET ALL
+@proposal_app.route('/api/proposals', methods=['GET'])
+@token_required
+def get_all_proposals(current_user):
+  # Pagination parameters
+  page = request.args.get('page', default=1, type=int)
+  per_page = request.args.get('per_page', default=2, type=int)
+  
+  # Sorting parameters
+  sort_by = request.args.get('sort_by', default='_id', type=str)
+  sort_order = request.args.get('sort_order', default='asc', type=str)
 
-        return jsonify(serialized_proposals), 200
+  # Validate sort order
+  if sort_order.lower() not in ['asc', 'desc']:
+    return jsonify({'error': 'Invalid sort order. Use "asc" or "desc"'}), 400
+
+
+  # Calculate skip and limit values for pagination
+  skip = (page - 1) * per_page
+  limit = per_page
+
+  # Fetch all proposals from the database with pagination
+  all_proposals = proposals_collection.find().skip(skip).limit(limit).sort(sort_by, 1 if sort_order.lower() == 'asc' else -1)
+
+  # Serialize MongoDB documents to JSON format
+  serialized_proposals = json.loads(json_util.dumps(all_proposals))
+
+  # Get the total count of proposals
+  total_proposals = proposals_collection.count_documents({})
+
+  # Calculate total pages
+  total_pages = (total_proposals + per_page - 1) // per_page
+
+  # Construct pagination metadata
+  pagination = {
+      'total': total_proposals,
+      'total_pages': total_pages,
+      'page': page,
+      'per_page': per_page
+  }
+  
+  # Include sort information in the response
+  sort_info = {
+    'sort_by': sort_by,
+    'sort_order': sort_order
+  }
+
+  return jsonify({'proposals': serialized_proposals, 'pagination': pagination, 'sort_info': sort_info}), 200
+
+# Route for fetching proposals by a specific user GET BY ID
+@proposal_app.route('/api/proposals/user/<user_id>', methods=['GET'])
+@token_required
+def get_proposals_by_user(current_user, user_id):
+    # Check if the requesting user is authorized to access the proposals
+    if current_user['user_id'] != user_id:
+        return jsonify({'error': 'You are not authorized to access these proposals'}), 403
+      
+    # Pagination parameters
+    page = request.args.get('page', default=1, type=int)
+    per_page = request.args.get('per_page', default=2, type=int)
+      
+    # Sorting parameters
+    sort_by = request.args.get('sort_by', default='_id', type=str)
+    sort_order = request.args.get('sort_order', default='asc', type=str)
+
+    # Validate sort order
+    if sort_order.lower() not in ['asc', 'desc']:
+      return jsonify({'error': 'Invalid sort order. Use "asc" or "desc"'}), 400
+
+    # Calculate skip and limit values for pagination
+    skip = (page - 1) * per_page
+    limit = per_page    
+    
+    # Fetch all proposals associated with the specified user_id
+    user_proposals = proposals_collection.find({'user_details.user_id': user_id}).sort(sort_by, 1 if sort_order.lower() == 'asc' else -1)
+
+    # Serialize MongoDB documents to JSON format
+    serialized_proposals = json.loads(json_util.dumps(user_proposals))
+
+    # Get the total count of proposals
+    # total_proposals = proposals_collection.count_documents({})
+    total_proposals = proposals_collection.count_documents({'user_details.user_id': user_id})
+
+    # Calculate total pages
+    total_pages = (total_proposals + per_page - 1) // per_page
+
+    # Construct pagination metadata
+    pagination = {
+        'total': total_proposals,
+        'total_pages': total_pages,
+        'page': page,
+        'per_page': per_page
+    }
+    
+    # Include sort information in the response
+    sort_info = {
+      'sort_by': sort_by,
+      'sort_order': sort_order
+    }
+
+    return jsonify({'proposals': serialized_proposals, 'pagination': pagination, 'sort_info':sort_info}), 200  
+  
+  
+# Route for updating a proposal UPDATE
+@proposal_app.route('/api/proposals/<proposal_id>', methods=['PUT'])
+@token_required
+def update_proposal(current_user, proposal_id):
+  
+    try:
+      # Attempt to convert the proposal_id into an ObjectId
+      proposal_id = ObjectId(proposal_id)
+    except Exception as e:
+      # Return a custom error message for invalid ObjectId
+      return jsonify({'error': 'Invalid proposal ID'}), 400
+    
+    # Fetch the proposal from the database
+    proposal = proposals_collection.find_one({'_id': proposal_id})
+
+    # Check if the proposal exists
+    if not proposal:
+      return jsonify({'error': 'Proposal not found'}), 404
+
+    # Check if the user is authorized to update the proposal
+    if proposal['user_details']['user_id'] != current_user['user_id']:
+      return jsonify({'error': 'You are not authorized to update this proposal'}), 403
+      
+    # Retrieve the existing proposal from the database
+    existing_proposal = proposals_collection.find_one({'_id': ObjectId(proposal_id)})
+    if not existing_proposal:
+      return jsonify({'error': 'Proposal not found'}), 404
+    
+    # Ensure that the user_details field remains unchanged
+    updated_proposal_data = request.json
+    updated_proposal_data['user_details'] = existing_proposal.get('user_details')
+    
+    # Perform the update operation
+    result = proposals_collection.update_one(
+        {'_id': ObjectId(proposal_id)},
+        {'$set': updated_proposal_data}
+    )
+    
+    if result.modified_count == 1:
+      return jsonify({'message': 'Proposal updated successfully'}), 200
     else:
-        # Token is invalid
-        return jsonify({'error': 'Invalid token'}), 401
+      return jsonify({'error': 'Failed to update proposal'}), 500
+
+# Route for deleting a proposal DELETE
+@proposal_app.route('/api/proposals/<proposal_id>', methods=['DELETE'])
+@token_required
+def delete_proposal(current_user, proposal_id):
+    try:
+      # Attempt to convert the proposal_id into an ObjectId
+      proposal_id = ObjectId(proposal_id)
+    except Exception as e:
+      # Return a custom error message for invalid ObjectId
+      return jsonify({'error': 'Invalid proposal ID'}), 400
+    
+    # Fetch the proposal from the database
+    proposal = proposals_collection.find_one({'_id': proposal_id})
+
+    # Check if the proposal exists
+    if not proposal:
+      return jsonify({'error': 'Proposal not found'}), 404
+
+    # # Check if the user is authorized to delete the proposal
+    # if proposal['user_details']['user_id'] != current_user['_id']:
+    #   return jsonify({'error': 'You are not authorized to delete this proposal'}), 403
+
+
+    # Perform the delete operation
+    result = proposals_collection.delete_one({'_id': ObjectId(proposal_id)})
+    
+    if result.deleted_count == 1:
+      return jsonify({'message': 'Proposal deleted successfully'}), 200
+    else:
+      return jsonify({'error': 'Failed to delete proposal'}), 500
+    
+
