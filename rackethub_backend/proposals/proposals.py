@@ -1,12 +1,8 @@
 import json
 from flask import Flask, request, jsonify, Blueprint
 from pymongo import MongoClient
-import bcrypt
-import re
 from bson import ObjectId
-import os
-import jwt
-from datetime import datetime, timedelta
+from datetime import datetime
 from bson import json_util, ObjectId
 from utiils.helper import verify_token, token_required
 
@@ -20,13 +16,6 @@ db = client["racquethub_db"]
 proposals_collection = db["proposals"]
 
 invalidated_tokens = set()
-
-
-def get_user_by_email(email):
-    print(f'user id {email}')
-    # Assuming db is your database connection object
-    user_details = db['users'].find_one({'email': email})
-    return user_details
 
 # Route for creating a new proposal CREATE
 @proposal_app.route('/api/proposals', methods=['POST'])
