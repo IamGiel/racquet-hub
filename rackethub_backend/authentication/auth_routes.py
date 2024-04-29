@@ -36,6 +36,9 @@ def register():
     confirmPassword = data.get('confirmPassword')
     user_name = data.get('name')
     
+    # Get the current timestamp
+    current_time = datetime.utcnow()
+    
     if password != confirmPassword:
         return jsonify({'error': 'Passwords do not match'}), 400
 
@@ -59,7 +62,20 @@ def register():
     users_collection.insert_one({
         'email': email,
         'password': hashed_password,
-        'name': user_name
+        'name': user_name,
+        'createdAt': current_time,
+        'membershipType': 'PRO',
+        'payment':'SEASONAL',
+        'trial':False,
+        'season':'SPRING',
+        'avatar':'avatarURL_here',
+        'playerInfo':{
+          'playingStyle':'counter_puncher',
+          'leftyOrRighty':'lefty',
+          'gear':'babolat'
+        },
+        'tennisRating':'4.0',
+        'pickelBallRating':'unrated'
     })
 
     return jsonify({'message': 'User registered successfully'}), 201
@@ -105,7 +121,7 @@ def login():
  
 @auth_app.route('/api/logout', methods=['POST'])
 @token_required
-def logout():
+def logout(current_user):
     print('logging out api')
     # Invalidate the token by adding it to the set
     token = request.headers.get('Authorization')
