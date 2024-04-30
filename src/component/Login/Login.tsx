@@ -8,9 +8,11 @@ import { Register } from "./Register";
 import { IconTennisMatch } from "../../assets/svgs/🦆 icon _tennis match_";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { error } from "console";
 
 export const Login = () => {
   const [open, setOpen] = useState(true);
+  const [failedLogin, setFailedLogin] = useState<any>(null);
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector(
     (state) => state.userAuth.isAuthenticated
@@ -21,24 +23,46 @@ export const Login = () => {
     // dispatch(login()); // Dispatch the login action
 
     const data:ICredentials = {
-      username:formik.values.username,
+      email:formik.values.email,
       password:formik.values.password,
       date:formik.values.date
     }
 
     console.log('data ', data)
-    dispatch(getSession(data)); // Dispatch the login action
+    handleLogin(data)
     setOpen(false)
   };
 
+  const handleLogin = async (data: any) => {
+    setOpen(true);
+    try {
+      const loginResponse = await dispatch(getSession(data));
+      console.log('login response typeof', typeof loginResponse.payload);
+      // Check if the login was successful before closing the dialog
+
+      const loginResponsePayload = JSON.parse(loginResponse.payload)
+      if (loginResponsePayload && loginResponsePayload.token) {
+        setOpen(false); // Close the dialog only if login was successful
+      } else {
+        setOpen(true);
+        setFailedLogin(loginResponsePayload)
+       
+      }
+    } catch (error:any) {
+      console.log('error on Login ', error);
+      setFailedLogin(error)
+      setOpen(true); // Keep the dialog open if there's an error during login
+    } 
+  }
+  
   const formik = useFormik({
     initialValues: {
-      username: "",
+      email: "",
       password: "",
       date:`${new Date()}`
     },
     validationSchema: Yup.object({
-      username: Yup.string()
+      email: Yup.string()
         .typeError("Please enter your email")
         .required("Email is required"),
       password: Yup.string()
@@ -84,7 +108,7 @@ export const Login = () => {
               <Dialog.Panel>
                 <div
                   className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8"
-                  style={{ background: "#fff" }}
+                  style={{ background: "#fff", minWidth:'450px' }}
                 >
                   <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                   <div className="flex flex-shrink-0 items-center justify-center">
@@ -99,18 +123,18 @@ export const Login = () => {
                     <form className="space-y-6" onSubmit={handleFormSubmit}>
                       <div>
                         <label
-                          htmlFor="username"
+                          htmlFor="email"
                           className="block text-sm text-left font-medium leading-6 text-gray-900"
                         >
                           Email address
                         </label>
                         <div className="mt-2">
                           <input
-                            id="username"
-                            name="username"
-                            type="username"
+                            id="email"
+                            name="email"
+                            type="email"
                             autoComplete="off"
-                            value={formik.values.username} // Add value attribute
+                            value={formik.values.email} // Add value attribute
                             onChange={formik.handleChange} // Add onChange handler
                             required
                             className={styles.loginInput + " loginInput block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"}
@@ -149,19 +173,14 @@ export const Login = () => {
                         </div>
                       </div>
 
+                      {failedLogin && <div className="mt-2">
+                        {failedLogin?.error}
+                      </div>}
+
                       <div>
                         <button
                           type="submit"
                           className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                          onSubmit={()=>{
-                            // submit form 
-                            const payload:ICredentials = {
-                              date:String(new Date()),
-                              password:formik.values.password,
-                              username:formik.values.username
-                            }
-                            dispatch(getSession(payload))
-                          }}
                        >
                           Sign in
                         </button>
@@ -183,6 +202,7 @@ export const Login = () => {
                       </a>
                     </p>
                   </div>
+                  {/* <pre>{JSON.stringify(formik,null,4)}</pre> */}
                 </div>
               </Dialog.Panel>
             </Transition.Child>

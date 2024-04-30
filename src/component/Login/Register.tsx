@@ -74,7 +74,7 @@ export const Register = () => {
               <Dialog.Panel>
                 <div
                   className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8"
-                  style={{ background: "#fff" }}
+                  style={{ background: "#fff", minWidth:'450px' }}
                 >
                   <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     {/* <img
@@ -180,9 +180,6 @@ export const Register = () => {
                         </button>
                       </div>
                     </form>
-
-                    <pre>{JSON.stringify(formik, null,4)}</pre>
-
 
                     <p className="mt-10 text-center text-sm text-gray-500">
                       Already a member?{" "}
