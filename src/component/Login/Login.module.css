@@ -8,3 +8,10 @@
   border-radius: 6px;
   outline: none;
 }
+
+.errorStyle {
+  color: red;
+  font-family: Inter;
+  font-size: 14px;
+  font-weight: 700;
+}

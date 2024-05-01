@@ -15,35 +15,6 @@ const username = process.env.REACT_APP_USERNAME;
 //   );
 // }
 
-export async function loginApi(credentials: {
-  username: string;
-  password: string;
-  isAuthenticated: string;
-}) {
-  const requestOptions: RequestInit = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(credentials),
-    redirect: "follow",
-  };
-
-  try {
-    const response = await fetch(
-      `http://localhost:3003/authData?user=${credentials.username}`,
-      requestOptions
-    );
-    if (!response.ok) {
-      throw new Error("Failed to authenticate");
-    }
-    // You can return the response data if needed
-    return await response.json();
-  } catch (error) {
-    // Handle errors
-    console.error("Error logging in:", error);
-    throw error;
-  }
-}
-
 export async function getZipcode(term: any) {
   const requestOptions: any = {
     method: "GET",
@@ -63,8 +34,9 @@ export async function loginApiv2(userDets: any) {
   const raw = JSON.stringify(userDets);
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
+  
 
-  console.log('raw ', raw)
+  // console.log("raw ", raw);
 
   const requestOptions: any = {
     method: "POST",
@@ -77,10 +49,10 @@ export async function loginApiv2(userDets: any) {
   return fetch("http://localhost:5000/api/login", requestOptions)
     .then((response) => response.text())
     .then((result) => {
-      console.log(result)
-      return result
+      // console.log(result);
+      return result;
     })
-    .catch((error) => console.error('error in api/login ', error));
+    .catch((error) => console.error("error in api/login ", error));
 }
 
 export async function getAllProposals() {
@@ -101,8 +73,31 @@ export async function getAllProposals() {
       return result;
     })
     .catch((error) => {
-      console.error('Error in api/proposals ', error);
+      console.error("Error in api/proposals ", error);
       throw error; // Rethrow the error for the calling code to handle
     });
 }
 
+export async function editUserDetals(payload:any) {
+  const authToken = localStorage.getItem('authToken')
+  const raw = JSON.stringify(payload);
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("Authorization", `Bearer ${authToken}`);
+  const requestOptions: any = {
+    method: "PUT",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+  if (!payload) return;
+  
+  
+  return fetch("http://localhost:5000/api/userProfile", requestOptions)
+    .then((response) => response.text())
+    .then((result) => {
+      // console.log(result);
+      return result;
+    })
+    .catch((error) => console.error("error in api/login ", error));
+}

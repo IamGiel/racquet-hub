@@ -1,6 +1,6 @@
 // reducers/userProfileSlice.ts
 import { createSlice } from "@reduxjs/toolkit";
-import { getUserDetails, getUserProfile } from "../actions/userProfileActions";
+import { editUserDetailsApi } from "../actions/userProfileActions";
 
 const initialState: any = {
   userProfile: null,
@@ -14,32 +14,18 @@ const userProfileSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(getUserProfile.pending, (state) => {
+     
+      .addCase(editUserDetailsApi.pending, (state) => {
         state.details = state
         state.loading = true;
         state.error = null;
       })
-      // .addCase(getUserProfile.fulfilled, (state, action) => {
-      //   state.details = state;
-      //   state.loading = false;
-      //   state.userProfile = action.payload;
-      // })
-      // .addCase(getUserProfile.rejected, (state, action) => {
-      //   state.details = state;
-      //   state.loading = false;
-      //   state.error = action.error.message || "Failed to fetch user profile";
-      // })
-      .addCase(getUserDetails.pending, (state) => {
-        state.details = state
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(getUserDetails.fulfilled, (state, action) => {
+      .addCase(editUserDetailsApi.fulfilled, (state, action) => {
         state.details = state;
         state.loading = false;
         state.userProfile = action.payload;
       })
-      .addCase(getUserDetails.rejected, (state, action) => {
+      .addCase(editUserDetailsApi.rejected, (state, action) => {
         state.details = state;
         state.loading = false;
         state.error = action.error.message || "Failed to fetch user details";

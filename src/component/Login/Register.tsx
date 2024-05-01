@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { login } from "../../reducers/userAuthSlice";
 import styles from "./Login.module.css";
 import { dialogService } from "../Services/dialog-service";
 import { Login } from "./Login";
@@ -19,21 +18,25 @@ export const Register = () => {
     event.preventDefault(); // Prevent the default form submission behavior
     // dispatch(login()); // Dispatch the login action
     setOpen(false);
-  };  
+  };
 
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
-      date:`${new Date()}`
+      date: `${new Date()}`,
     },
     validationSchema: Yup.object({
       email: Yup.string()
-        .typeError("Please provide valid email")
-        .required("Valid email is required"),
+        .email("Invalid email format")
+        .required("Email is required"),
       password: Yup.string()
-        .typeError("Please provide a password")
-        .required("Password required"),
+        .required("Password is required")
+        .min(5, "Password must be at least 5 characters")
+        .matches(
+          /^(?=.*\d)(?=.*[A-Z])(?=.*\W)(?!.*\s).*$/,
+          "Password must contain at least one number, one uppercase letter, and one special character"
+        ),
     }),
     onSubmit(values, { resetForm }) {
       console.log("ONSUBMIT FORM Form values:", values);
@@ -74,7 +77,7 @@ export const Register = () => {
               <Dialog.Panel>
                 <div
                   className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8"
-                  style={{ background: "#fff", minWidth:'450px' }}
+                  style={{ background: "#fff", minWidth: "450px" }}
                 >
                   <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     {/* <img

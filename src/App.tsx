@@ -1,36 +1,34 @@
-import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
-import { Greet } from "./component/Greet/Greet";
-import Landing from "./component/Landing/Landing";
-
-import { Provider } from "react-redux";
-import store from "./store";
-import { DialogLoader } from "./component/Services/dialog-service";
-import getStore from "./store";
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { Profile } from "./component/Profile/Profile";
+import React, { useEffect } from "react";
+import { Provider, useDispatch } from "react-redux";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  RouteProps,
+  BrowserRouter,
+} from "react-router-dom";
 import { Header } from "./component/Header/Header";
+import { Profile } from "./component/Profile/Profile";
+import { DialogLoader } from "./component/Services/dialog-service";
+import Landing from "./component/Landing/Landing";
+import rootReducer from "./reducers";
+import store, { useAppSelector } from "./store";
+import RoutesComponent from "./component/Routes/Routes";
 
 function App() {
-  const store = getStore();
-
   return (
-    <div className="App">
-    
     <Provider store={store}>
-      <Router>
-        <Header/>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/profile" element={<Profile />} />
-        </Routes>
-      </Router>
-      <div>
-        <DialogLoader />
+      <div className="App">
+        <BrowserRouter>
+          <RoutesComponent />
+        </BrowserRouter>
+        
+        <div>
+          <DialogLoader />
+        </div>
       </div>
     </Provider>
-  </div>
   );
 }
 

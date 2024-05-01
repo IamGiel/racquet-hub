@@ -7,7 +7,6 @@ import { userAuthReducer } from "./userAuthSlice";
 const rootReducer = combineReducers({
   userAuth: userAuthReducer,
   userProfile: userProfileReducer,
-  /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
 });
 
 // Optionally, if you want to handle resetting state in reducers

@@ -1,3 +1,72 @@
 .profileContainer {
   padding: 12px;
+  width: 650px;
+  margin: 12px auto;
+  height: 800px;
+}
+.extraInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.editBtn {
+  border-radius: 12px;
+  background-color: #145c80; /* bg-indigo-600 */
+  padding: 0.5rem 1rem; /* px-2 py-1 */
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 600; /* font-semibold */
+  color: #ffffff; /* text-white */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+  display: flex;
+  align-items: left;
+}
+
+.editBtn:hover {
+  background-color: #023047; /* hover:bg-indigo-500 */
+}
+
+.editBtn:focus-visible {
+  outline: 2px solid transparent; /* focus-visible:outline */
+  outline-offset: 2px; /* focus-visible:outline-offset */
+  outline-color: red;
+}
+
+.editBtn:focus-visible:focus-visible {
+  outline-color: red; /* focus-visible:outline-indigo-600 */
+}
+.saveBtn {
+  border-radius: 12px;
+  background-color: #7d8b3c; /* bg-indigo-600 */
+  padding: 0.5rem 1rem; /* px-2 py-1 */
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 600; /* font-semibold */
+  color: #ffffff; /* text-white */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+  display: flex;
+  align-items: left;
+}
+
+.saveBtn:hover {
+  background-color: #5e6e14; /* hover:bg-indigo-500 */
+}
+
+.saveBtn:focus-visible {
+  outline: 2px solid transparent; /* focus-visible:outline */
+  outline-offset: 2px; /* focus-visible:outline-offset */
+  outline-color: red;
+}
+
+.saveBtn:focus-visible:focus-visible {
+  outline-color: red; /* focus-visible:outline-indigo-600 */
+}
+
+.inputFieldsStyle {
+  padding: 6px;
+  border: 1px solid #d4d0d0;
+  border-radius: 6px;
+}
+
+.inputFieldsStyle:focus {
+  outline: none;
 }

@@ -16,6 +16,11 @@
   font-size: 45px;
 }
 
+.badgeStyle {
+  position: relative;
+  top: -13px;
+}
+
 .descriptionTitle {
   display: flex;
   gap: 12px;

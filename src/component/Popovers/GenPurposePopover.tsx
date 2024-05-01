@@ -5,10 +5,10 @@ import styles from "./Popover.module.css";
 
 interface IGenPurposePopover {
   popoverBtnLabel: string;
-  openPopover: (someAction:any) => void; 
+  openPopover?: (someAction:any) => void; 
   children: React.ReactElement; 
   icon: React.ReactElement;
-  topPosition:string;
+  topPosition?:string;
 }
 
 export const GenPurposePopover = ({
@@ -55,9 +55,9 @@ export const GenPurposePopover = ({
         as={Fragment}
         enter="transition ease-out duration-200"
         enterFrom="opacity-0 translate-y-1"
-        enterTo="opacity-100 translate-y-0"
+        enterTo="opacity-100 translate-y-1"
         leave="transition ease-in duration-150"
-        leaveFrom="opacity-100 translate-y-0"
+        leaveFrom="opacity-100 translate-y-1"
         leaveTo="opacity-0 translate-y-1"
       >
         <Popover.Panel className={"gen-pop-children-popover-panel absolute z-10 flex w-[350px] -translate-x-[400px] -translate-y-[50px]"}>

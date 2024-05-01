@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import { loginApi, loginApiv2 } from "../apis/fetch";
+import { loginApiv2 } from "../apis/fetch";
+import { authenticateAndGetUserProfile } from "../actions/userProfileActions";
 
 interface UserAuthState {
   isAuthenticated: boolean;
@@ -22,57 +23,39 @@ export interface ICredentials {
   password: string;
   date: string;
 }
-// Create an async thunk to handle the login process
-export const getSession = createAsyncThunk(
-  "userAuth/getSession",
-  async (credentials: ICredentials, { rejectWithValue }) => {
-    try {
-      const response: any = await loginApiv2(credentials);
-      localStorage.setItem("authToken", `${response.data?.token}`); // Assuming 'token' is present in the response data
-      return response; // Return the response data
-    } catch (error: any) {
-      console.error("Failed to fetch session:", error);
-      // Return the error message as the payload
-      return rejectWithValue(error?.message);
-    }
-  }
-);
 
 const userAuthSlice = createSlice({
   name: "userAuth",
   initialState,
   reducers: {
-    login(state) {
-      console.log("login reducer called ", state);
-      // do i call getSession here to login user ?
-      // state.isAuthenticated = true;
-    },
     logout(state) {
-      console.log("logout state ", state);
       state.isAuthenticated = false;
       localStorage.clear();
-      console.log("locastorate should have been cleared");
       // Reset any additional state if needed
     },
   },
   extraReducers(builder) {
     builder
-      .addCase(getSession.pending, (state) => {
+      .addCase(authenticateAndGetUserProfile.pending, (state) => {
         // Handle pending state
-        console.log("pending getSession State ", state);
       })
-      .addCase(getSession.fulfilled, (state, action) => {
+      .addCase(authenticateAndGetUserProfile.fulfilled, (state, action) => {
         // Handle fulfilled state
-        console.log("fullfilled getSession State ", state);
-        console.log("fullfilled getSession action ", action);
-        
+
         // Access the response data directly from the action payload
-        const responseData = JSON.parse(action.payload); // Assuming 'data' contains the response data
-        
-        console.log(responseData);
+        const responseData:any = action?.payload; // Assuming 'data' contains the response data
+
       
+      
+
         // Update the Redux state with the response data
-        if(responseData.token){
+        if(responseData && JSON.parse(responseData)?.error){
+          return {
+            ...state,
+            isAuthenticated: false,
+            payload: responseData,
+          };
+        } else if(responseData && JSON.parse(responseData)?.token){
           return {
             ...state,
             isAuthenticated: true,
@@ -81,24 +64,32 @@ const userAuthSlice = createSlice({
         } else {
           return {
             ...state,
-            isAuthenticated: false,
-            payload: responseData,
+            isAuthenticated: true,
+            payload: action?.meta?.arg?.token,
           };
         }
-        
+       
       })
-      
-      .addCase(getSession.rejected, (state, action) => {
+
+      // Update the rejected case to store only the error message
+      .addCase(authenticateAndGetUserProfile.rejected, (state, action) => {
         // Handle rejected state
-        console.log("rejected getSession State ", state);
-        state.isAuthenticated = false;
-        // Reset any additional state if needed
+
+        // Access the error message from the response body
+        const errorMessage = action.error; // Extract the error message
+
+        // Update the Redux state or display a notification to the user based on the error message
+        return {
+          ...state,
+          isAuthenticated: false,
+          payload: errorMessage, // Store only the error message
+        };
       });
   },
 });
 
 export const userAuthReducer = userAuthSlice.reducer;
 
-export const { login, logout } = userAuthSlice.actions;
+export const { logout } = userAuthSlice.actions;
 
 // export default userAuthSlice.reducer;

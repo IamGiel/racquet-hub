@@ -9,12 +9,15 @@ import ProposalListv2 from "./ProposalListv2";
 import { IconTennisMatch } from "../../assets/svgs/🦆 icon _tennis match_";
 import { useSelector } from "react-redux";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { ICredentials, getSession, login, logout } from "../../reducers/userAuthSlice";
+import { ICredentials, logout } from "../../reducers/userAuthSlice";
 import { dialogService } from "../Services/dialog-service";
 import { Login } from "../Login/Login";
 import { Profile } from "../Profile/Profile";
 import { useNavigate } from "react-router-dom";
- 
+import {
+  authenticateAndGetUserProfile,
+} from "../../actions/userProfileActions";
+
 const user = {
   name: "Tom Cook",
   email: "tom@example.com",
@@ -38,17 +41,18 @@ function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Landing() {
+function Landing() {
   const [activeLink, setActiveLink] = useState("Dashboard");
   const [proposalList, setProposalList] = useState([]);
   const [credentials, setCredentials] = useState<any>(null);
-  
+
   const dispatch = useAppDispatch();
-  const navigateTo = useNavigate()
+  const navigateTo = useNavigate();
   const isAuthenticated = useAppSelector(
     (state) => state.userAuth.isAuthenticated
   );
   const appName = "Racquet Hub";
+
 
   const fetchData = async () => {
     try {
@@ -66,44 +70,25 @@ export default function Landing() {
     }
   };
 
-  const callToAuth = (actionToCall:any) => {
-    console.log('action to call ', actionToCall)
-    if(actionToCall === 'logout'){
+  const callToAuth = (actionToCall: any) => {
+    console.log("action to call ", actionToCall);
+    if (actionToCall === "logout") {
       dispatch(logout()); // Dispatch the logout action
     }
-    if(actionToCall === 'login'){
-      dialogService.openDialog(Login)
+    if (actionToCall === "login") {
+      dialogService.openDialog(Login);
       // dispatch(login()); // Dispatch the login action
     }
-  }
-  
+  };
 
   useEffect(() => {
-    // Dispatch the getSession action with the username and password
-    // const username = "tester@mail.com";
-    // const password = "Test#4321!";
-    // const isAuthenticated = "false";
-    // console.log('what is isAuthenticated ', isAuthenticated)
-    // const cred: Promise<any> = dispatch(getSession({ username, password, isAuthenticated }));
-    // cred.then((res) => {
-    //   console.log('is auth ', res?.meta.arg);
-    //   login(res?.meta.arg)
-    //   setCredentials(res?.meta?.arg)
-    // });
-    console.log('dispatch called ', isAuthenticated)
-    console.log('dispatch called isAuthenticated  = ', isAuthenticated)
-  }, [dispatch]);
-
-  useEffect(() => {
-    fetchData();
+    // fetchData();
   }, []);
 
   return (
     <>
       {/* <pre>test</pre> */}
       <div className="min-h-full">
-       
-
         <div className="py-10">
           <header>
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -130,3 +115,5 @@ export default function Landing() {
     </>
   );
 }
+
+export default Landing;

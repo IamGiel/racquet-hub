@@ -8,5 +8,6 @@ export const API_PATH = {
   GET_USER_PROFILE: `${BASE_URL}/userProfile`,
   GET_USER_DETAILS: `${BASE_URL2}/authData`,
   LOGIN_API: `${BASE_URL2}/api/login`,
+  LOGIN_APIv2: `${BASE_URL3}/api/login`,
   // Add more API paths as needed
 };
