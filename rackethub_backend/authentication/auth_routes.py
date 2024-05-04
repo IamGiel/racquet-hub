@@ -152,6 +152,7 @@ def login():
     else:
         # No email/password or token provided
         return jsonify({'error': 'Invalid request'}), 400
+
 @auth_app.route('/api/logout', methods=['POST'])
 @token_required
 def logout(current_user):

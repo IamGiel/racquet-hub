@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import styles from "./Header.module.css";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useAppDispatch, useAppSelector } from "../../store/";
+import { useAppDispatch } from "../../store/";
 import { useNavigate } from "react-router";
 import Avatar from "boring-avatars";
 import { Login } from "../Login/Login";
@@ -11,6 +11,8 @@ import { logout } from "../../reducers/userAuthSlice";
 import { IconTennisMatch } from "../../../src/assets/svgs/🦆 icon _tennis match_";
 import { Register } from "../Login/Register";
 import { authenticateAndGetUserProfile } from "../../actions/userProfileActions";
+import {  useLocation } from 'react-router-dom';
+import { useSelector } from "react-redux";
 
 export const Header = ({ loginStatus }:any) => {
   const [activeLink, setActiveLink] = useState("Dashboard");
@@ -18,12 +20,11 @@ export const Header = ({ loginStatus }:any) => {
 
   const dispatch = useAppDispatch();
   const navigateTo = useNavigate();
+  const userAuth = useSelector((state:any) => state?.userAuth);
+
   function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
   }
-  const isAuthenticated = useAppSelector(
-    (state) => state.userAuth.isAuthenticated
-  );
 
   const callToAuth = (actionToCall: any) => {
     console.log("action to call ", actionToCall);
@@ -37,14 +38,8 @@ export const Header = ({ loginStatus }:any) => {
     }
   };
   const appName = "Racquet Hub";
+  const location = useLocation();
 
-  // useEffect(() => {
-  //   const authToken = localStorage.getItem("authToken");
-  //   if (authToken) {
-  //     // Dispatch an action to authenticate the user using the stored token
-  //     dispatch(authenticateAndGetUserProfile({ token: authToken }));
-  //   }
-  // }, [dispatch]);
 
   return (
     <Disclosure
@@ -58,8 +53,13 @@ export const Header = ({ loginStatus }:any) => {
             <div className="flex h-16 justify-between">
               <div
                 className="flex gap-[12px] cursor-pointer"
-                onClick={() => navigateTo("/")}
-                // style={{ opacity: isAuthenticated ? "1" : "0.7" }}
+                onClick={() => {
+                  console.log('checking authStatus ', userAuth)
+                  if(!userAuth.isAuthenticated){
+                    dispatch(logout())
+                  }
+                  navigateTo("/")
+                }}
               >
                 <div className="flex flex-shrink-0 items-center">
                   <IconTennisMatch height={`64px`} width={`64px`} />
@@ -72,7 +72,7 @@ export const Header = ({ loginStatus }:any) => {
                   onMouseLeave={()=>setOpenToolTip(false)}
                   >
                     <svg
-                      className={`h-1.5 w-1.5 ${isAuthenticated ? 'fill-green-500' : 'fill-red-500'}`}
+                      className={`h-1.5 w-1.5 ${userAuth.isAuthenticated ? 'fill-green-500' : 'fill-red-500'}`}
                       viewBox="0 0 6 6"
                       aria-hidden="true"
                     >
@@ -80,7 +80,7 @@ export const Header = ({ loginStatus }:any) => {
                     </svg>
                     {openToolTip && 
                          <p className="absolute w-48 px-5 py-3 text-center text-gray-600 truncate -translate-x-1/2 bg-white rounded-lg shadow-lg -bottom-12 left-1/2 dark:shadow-none shadow-gray-200 dark:bg-gray-800 dark:text-white">
-                         {isAuthenticated ? 'Your logged in' : 'Please login'}
+                         {userAuth.isAuthenticated ? 'Your logged in' : 'Please login'}
                      </p>
                     }
                   </span>
@@ -153,7 +153,7 @@ export const Header = ({ loginStatus }:any) => {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      {isAuthenticated && (
+                      {userAuth.isAuthenticated && (
                         <Menu.Item>
                           {({ active }) => (
                             <a
@@ -180,12 +180,12 @@ export const Header = ({ loginStatus }:any) => {
                             onClick={() => {
                               setActiveLink(
                                 `${
-                                  isAuthenticated === true ? "logout" : "login"
+                                  userAuth.isAuthenticated === true ? "logout" : "login"
                                 }`
                               );
                               callToAuth(
                                 `${
-                                  isAuthenticated === true ? "logout" : "login"
+                                  userAuth.isAuthenticated === true ? "logout" : "login"
                                 }`
                               );
                             }}
@@ -195,14 +195,14 @@ export const Header = ({ loginStatus }:any) => {
                             )}
                           >
                             {`${
-                              isAuthenticated === true
+                              userAuth.isAuthenticated === true
                                 ? "logout"
                                 : "Your Logged out - login"
                             }`}
                           </a>
                         )}
                       </Menu.Item>
-                      {!isAuthenticated && (
+                      {!userAuth.isAuthenticated && (
                         <Menu.Item>
                           {({ active }) => (
                             <a

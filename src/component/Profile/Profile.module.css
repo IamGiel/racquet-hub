@@ -1,8 +1,9 @@
 .profileContainer {
   padding: 12px;
   width: 650px;
-  margin: 12px auto;
+  margin: 42px auto;
   height: 800px;
+  background: #e8f1ed;
 }
 .extraInfo {
   display: flex;
@@ -13,13 +14,16 @@
 .editBtn {
   border-radius: 12px;
   background-color: #145c80; /* bg-indigo-600 */
-  padding: 0.5rem 1rem; /* px-2 py-1 */
-  font-size: 0.875rem; /* text-sm */
-  font-weight: 600; /* font-semibold */
-  color: #ffffff; /* text-white */
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+  padding: 3px;
+  justify-content: center;
+  font-weight: 600;
+  color: #ffffff;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   display: flex;
-  align-items: left;
+  align-items: center;
+  font-size: 12px;
+  min-width: 87px;
+  cursor: pointer;
 }
 
 .editBtn:hover {
@@ -38,13 +42,16 @@
 .saveBtn {
   border-radius: 12px;
   background-color: #7d8b3c; /* bg-indigo-600 */
-  padding: 0.5rem 1rem; /* px-2 py-1 */
-  font-size: 0.875rem; /* text-sm */
-  font-weight: 600; /* font-semibold */
-  color: #ffffff; /* text-white */
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+  padding: 3px;
+  justify-content: center;
+  font-weight: 600;
+  color: #ffffff;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   display: flex;
-  align-items: left;
+  align-items: center;
+  font-size: 12px;
+  min-width: 87px;
+  cursor: pointer;
 }
 
 .saveBtn:hover {
@@ -69,4 +76,8 @@
 
 .inputFieldsStyle:focus {
   outline: none;
+}
+
+.btnDisabled {
+  background: lightgrey;
 }

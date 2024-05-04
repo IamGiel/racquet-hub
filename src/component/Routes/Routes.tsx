@@ -7,23 +7,25 @@ import { Profile } from "../Profile/Profile";
 import ProtectedRoute from "./ProtectedRoutes";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { authenticateAndGetUserProfile } from "../../actions/userProfileActions";
+import { useSelector } from "react-redux";
 
 const RoutesComponent = () => {
   const dispatch = useAppDispatch();
   const navigateTo = useNavigate();
-  const isAuthenticated = useAppSelector(
-    (state) => state.userAuth.isAuthenticated
-  );  
+  const userAuth = useSelector((state:any) => state?.userAuth);
+
   useEffect(() => {
     const authToken = localStorage.getItem("authToken");
     dispatch(authenticateAndGetUserProfile({ token: authToken }));
-    if(!isAuthenticated){
+    if(userAuth.isAuthenticated){
+      localStorage.clear()
       navigateTo('/')
     }
-  }, [isAuthenticated]);
+    console.log('user auth ', userAuth);
+  }, [dispatch]);
   return (
     <div className="route-component-container">
-      <Header loginStatus={isAuthenticated}/>
+      <Header loginStatus={userAuth.isAuthenticated}/>
       {/* <span>TESTING USER: {isAuthenticated ? 'is authenticated' : 'is NOT authenticated'}</span> */}
       {/* <Routes>
         <Route path="/" element={<Landing />} />
@@ -31,7 +33,7 @@ const RoutesComponent = () => {
       </Routes> */}
       <Routes>
         <Route index element={<Landing />} />
-        {isAuthenticated && <Route path="/profile" element={<Profile />} />}
+        {userAuth.isAuthenticated && <Route path="/profile" element={<Profile />} />}
       </Routes>
     </div>
   );

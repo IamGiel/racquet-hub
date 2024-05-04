@@ -14,10 +14,10 @@ users_collection = db["users"]
 JWT_SECRET_KEY = "your_secret_key"
 JWT_EXPIRATION_DELTA = timedelta(
     days=0,
-    seconds=0,
+    seconds=35,
     microseconds=0,
     milliseconds=0,
-    minutes=5,
+    minutes=1,
     hours=0,
     weeks=0
 )

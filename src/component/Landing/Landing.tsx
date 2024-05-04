@@ -48,9 +48,8 @@ function Landing() {
 
   const dispatch = useAppDispatch();
   const navigateTo = useNavigate();
-  const isAuthenticated = useAppSelector(
-    (state) => state.userAuth.isAuthenticated
-  );
+  const userAuth = useSelector((state:any) => state?.userAuth);
+
   const appName = "Racquet Hub";
 
 
@@ -83,6 +82,9 @@ function Landing() {
 
   useEffect(() => {
     // fetchData();
+    // if(!userAuth.isAuthenticated){
+    //   dispatch(logout())
+    // }
   }, []);
 
   return (
