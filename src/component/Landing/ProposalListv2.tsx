@@ -170,6 +170,8 @@ export default function ProposalListv2({ proposals }: any) {
       // Apply the current filter to the filtered list
       if (aFilter?.type === "TYPE_SPORT") {
         filteredList = filteredList.filter((listItem: any) => {
+          console.log('listItem ', listItem)
+          console.log('aFilter ', aFilter)
           return listItem.sport.toLowerCase() === aFilter?.name.toLowerCase();
         });
       }
@@ -342,10 +344,12 @@ export default function ProposalListv2({ proposals }: any) {
                           alignItems: "center",
                         }}
                       >
+                        {/* <pre>{JSON.stringify(proposalItem, null, 4)}</pre> */}
+
                         <span>
                           <Avatar
                             size={40}
-                            name={proposalItem.domain}
+                            name={proposalItem.user_details.name}
                             square={true}
                             variant="beam"
                             colors={[
@@ -359,7 +363,7 @@ export default function ProposalListv2({ proposals }: any) {
                           />
                         </span>
                         <span className="td_info text-[#023047]">
-                          {proposalItem.name}
+                          {proposalItem.user_details.name}
                         </span>
                       </td>
                       <td

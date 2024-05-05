@@ -76,11 +76,11 @@ def create_proposal(current_user):
 
 # Route for fetching all proposals GET ALL
 @proposal_app.route('/api/proposals', methods=['GET'])
-@token_required
-def get_all_proposals(current_user):
+# @token_required
+def get_all_proposals():
   # Pagination parameters
   page = request.args.get('page', default=1, type=int)
-  per_page = request.args.get('per_page', default=2, type=int)
+  per_page = request.args.get('per_page', default=10, type=int)
   
   # Sorting parameters
   sort_by = request.args.get('sort_by', default='_id', type=str)

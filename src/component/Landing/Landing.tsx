@@ -43,12 +43,13 @@ function classNames(...classes: any) {
 
 function Landing() {
   const [activeLink, setActiveLink] = useState("Dashboard");
-  const [proposalList, setProposalList] = useState([]);
+  const [proposalList, setProposalList] = useState<any>({});
   const [credentials, setCredentials] = useState<any>(null);
 
   const dispatch = useAppDispatch();
   const navigateTo = useNavigate();
   const userAuth = useSelector((state:any) => state?.userAuth);
+  // const proposals = useSelector((state:any) => state?.proposalList);
 
   const appName = "Racquet Hub";
 
@@ -56,12 +57,11 @@ function Landing() {
   const fetchData = async () => {
     try {
       await getAllProposals()
-        .then((response) => response.json())
-        .then((result) => {
-          // console.log(result);
-          // console.log(typeof result);
-          setProposalList(result);
+        .then((response) => {
+          console.log(response)
+          setProposalList(response);
         })
+       
         .catch((error) => console.error(error));
     } catch (error) {
       // Handle errors, e.g., log the error or show a user-friendly message
@@ -69,22 +69,10 @@ function Landing() {
     }
   };
 
-  const callToAuth = (actionToCall: any) => {
-    console.log("action to call ", actionToCall);
-    if (actionToCall === "logout") {
-      dispatch(logout()); // Dispatch the logout action
-    }
-    if (actionToCall === "login") {
-      dialogService.openDialog(Login);
-      // dispatch(login()); // Dispatch the login action
-    }
-  };
-
   useEffect(() => {
-    // fetchData();
-    // if(!userAuth.isAuthenticated){
-    //   dispatch(logout())
-    // }
+    const token = localStorage.getItem('authToken')
+    console.log('token in landing ', token)
+    fetchData();
   }, []);
 
   return (
@@ -102,12 +90,11 @@ function Landing() {
           <main>
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
               {/* Your content */}
-              <span>proposals </span>
 
-              {proposalList && proposalList.length > 0 && (
+              {proposalList && proposalList?.proposals && proposalList?.proposals?.length > 0 && (
                 // <ProposalList proposals={proposalList}/>
                 <div className="content-container">
-                  <ProposalListv2 proposals={proposalList} />
+                  <ProposalListv2 proposals={proposalList.proposals} />
                 </div>
               )}
             </div>

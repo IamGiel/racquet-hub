@@ -14,7 +14,7 @@ import * as Yup from "yup";
 import _ from "lodash";
 
 import { FlatPickerDate } from "../Form/FlatPicker/FlatPickerDate";
-import { getZipcode } from "../../apis/fetch";
+import { createProposal, getZipcode } from "../../apis/fetch";
 import { Time } from "../Form/Date/Time";
 import { ReactDatePicker } from "../Form/ReactDatePicker/ReactDatePicker";
 import { InputText } from "../Form/InputText";
@@ -76,7 +76,32 @@ export const ProposeComponent = ({ close, data }: any) => {
         .required("Date and time is required"),
     }),
     onSubmit(values, { resetForm }) {
-      console.log("ONSUBMIT FORM Form values:", values);
+      console.log("ONSUBMIT FORM Form values:", JSON.stringify(values));
+
+      const payload = {
+        sport: formik.values.sportType,
+        type: formik.values.categoryType,
+        eventStatus: {
+          status: "open",
+        },
+        location: {
+          location: formik.values.location,
+          distance: 12,
+        },
+        playTime: formik.values.date,
+        createdAt: "{{moment.utc().format()}}",
+      };
+      createProposal(payload).then((res)=>{
+        console.log('create proposal res ', res)
+        // close modal 
+        // show success banner
+        // rerender ProposalListV2 component to show new proposal added.
+        close()
+      }, (err)=> {
+        console.log('create proposal err ', err)
+        // if error is is 400s reroute to landing 
+
+      })
 
       // Revalidate the form if it's dirty
       if (formik.dirty) {
@@ -183,7 +208,7 @@ export const ProposeComponent = ({ close, data }: any) => {
                         selections={sportTypeFilters}
                         onSelect={handleSelectedSportType}
                       />
-                      {formik.errors.sportType && formik.touched.sportType &&(
+                      {formik.errors.sportType && formik.touched.sportType && (
                         <p className={styles.errorMessge + " sportype-err-msg"}>
                           {formik.errors.sportType}
                         </p>
@@ -196,11 +221,14 @@ export const ProposeComponent = ({ close, data }: any) => {
                         selections={sportCategoryFilters}
                         onSelect={handleSelectedCategoryType}
                       />
-                      {formik.errors.categoryType && formik.touched.categoryType && (
-                        <p className={styles.errorMessge + " sportype-err-msg"}>
-                          {formik.errors.categoryType}
-                        </p>
-                      )}
+                      {formik.errors.categoryType &&
+                        formik.touched.categoryType && (
+                          <p
+                            className={styles.errorMessge + " sportype-err-msg"}
+                          >
+                            {formik.errors.categoryType}
+                          </p>
+                        )}
                     </div>
                     <div className="input-for-sportType">
                       <InputText

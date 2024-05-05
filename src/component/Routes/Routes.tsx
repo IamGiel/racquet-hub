@@ -17,11 +17,11 @@ const RoutesComponent = () => {
   useEffect(() => {
     const authToken = localStorage.getItem("authToken");
     dispatch(authenticateAndGetUserProfile({ token: authToken }));
-    if(userAuth.isAuthenticated){
-      localStorage.clear()
+    if(userAuth.isAuthenticated === false){
+      console.log('user auth ', userAuth);
       navigateTo('/')
     }
-    console.log('user auth ', userAuth);
+   
   }, [dispatch]);
   return (
     <div className="route-component-container">
@@ -33,7 +33,7 @@ const RoutesComponent = () => {
       </Routes> */}
       <Routes>
         <Route index element={<Landing />} />
-        {userAuth.isAuthenticated && <Route path="/profile" element={<Profile />} />}
+        {userAuth.isAuthenticated === true && <Route path="/profile" element={<Profile />} />}
       </Routes>
     </div>
   );

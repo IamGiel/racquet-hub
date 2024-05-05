@@ -101,3 +101,27 @@ export async function editUserDetals(payload:any) {
     })
     .catch((error) => console.error("error in api/login ", error));
 }
+
+export async function createProposal(payload:any) {
+  const authToken = localStorage.getItem('authToken')
+  const raw = JSON.stringify(payload);
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("Authorization", `Bearer ${authToken}`);
+  const requestOptions: any = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+  if (!payload) return;
+  
+  
+  return fetch("http://localhost:5000/api/proposals", requestOptions)
+    .then((response) => response.text())
+    .then((result) => {
+      // console.log(result);
+      return result;
+    })
+    .catch((error) => console.error("error in api/login ", error));
+}
