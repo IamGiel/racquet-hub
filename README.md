@@ -49,30 +49,26 @@ https://www.youtube.com/watch?v=foiMMI-pEes&list=PLC3y8-rFHvwirqe1KHFCHJ0RqNuN61
 
 
 racquethub_backend/
-│
-├── app.py          # Main Flask application entry point
-├── authentication/ # Package for authentication-related code
-│   ├── __init__.py # Initialize the authentication package
-│   ├── routes.py   # Define authentication routes (login, register, etc.)
-│   └── models.py   # Define authentication-related database models
-│
-├── utils/          # Package for utility functions
-│   ├── __init__.py # Initialize the utils package
-│   └── helper.py   # Utility functions used throughout the application
-│
-├── config.py       # Configuration settings for the application
-├── requirements.txt# List of Python dependencies
-└── .env            # Environment variables (optional)
-
+├── app.py                    # Main Flask application entry point
+├── authentication/           # Package for authentication-related code
+│   ├── __init__.py           # Initialize the authentication package
+│   ├── routes.py             # Define authentication routes (login, register, etc.)
+│   └── models.py             # Define authentication-related database models
+├── utils/                    # Package for utility functions
+│   ├── __init__.py           # Initialize the utils package
+│   └── helper.py             # Utility functions used throughout the application
+├── config.py                 # Configuration settings for the application
+├── requirements.txt          # List of Python dependencies
+└── .env                      # Environment variables (optional)
 
 racquethub_app/
-│
-├── racquethub_backend # Main backend file
-├── src # Main front end components
-|   └── App.tsx
+├── racquethub_backend        # Main backend file
+├── src                       # Main front end components
+│   └── App.tsx
 ├── package.json
 ├── venv
-├── .env
+└── .env
+
 
 
 # TODO List
