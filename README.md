@@ -75,16 +75,15 @@ racquethub_app/
 ├── .env
 
 
-# TODO 
+# TODO List
 
-## after submit new proposal
+## After Submitting a New Proposal
 
-// close modal
-// disable to the submit button while processing request.
-// show a success banner 
-// rerender the proposal list component to show the new proposal
+- Close modal
+- Disable the submit button while processing the request
+- Show a success banner 
+- Rerender the proposal list component to display the new proposal
 
-## Feature: 
+## Feature: Delete Proposal
 
-## Delete proposal
-// logged in
+- Implement functionality for logged-in users to delete proposals
