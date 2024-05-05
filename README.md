@@ -73,3 +73,18 @@ racquethub_app/
 ├── package.json
 ├── venv
 ├── .env
+
+
+# TODO 
+
+## after submit new proposal
+
+// close modal
+// disable to the submit button while processing request.
+// show a success banner 
+// rerender the proposal list component to show the new proposal
+
+## Feature: 
+
+## Delete proposal
+// logged in
