@@ -86,4 +86,4 @@ racquethub_app/
 
 ## Feature: Delete Proposal
 
-- Implement functionality for logged-in users to delete proposals
+- Implement functionality for logged-in users to delete/update  proposals
