@@ -88,7 +88,7 @@ function Landing() {
             </div>
           </header>
           <main>
-            <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 min-h-[800px]">
               {/* Your content */}
 
               {proposalList && proposalList?.proposals && proposalList?.proposals?.length > 0 && (

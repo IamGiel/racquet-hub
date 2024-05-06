@@ -31,6 +31,8 @@ export const ProposeComponent = ({ close, data }: any) => {
   let [isOpen, setIsOpen] = useState(true);
   let [showDatePicker, setShowDatePicker] = useState(false);
   let [eventDate, setEventDate] = useState<any>(null);
+  let [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   function showDatePickerFunc(val: boolean) {
     // e.preventDefault()
@@ -43,11 +45,6 @@ export const ProposeComponent = ({ close, data }: any) => {
 
   function openModal() {
     setIsOpen(true);
-  }
-
-  function handleSubmitProposal(event: any) {
-    event.preventDefault();
-    console.log("submitting proposal ");
   }
   function handleSelectedDate(dateSelected: any) {
     console.log("dateSelected  ", dateSelected);
@@ -77,7 +74,7 @@ export const ProposeComponent = ({ close, data }: any) => {
     }),
     onSubmit(values, { resetForm }) {
       console.log("ONSUBMIT FORM Form values:", JSON.stringify(values));
-
+      setIsLoading(true)
       const payload = {
         sport: formik.values.sportType,
         type: formik.values.categoryType,
@@ -93,13 +90,25 @@ export const ProposeComponent = ({ close, data }: any) => {
       };
       createProposal(payload).then((res)=>{
         console.log('create proposal res ', res)
+        if(res.error){
+          setErrorMsg(res.error)
+
+          return false
+        }
+       
         // close modal 
         // show success banner
         // rerender ProposalListV2 component to show new proposal added.
+        
         close()
-      }, (err)=> {
+        setIsLoading(false)
+      }).catch((err)=> {
         console.log('create proposal err ', err)
+        setIsLoading(false)
         // if error is is 400s reroute to landing 
+        const errorThrown = JSON.stringify(err)
+        setErrorMsg(String(errorThrown)); // Convert errorThrown to a string explicitly if necessary
+        return false
 
       })
 
@@ -287,10 +296,13 @@ export const ProposeComponent = ({ close, data }: any) => {
                       </button>
                     </div>
                   </form>
+                  <span className={styles.errMsg + " errmsg mt-2"}>{errorMsg}</span>
                 </div>
+                
               </Dialog.Panel>
             </Transition.Child>
           </div>
+         
         </div>
       </Dialog>
       {/* </Transition> */}

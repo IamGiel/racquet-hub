@@ -1,7 +1,21 @@
+.profilePageContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.subprofilePageContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  /* justify-content: space-around; */
+  margin: 12px auto;
+}
+
 .profileContainer {
   padding: 12px;
   width: 650px;
-  margin: 42px auto;
+  margin: 42px 34px;
   height: 800px;
   background: #e8f1ed;
 }

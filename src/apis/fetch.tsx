@@ -118,10 +118,13 @@ export async function createProposal(payload:any) {
   
   
   return fetch("http://localhost:5000/api/proposals", requestOptions)
-    .then((response) => response.text())
+    .then((response) => response.json())
     .then((result) => {
       // console.log(result);
       return result;
     })
-    .catch((error) => console.error("error in api/login ", error));
+    .catch((error) => {
+      console.error("error in api/login ", error)
+      return error
+    });
 }

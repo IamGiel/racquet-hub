@@ -12,29 +12,41 @@ import { useSelector } from "react-redux";
 const RoutesComponent = () => {
   const dispatch = useAppDispatch();
   const navigateTo = useNavigate();
-  const userAuth = useSelector((state:any) => state?.userAuth);
+  const userAuth = useSelector((state: any) => state?.userAuth);
 
   useEffect(() => {
     const authToken = localStorage.getItem("authToken");
     dispatch(authenticateAndGetUserProfile({ token: authToken }));
-    if(userAuth.isAuthenticated === false){
-      console.log('user auth ', userAuth);
-      navigateTo('/')
-    }
+    
+  }, [dispatch, navigateTo]);
+  
+
+  useEffect(() => {
    
-  }, [dispatch]);
+    if (userAuth.isAuthenticated === false) {
+      console.log("user auth ", userAuth);
+      navigateTo("/");
+    }
+  }, [userAuth]);
+
+
   return (
     <div className="route-component-container">
-      <Header loginStatus={userAuth.isAuthenticated}/>
+      <Header loginStatus={userAuth.isAuthenticated} />
       {/* <span>TESTING USER: {isAuthenticated ? 'is authenticated' : 'is NOT authenticated'}</span> */}
       {/* <Routes>
         <Route path="/" element={<Landing />} />
         <ProtectedRoute path="/profile" element={<Profile />} />
       </Routes> */}
-      <Routes>
-        <Route index element={<Landing />} />
-        {userAuth.isAuthenticated === true && <Route path="/profile" element={<Profile />} />}
-      </Routes>
+
+      <div className="main-container min-h-800px">
+        <Routes>
+          <Route index element={<Landing />} />
+          {userAuth.isAuthenticated === true && (
+            <Route path="/profile" element={<Profile />} />
+          )}
+        </Routes>
+      </div>
     </div>
   );
 };

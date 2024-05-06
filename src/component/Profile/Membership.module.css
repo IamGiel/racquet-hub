@@ -1,0 +1,33 @@
+.membershipContainer {
+  /* padding: 12px; */
+  width: 650px;
+  margin: 42px 34px;
+  height: 800px;
+  /* background: #e8f1ed; */
+}
+
+.sectionName {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.75rem;
+  color: #1a202c;
+}
+.columnedSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.membership,
+.paymentinfo {
+  padding: 12px;
+  width: 650px;
+  height: 350px;
+  background: #e8f1ed;
+
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.75rem;
+  color: #1a202c;
+}

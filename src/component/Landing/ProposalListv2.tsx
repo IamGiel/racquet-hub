@@ -20,6 +20,7 @@ import { ProposeComponent } from "../Dialogs/ProposeComponent.dialog";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { GenPurposePopover } from "../Popovers/GenPurposePopover";
 import { ProposalStatus } from "../ProposalStatus/ProposalStatus";
+import EmptyList from "./EmptyList";
 
 export default function ProposalListv2({ proposals }: any) {
   const [listOfProposals, setListOfProposals] = useState(proposals || []);
@@ -52,6 +53,9 @@ export default function ProposalListv2({ proposals }: any) {
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector(
     (state) => state.userAuth.isAuthenticated
+  );
+  const userAuth = useAppSelector((state) =>
+    JSON.parse(state.userAuth.payload)
   );
 
   const mainFontColor = `#023047`;
@@ -170,8 +174,8 @@ export default function ProposalListv2({ proposals }: any) {
       // Apply the current filter to the filtered list
       if (aFilter?.type === "TYPE_SPORT") {
         filteredList = filteredList.filter((listItem: any) => {
-          console.log('listItem ', listItem)
-          console.log('aFilter ', aFilter)
+          console.log("listItem ", listItem);
+          console.log("aFilter ", aFilter);
           return listItem.sport.toLowerCase() === aFilter?.name.toLowerCase();
         });
       }
@@ -225,164 +229,170 @@ export default function ProposalListv2({ proposals }: any) {
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
-      <div
-        className={styles.eventsIntro + " eventsIntro sm:flex sm:items-center"}
-      >
-        <div className={styles.descriptionTitle + " descriptionTitle"}>
-          <h1
-            className="text-base font-semibold text-gray-900"
-            style={{
-              fontWeight: "700",
-              fontSize: "30px",
-              color: mainFontColor,
-            }}
+      {userAuth?.data?._id && (
+        <div className="mt-2 flow-root">
+          <div
+            className={
+              styles.eventsIntro + " eventsIntro sm:flex sm:items-center"
+            }
           >
-            Events
-          </h1>
-          <p
-            className="mt-2 text-sm text-gray-700"
-            style={{
-              fontWeight: "500",
-              fontSize: "20px",
-              color: mainFontColor,
-            }}
-          >
-            List of players who want to start an event. Checkout their proposal.
-          </p>
-        </div>
-        <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-          <button
-            type="button"
-            className="block rounded-md px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            style={{
-              background: isAuthenticated ? "rgb(3, 63, 99)" : "lightGrey",
-            }}
-            onClick={handleMakeProposal}
-            disabled={isAuthenticated ? false : true}
-          >
-            Propose an Event
-          </button>
-        </div>
-      </div>
-      <div className="mt-8 flow-root">
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 h-[100vh]">
-          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            {/* {listOfProposals.length > 0 && ( */}
-            <div className={styles.filtersub + " filtersub"}>
-              <div className={styles.filterPopDiv + " filterPopDiv"}>
-                <FilterPopover
-                  filterData={filterData}
-                  onSelectedItemsChange={handleSelectedItemsChange}
-                  selectedItems={selections}
-                  onClickFilter={showPopoverForFiltering}
-                />
-              </div>
+            <div className={styles.descriptionTitle + " descriptionTitle"}>
+              <h1
+                className="text-base font-semibold text-gray-900"
+                style={{
+                  fontWeight: "700",
+                  fontSize: "30px",
+                  color: mainFontColor,
+                }}
+              >
+                Events
+              </h1>
+              <p
+                className="mt-2 text-sm text-gray-700"
+                style={{
+                  fontWeight: "500",
+                  fontSize: "20px",
+                  color: mainFontColor,
+                }}
+              >
+                List of players who want to start an event. Checkout their
+                proposal.
+              </p>
             </div>
-            {/* )} */}
-            <hr style={{ margin: "24px 0px 0px" }} />
-            {/* <pre>{JSON.stringify(filteredList, null, 4)}</pre> */}
-            {/* <pre>{JSON.stringify(proposals, null, 4)}</pre> */}
-            {filteredList && filteredList.length > 0 && (
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead>
-                  <tr>
-                    {columns.map((column) => (
-                      <th
-                        key={column.id}
-                        scope="col"
-                        className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
-                        style={{ maxWidth: "300px" }}
-                      >
-                        <div
-                          className="col-label-container"
-                          style={{
-                            display: "flex",
-                            gap: "12px",
-                            alignItems: "center",
-                          }}
+            <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+              <button
+                type="button"
+                className="block rounded-md px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                style={{
+                  background: isAuthenticated ? "rgb(3, 63, 99)" : "lightGrey",
+                }}
+                onClick={handleMakeProposal}
+                disabled={isAuthenticated ? false : true}
+              >
+                Propose an Event
+              </button>
+            </div>
+          </div>
+          <div className="-mx-4 my-2 sm:-mx-6 lg:-mx-8 h-[100vh]">
+            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+              {/* {listOfProposals.length > 0 && ( */}
+              <div className={styles.filtersub + " filtersub"}>
+                <div className={styles.filterPopDiv + " filterPopDiv"}>
+                  <FilterPopover
+                    filterData={filterData}
+                    onSelectedItemsChange={handleSelectedItemsChange}
+                    selectedItems={selections}
+                    onClickFilter={showPopoverForFiltering}
+                  />
+                </div>
+              </div>
+              {/* )} */}
+              <hr style={{ margin: "24px 0px 0px" }} />
+              {/* <pre>{JSON.stringify(filteredList, null, 4)}</pre> */}
+              {/* <pre>{JSON.stringify(proposals, null, 4)}</pre> */}
+              {filteredList && filteredList.length > 0 && (
+                <table className="min-w-full divide-y divide-gray-300">
+                  <thead>
+                    <tr>
+                      {columns.map((column, columnId) => (
+                        <th
+                          key={column.id + "-" + columnId}
+                          scope="col"
+                          className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
+                          style={{ maxWidth: "300px" }}
                         >
-                          <span className="colLabel capitalize text-[#023047]">
-                            {column.label}
-                          </span>{" "}
-                          <div className="controller-container">
-                            {(column?.id === "name" ||
-                              column?.id === "location.distance" ||
-                              column?.id === "playTime") && (
-                              <span
-                                className={styles.caretStyle + " caret"}
-                                onClick={(event) => {
-                                  event.preventDefault();
-                                  handleControl(column.id);
-                                }}
-                              >
-                                {renderCaret(column?.id)}
-                              </span>
-                            )}
+                          <div
+                            className="col-label-container"
+                            style={{
+                              display: "flex",
+                              gap: "12px",
+                              alignItems: "center",
+                            }}
+                          >
+                            <span className="colLabel capitalize text-[#023047]">
+                              {column.label}
+                            </span>{" "}
+                            <div className="controller-container">
+                              {(column?.id === "name" ||
+                                column?.id === "location.distance" ||
+                                column?.id === "playTime") && (
+                                <span
+                                  className={styles.caretStyle + " caret"}
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    handleControl(column.id);
+                                  }}
+                                >
+                                  {renderCaret(column?.id)}
+                                </span>
+                              )}
+                            </div>
                           </div>
-                        </div>
+                        </th>
+                      ))}
+                      <th
+                        scope="col"
+                        className="relative py-3.5 pl-3 pr-4 sm:pr-0"
+                      >
+                        <span className="sr-only">Edit</span>
                       </th>
-                    ))}
-                    <th
-                      scope="col"
-                      className="relative py-3.5 pl-3 pr-4 sm:pr-0"
-                    >
-                      <span className="sr-only">Edit</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {filteredList.map((proposalItem: any) => (
-                    <tr key={proposalItem.domain}>
-                      <td
-                        className={
-                          styles.tdAlignment +
-                          " tdAlignment whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0"
-                        }
-                        style={{
-                          display: "flex",
-                          gap: "12px",
-                          alignItems: "center",
-                        }}
-                      >
-                        {/* <pre>{JSON.stringify(proposalItem, null, 4)}</pre> */}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {filteredList.map(
+                      (proposalItem: any, proposalItemId: any) => (
+                        <tr key={proposalItem.domain}>
+                          <td
+                            key={proposalItemId}
+                            className={
+                              styles.tdAlignment +
+                              " tdAlignment whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0"
+                            }
+                            style={{
+                              display: "flex",
+                              gap: "12px",
+                              alignItems: "center",
+                            }}
+                          >
+                            {/* <pre>{JSON.stringify(proposalItem, null, 4)}</pre> */}
 
-                        <span>
-                          <Avatar
-                            size={40}
-                            name={proposalItem.user_details.name}
-                            square={true}
-                            variant="beam"
-                            colors={[
-                              // #033f63 // #28666e // #7c9885 // #b5b682 // #fedc97
-                              "#033f63",
-                              "#28666e",
-                              "#7c9885",
-                              "#b5b682",
-                              "#fedc97",
-                            ]}
-                          />
-                        </span>
-                        <span className="td_info text-[#023047]">
-                          {proposalItem.user_details.name}
-                        </span>
-                      </td>
-                      <td
-                        className={
-                          styles.tdAlignment +
-                          " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
-                        }
-                      >
-                        {proposalItem.sport}
-                      </td>
-                      <td
-                        className={
-                          styles.tdAlignment +
-                          " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
-                        }
-                      >
-                        {proposalItem.type}
-                      </td>
-                      {/* <td
+                            <span>
+                              <Avatar
+                                size={40}
+                                name={proposalItem.user_details.name}
+                                square={true}
+                                variant="beam"
+                                colors={[
+                                  // #033f63 // #28666e // #7c9885 // #b5b682 // #fedc97
+                                  "#033f63",
+                                  "#28666e",
+                                  "#7c9885",
+                                  "#b5b682",
+                                  "#fedc97",
+                                ]}
+                              />
+                            </span>
+                            <span className="td_info text-[#023047]">
+                              {proposalItem.user_details.name}
+                            </span>
+                          </td>
+                          <td
+                            className={
+                              styles.tdAlignment +
+                              " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
+                            }
+                          >
+                            {proposalItem.sport}
+                          </td>
+                          <td
+                            className={
+                              styles.tdAlignment +
+                              " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
+                            }
+                          >
+                            {proposalItem.type}
+                          </td>
+                          {/* <td
                       className={
                         styles.tdAlignment +
                         " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
@@ -390,94 +400,148 @@ export default function ProposalListv2({ proposals }: any) {
                     >
                       {proposalItem.email}
                     </td> */}
-                      <td
-                        className={`${styles.tdAlignment} tdAlignment whitespace-nowrap py-4 text-sm text-gray-500`}
-                        style={{ maxWidth: "200px" }}
-                      >
-                       {makeReadableTimePlace(proposalItem.playTime)}
-                      </td>
-                      <td
-                        className={
-                          styles.tdAlignment +
-                          " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
-                        }
-                      >
-                        {/* {JSON.stringify(proposalItem)} */}
-                        <div className="location-details">
-                          <span>{proposalItem.location?.location}</span>
-                          <span>
-                            {proposalItem.location?.distance
-                              ? `, ${proposalItem.location?.distance} miles away`
-                              : ""}
-                          </span>
-                        </div>
-                      </td>
-                      <td
-                        className={
-                          styles.tdAlignment +
-                          " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500 flex gap-[8px]"
-                        }
-                        style={{display:'flex', justifyContent:'left', alignItems:'center', marginBottom:'22px'}}
-                      >
-                        <div className="status w-[75px]">{proposalItem.eventStatus?.status}{" "}</div>
-                        <div><GenPurposePopover
-                            popoverBtnLabel=""
-                            openPopover={onOpenStatusInfo}
-                            children={<ProposalStatus />}
-                            icon={
-                              <InformationCircleIcon
-                                height={`24px`}
-                                width={`24px`}
-                                stroke="#a89b9b"
-                              />
+                          <td
+                            className={`${styles.tdAlignment} tdAlignment whitespace-nowrap py-4 text-sm text-gray-500`}
+                            style={{ maxWidth: "200px" }}
+                          >
+                            {makeReadableTimePlace(proposalItem.playTime)}
+                          </td>
+                          <td
+                            className={
+                              styles.tdAlignment +
+                              " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
                             }
-                            topPosition="40%"
-                          /></div>
-                      </td>
-                      <td
-                        className={
-                          styles.tdAlignment +
-                          " tdAlignment relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
-                        }
-                      >
-                        <a
-                          href={`http://localhost:3001`}
-                          className={styles["join-button"] + " join-button"}
-                          style={{
-                            display: isAuthenticated ? "flex" : "none",
-                            gap: "12px",
-                            alignItems: "center",
-                            background:
-                              proposalItem.eventStatus?.status === "closed"
-                                ? "lightgrey"
-                                : "",
-                            pointerEvents:
-                              proposalItem.eventStatus?.status === "closed"
-                                ? "none"
-                                : undefined,
-                            justifyContent: "center",
-                          }}
-                        >
-                          {proposalItem.eventStatus?.status === "closed"
-                            ? "full"
-                            : "Join"}
-                          <span className="sr-only">, {proposalItem.name}</span>
-                        </a>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+                          >
+                            {/* {JSON.stringify(proposalItem)} */}
 
-            {filteredList && filteredList.length === 0 && (
-              <div className={styles.noProposalsFound + " no-proposla-found"}>
-                NO PROPOSALS FOUND
-              </div>
-            )}
+                            <div className="location-details">
+                              <span>{proposalItem.location?.location}</span>
+                              <span>
+                                {proposalItem.location?.distance
+                                  ? `, ${proposalItem.location?.distance} miles away`
+                                  : ""}
+                              </span>
+                            </div>
+                          </td>
+                          <td
+                            className={
+                              styles.tdAlignment +
+                              " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500 flex gap-[8px]"
+                            }
+                            style={{
+                              display: "flex",
+                              justifyContent: "left",
+                              alignItems: "center",
+                              marginBottom: "22px",
+                            }}
+                          >
+                            <div className="status w-[75px]">
+                              {proposalItem.eventStatus?.status}{" "}
+                            </div>
+                            <div>
+                              <GenPurposePopover
+                                popoverBtnLabel=""
+                                openPopover={onOpenStatusInfo}
+                                children={<ProposalStatus />}
+                                icon={
+                                  <InformationCircleIcon
+                                    height={`24px`}
+                                    width={`24px`}
+                                    stroke="#a89b9b"
+                                  />
+                                }
+                                topPosition="40%"
+                              />
+                            </div>
+                          </td>
+                          {userAuth.data._id !==
+                            proposalItem?.user_details?.user_id && (
+                            <td
+                              className={
+                                styles.tdAlignment +
+                                " tdAlignment relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
+                              }
+                            >
+                              <button
+                                type="button"
+                                className={
+                                  styles["join-button"] + " join-button"
+                                }
+                                style={{
+                                  display: isAuthenticated ? "flex" : "none",
+                                  gap: "12px",
+                                  alignItems: "center",
+                                  background:
+                                    proposalItem.eventStatus?.status ===
+                                    "closed"
+                                      ? "lightgrey"
+                                      : "",
+                                  pointerEvents:
+                                    proposalItem.eventStatus?.status ===
+                                    "closed"
+                                      ? "none"
+                                      : undefined,
+                                  justifyContent: "center",
+                                }}
+                              >
+                                {proposalItem.eventStatus?.status === "closed"
+                                  ? "full"
+                                  : "Join"}
+                                <span className="sr-only">
+                                  , {proposalItem.name}
+                                </span>
+                              </button>
+                            </td>
+                          )}
+
+                          {userAuth.data._id ===
+                            proposalItem?.user_details?.user_id && (
+                            <td
+                              className={
+                                styles.tdAlignment +
+                                " tdAlignment relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
+                              }
+                            >
+                              <button
+                                type="button"
+                                className={
+                                  styles["join-button"] + " join-button"
+                                }
+                                style={{
+                                  display: isAuthenticated ? "flex" : "none",
+                                  gap: "12px",
+                                  alignItems: "center",
+                                  background: "#e2715b",
+                                  pointerEvents:
+                                    proposalItem.eventStatus?.status ===
+                                    "closed"
+                                      ? "none"
+                                      : undefined,
+                                  justifyContent: "center",
+                                }}
+                              >
+                                Edit
+                              </button>
+                            </td>
+                          )}
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+                </table>
+              )}
+
+              {filteredList && filteredList.length === 0 && (
+                <div className={styles.noProposalsFound + " no-proposla-found"}>
+                  NO PROPOSALS FOUND
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {!userAuth?.data?._id && <EmptyList />}
     </div>
   );
 }
