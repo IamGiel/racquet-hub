@@ -1,0 +1,84 @@
+.proposalDetailContainer {
+  width: 650px;
+  display: flex;
+  flex-direction: column;
+  margin: 32px;
+}
+
+.sportType {
+  margin: 24px 0px;
+}
+
+.errorMessge {
+  color: red;
+  font-size: 13px;
+  font-family: "Inter";
+  font-style: normal;
+  line-height: 24px;
+}
+
+.cancelBtn {
+  display: flex;
+  padding: 9px 17px;
+  justify-content: center;
+  align-items: center;
+
+  color: var(--Slate-Tints-400, #bac1d8);
+
+  /* In-App/text-sm/Medium */
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 142.857% */
+}
+
+.deleteBtn {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: rgb(226, 113, 91);
+  justify-content: center;
+
+  background-color: #e2715b;
+  color: #fff;
+  font-weight: bold;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 0.375rem;
+}
+
+.submitValid {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: green;
+  justify-content: center;
+
+  background-color: #7b9885;
+  color: #fff;
+  font-weight: bold;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 0.375rem;
+}
+.submitInValid {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: rgb(226, 113, 91);
+  justify-content: center;
+
+  background-color: lightgrey;
+  color: #fff;
+  font-weight: bold;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 0.375rem;
+}

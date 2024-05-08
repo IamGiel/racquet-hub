@@ -1,14 +1,14 @@
 {
-  "_id": { "$oid": "662f0e4dad764031d9a2574e" },
-  "createdAt": { "$date": "2024-04-29T03:04:45.983Z" },
-  "eventStatus": { "status": "closed" },
-  "location": { "distance": 23, "location": "Cary" },
-  "playTime": "30 Apr 2024 at 6pm",
-  "sport": "tennis",
-  "type": "singles",
+  "_id": { "$oid": "663706dae299f6066996e627" },
+  "createdAt": { "$date": "2024-05-05T04:11:06.656Z" },
+  "eventStatus": { "status": "open" },
+  "location": { "distance": 12, "location": "Knightdale" },
+  "playTime": "2024-05-08T19:00:00.000Z",
+  "sport": "Pickleball",
+  "type": "Doubles",
   "user_details": {
-    "email": "Tester@mail.com",
-    "name": "Tester D",
-    "user_id": "662d023d49268ec0fadefd2e"
+    "email": "Chester_d@mail.com",
+    "name": "Chester D",
+    "user_id": "662f0d9dad764031d9a2574d"
   }
 }

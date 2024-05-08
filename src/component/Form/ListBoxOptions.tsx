@@ -37,21 +37,34 @@ export const ListBoxOptions: React.FC<IListBoxOptions> = ({
     }
   }, [selected]);
 
+  const placeholderEntry = () => {
+    if(selected?.name){
+      return selected.name
+    } else
+    if(placeholder){
+      return placeholder
+    } else {
+      return 'Make a selection'
+    }
+
+    
+  }
+
   return (
     <Listbox value={selected} onChange={setSelected}>
       {({ open }) => (
         <>
-          <Listbox.Label className="block text-sm font-medium leading-6 text-gray-900">
+          <Listbox.Label className="block text-sm font-medium leading-6 text-['#181818']">
             {label}
           </Listbox.Label>
           <div className="relative mt-2">
             <Listbox.Button className="relative w-full cursor-default shadow-md rounded-lg bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6" style={{borderRadius:'6px'}}>
               <span
-                className={`block truncate ${
+                className={`block truncate text-[14px] text-['#181818'] font-['Inter'] ${
                   !selected?.name ? "opacity-[0.5]" : ""
                 }`}
               >
-                {selected?.name ?? "Make a selection"}
+                {placeholderEntry()}
               </span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                 <ChevronUpDownIcon

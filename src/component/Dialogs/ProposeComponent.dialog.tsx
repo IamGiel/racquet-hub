@@ -90,11 +90,11 @@ export const ProposeComponent = ({ close, data }: any) => {
       };
       createProposal(payload).then((res)=>{
         console.log('create proposal res ', res)
-        if(res.error){
-          setErrorMsg(res.error)
+        // if(res.error){
+        //   setErrorMsg(res.error)
 
-          return false
-        }
+        //   return false
+        // }
        
         // close modal 
         // show success banner
@@ -203,7 +203,10 @@ export const ProposeComponent = ({ close, data }: any) => {
                 <div className="form-container mt-4 flex flex-col gap-[12px] justify-center ">
                   <StepperComponent status={formik} />
                   <form
-                    onSubmit={formik.handleSubmit}
+                    onSubmit={(event)=> {
+                      event.preventDefault()
+                      formik.handleSubmit()
+                    }}
                     style={{
                       display: "flex",
                       flexDirection: "column",
@@ -226,7 +229,7 @@ export const ProposeComponent = ({ close, data }: any) => {
                     <div className="input-for-sportType">
                       <ListBoxOptions
                         id="categoryType"
-                        label="Select a Category"
+                        label="Select a category"
                         selections={sportCategoryFilters}
                         onSelect={handleSelectedCategoryType}
                       />
@@ -262,7 +265,7 @@ export const ProposeComponent = ({ close, data }: any) => {
                       )}
                     </div> */}
                     <div className="input-for-sportType">
-                      <ReactDatePicker onDateSelect={handleSelectedDateTime} />
+                      <ReactDatePicker onDateSelect={handleSelectedDateTime} prevValue={formik.values.date}/>
                       {/* <DatePicker onSelectDate={handleSelectedDateTime} /> */}
                       {formik.errors.date && formik.touched.date && (
                         <p className={styles.errorMessge + " sportype-err-msg"}>

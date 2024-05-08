@@ -19,14 +19,17 @@ import { dialogService } from "../Services/dialog-service";
 import { ProposeComponent } from "../Dialogs/ProposeComponent.dialog";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { GenPurposePopover } from "../Popovers/GenPurposePopover";
-import { ProposalStatus } from "../ProposalStatus/ProposalStatus";
+import { ProposalStatus } from "../Proposals/ProposalStatus";
 import EmptyList from "./EmptyList";
+import { useNavigate } from "react-router-dom";
 
 export default function ProposalListv2({ proposals }: any) {
   const [listOfProposals, setListOfProposals] = useState(proposals || []);
   const [filteredList, setfilteredList] = useState(proposals || []);
   const [filterData, setFilterData] = useState<any>([]);
   const [selections, setSelections] = useState<any>([]);
+
+  const navigateTo = useNavigate()
 
   const [sortConfig, setSortConfig] = useState<any>({
     key: "playtime",
@@ -227,9 +230,16 @@ export default function ProposalListv2({ proposals }: any) {
     console.log(`on open status `, status);
   }
 
+  function onEditProposal(proposalItem:any){
+    console.log(`on open proposalItem `, proposalItem);
+    if(isAuthenticated){
+      navigateTo(`/proposal/${proposalItem?._id?.['$oid']}/edit`, {state:proposalItem})
+    }
+  }
+
   return (
     <div className="px-4 sm:px-6 lg:px-8">
-      {userAuth?.data?._id && (
+      {/* <pre>{JSON.stringify(userAuth)} TEST</pre> */}
         <div className="mt-2 flow-root">
           <div
             className={
@@ -454,7 +464,7 @@ export default function ProposalListv2({ proposals }: any) {
                               />
                             </div>
                           </td>
-                          {userAuth.data._id !==
+                          {userAuth?.data._id !==
                             proposalItem?.user_details?.user_id && (
                             <td
                               className={
@@ -485,7 +495,7 @@ export default function ProposalListv2({ proposals }: any) {
                                 }}
                               >
                                 {proposalItem.eventStatus?.status === "closed"
-                                  ? "full"
+                                  ? "Full"
                                   : "Join"}
                                 <span className="sr-only">
                                   , {proposalItem.name}
@@ -494,7 +504,7 @@ export default function ProposalListv2({ proposals }: any) {
                             </td>
                           )}
 
-                          {userAuth.data._id ===
+                          {userAuth?.data._id ===
                             proposalItem?.user_details?.user_id && (
                             <td
                               className={
@@ -519,6 +529,7 @@ export default function ProposalListv2({ proposals }: any) {
                                       : undefined,
                                   justifyContent: "center",
                                 }}
+                                onClick={()=>onEditProposal(proposalItem)}
                               >
                                 Edit
                               </button>
@@ -539,9 +550,9 @@ export default function ProposalListv2({ proposals }: any) {
             </div>
           </div>
         </div>
-      )}
+      
 
-      {!userAuth?.data?._id && <EmptyList />}
+    
     </div>
   );
 }

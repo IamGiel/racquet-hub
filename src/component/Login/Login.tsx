@@ -11,7 +11,7 @@ import * as Yup from "yup";
 import { error } from "console";
 import { authenticateAndGetUserProfile } from "../../actions/userProfileActions";
 
-export const Login = () => {
+export const Login = ({close}:any) => {
   const [open, setOpen] = useState(true);
   const [failedLogin, setFailedLogin] = useState<any>(null);
   const dispatch = useAppDispatch();
@@ -30,8 +30,9 @@ export const Login = () => {
     };
 
     console.log("data ", data);
+    // console.log("close ", close);
     handleLogin(data);
-    setOpen(false);
+    // setOpen(false);
   };
 
   const handleLogin = async (data: any) => {
@@ -43,12 +44,14 @@ export const Login = () => {
       console.log("parsed res.payload ", resPayload);
       if (resPayload.token) {
         //  means user is authenticated, close the modal
-        setOpen(false);
-        localStorage.setItem('authToken', resPayload.token)
+        // setOpen(false);
+        // dialogService.close(resPayload);
+        close(resPayload)
+        localStorage.setItem("authToken", resPayload.token);
       } else if (!resPayload.token) {
         // set failedLogin resPayload, keep the modal open
         setOpen(true);
-        dispatch(logout())
+        dispatch(logout());
         setFailedLogin(resPayload.error.message);
       }
     }
@@ -83,9 +86,18 @@ export const Login = () => {
     },
   });
 
+  const handleDialogClose = (addedData:any) => {
+    // Perform any necessary action with the added data
+    console.log('Added data:', addedData);
+  };
+
   return (
     <Transition.Root show={open} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setOpen}>
+      <Dialog as="div" className="relative z-10" onClose={(addedData:any) => {
+          console.log('closing this login dialog ', addedData)
+          handleDialogClose(addedData);
+          // setOpen(false);
+        }} >
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -169,7 +181,6 @@ export const Login = () => {
                           >
                             Password
                           </label>
-                         
                         </div>
                         <div className="mt-2">
                           <input

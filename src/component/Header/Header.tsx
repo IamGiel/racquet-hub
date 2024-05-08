@@ -10,11 +10,10 @@ import { dialogService } from "../Services/dialog-service";
 import { logout } from "../../reducers/userAuthSlice";
 import { IconTennisMatch } from "../../../src/assets/svgs/🦆 icon _tennis match_";
 import { Register } from "../Login/Register";
-import { authenticateAndGetUserProfile } from "../../actions/userProfileActions";
 import {  useLocation } from 'react-router-dom';
 import { useSelector } from "react-redux";
 
-export const Header = ({ loginStatus }:any) => {
+export const Header = ({ loginStatus, onSuccessAuth }:any) => {
   const [activeLink, setActiveLink] = useState("Dashboard");
   const [openToolTip, setOpenToolTip] = useState(false);
 
@@ -26,6 +25,12 @@ export const Header = ({ loginStatus }:any) => {
     return classes.filter(Boolean).join(" ");
   }
 
+  const handleLoginDialogClose = (data: any) => {
+    // Handle the received data here
+    console.log("Data received from dialog:", data);
+    onSuccessAuth(data)
+  };
+
   const callToAuth = (actionToCall: any) => {
     console.log("action to call ", actionToCall);
     if (actionToCall === "logout") {
@@ -33,7 +38,7 @@ export const Header = ({ loginStatus }:any) => {
       dispatch(logout());
     }
     if (actionToCall === "login") {
-      dialogService.openDialog(Login);
+      dialogService.openDialog(Login, null, handleLoginDialogClose)
       // dispatch(login()); // Dispatch the login action
     }
   };

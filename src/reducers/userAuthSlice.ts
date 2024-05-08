@@ -31,6 +31,7 @@ const userAuthSlice = createSlice({
     logout(state) {
       state.isAuthenticated = false;
       localStorage.clear();
+      window.location.reload()
       // Reset any additional state if needed
     },
   },

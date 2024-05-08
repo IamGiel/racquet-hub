@@ -16,6 +16,10 @@
   font-size: 45px;
 }
 
+.headerRow {
+  z-index: 0;
+}
+
 .descriptionTitle {
   display: flex;
   gap: 12px;
@@ -74,6 +78,7 @@
 .eventsIntro {
   display: flex;
   justify-content: space-between;
+  margin: 0px 0px 12px 0px;
 }
 
 @media (max-width: 574px) {

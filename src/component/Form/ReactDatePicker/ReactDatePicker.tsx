@@ -3,8 +3,8 @@ import DatePicker, { CalendarContainer } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./ReactDatePicker.css";
 
-export const ReactDatePicker = ({ onDateSelect }: any) => {
-  const [startDate, setStartDate] = useState(new Date());
+export const ReactDatePicker = ({ onDateSelect, prevValue = null }: any) => {
+  const [startDate, setStartDate] = useState(null);
   const MyContainer = ({ className, children }: any) => {
     return (
       <div className={" some-date-picker-wrapper"}>
@@ -27,16 +27,17 @@ export const ReactDatePicker = ({ onDateSelect }: any) => {
       >
         Select a date and time:
       </label>
+      {/* <pre>{prevValue}</pre> */}
       <DatePicker
-        selected={startDate}
+        selected={prevValue ? new Date(prevValue) : new Date()}
         onChange={(date: any) => {
           setStartDate(date);
           onDateSelect(date);
         }}
-        minDate={new Date()} // Set minimum date to today
+        minDate={startDate} // Set minimum date to today
         maxDate={maxDate} // Set maximum date to today + 14 days
         calendarContainer={MyContainer}
-        wrapperClassName="datePicker"
+        wrapperClassName={!startDate ? "datePickerGrayed": "datePicker"}
         showTimeSelect
         dateFormat="EEE, MMM dd 'at'  p"
       />

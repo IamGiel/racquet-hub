@@ -17,7 +17,7 @@ JWT_EXPIRATION_DELTA = timedelta(
     seconds=15,
     microseconds=0,
     milliseconds=0,
-    minutes=1,
+    minutes=5,
     hours=0,
     weeks=0
 )

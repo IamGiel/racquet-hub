@@ -14,9 +14,8 @@ import { dialogService } from "../Services/dialog-service";
 import { Login } from "../Login/Login";
 import { Profile } from "../Profile/Profile";
 import { useNavigate } from "react-router-dom";
-import {
-  authenticateAndGetUserProfile,
-} from "../../actions/userProfileActions";
+import EmptyList from "./EmptyList";
+import { ProposalListv3 } from "./ProposalListV3";
 
 const user = {
   name: "Tom Cook",
@@ -41,62 +40,60 @@ function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-function Landing() {
+function Landing({authStatus}:any) {
   const [activeLink, setActiveLink] = useState("Dashboard");
   const [proposalList, setProposalList] = useState<any>({});
   const [credentials, setCredentials] = useState<any>(null);
 
   const dispatch = useAppDispatch();
   const navigateTo = useNavigate();
-  const userAuth = useSelector((state:any) => state?.userAuth);
+  const userAuth = useSelector((state: any) => state?.userAuth);
   // const proposals = useSelector((state:any) => state?.proposalList);
 
   const appName = "Racquet Hub";
 
-
   const fetchData = async () => {
-    try {
-      await getAllProposals()
-        .then((response) => {
-          console.log(response)
-          setProposalList(response);
-        })
-       
-        .catch((error) => console.error(error));
-    } catch (error) {
-      // Handle errors, e.g., log the error or show a user-friendly message
-      console.error("Error fetching proposals:", error);
-    }
+    console.log("fetchdta");
+
+    await getAllProposals()
+      .then((response) => {
+        console.log("response get all proposals", response);
+        setProposalList(response);
+      })
+
+      .catch((error) => {
+        console.error("some error on get all proposals ", error);
+        setProposalList(null);
+        navigateTo("/");
+      });
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken')
-    console.log('token in landing ', token)
+    const token = localStorage.getItem("authToken");
+    console.log("token in landing ", token);
     fetchData();
-  }, []);
+  }, [authStatus]);
 
   return (
     <>
       {/* <pre>test</pre> */}
+     
       <div className="min-h-full">
         <div className="py-10">
-          <header>
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              {/* <h1 className="main-page-title text-3xl font-bold leadi g-tight tracking-tight text-gray-900" style={{display:'flex'}}>
-                Proposals
-              </h1> */}
-            </div>
-          </header>
+         
           <main>
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 min-h-[800px]">
               {/* Your content */}
+              {proposalList &&
+                proposalList?.proposals &&
+                proposalList?.proposals?.length > 0 && (
+                  <div className="content-container">
+                    {/* <ProposalListv2 proposals={proposalList.proposals} /> */}
+                    <ProposalListv3 proposalList={proposalList.proposals}/>
+                  </div>
+                )}
 
-              {proposalList && proposalList?.proposals && proposalList?.proposals?.length > 0 && (
-                // <ProposalList proposals={proposalList}/>
-                <div className="content-container">
-                  <ProposalListv2 proposals={proposalList.proposals} />
-                </div>
-              )}
+              {!proposalList && <EmptyList />}
             </div>
           </main>
         </div>
