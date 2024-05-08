@@ -199,7 +199,8 @@ export const ProposalDetails = () => {
             onClick={(event: any) => {
               event.preventDefault();
               console.log('delete proposal clicked submit ', state)
-              deleteProposal(state?.id).then((successRes)=>{
+              // deleteProposal(state?.id).then((successRes)=>{
+              deleteProposal(state?._id?.$oid).then((successRes)=>{
                 console.log('success res ', successRes)
                 navigateTo('/')
               }).catch(error=>{
@@ -231,7 +232,8 @@ export const ProposalDetails = () => {
                 playTime: formik.values.date,
                 createdAt: "{{moment.utc().format()}}",
               };
-              editProposal(payload, state.id).then((response) => response.text())
+              // editProposal(payload, state.id).then((response) => response.text())
+              editProposal(payload, state?._id?.$oid).then((response) => response.text())
               .then((result) => {
                 console.log(result)
                 navigateTo('/')
