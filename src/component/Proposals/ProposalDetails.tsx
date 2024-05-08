@@ -232,7 +232,10 @@ export const ProposalDetails = () => {
                 createdAt: "{{moment.utc().format()}}",
               };
               editProposal(payload, state.id).then((response) => response.text())
-              .then((result) => console.log(result))
+              .then((result) => {
+                console.log(result)
+                navigateTo('/')
+              })
               .catch((error) => console.error(error));
             }}
           >
@@ -241,7 +244,7 @@ export const ProposalDetails = () => {
         </div>
       </form>
       <hr />
-      <pre>{JSON.stringify(state, null, 4)}</pre>
+      {/* <pre>{JSON.stringify(state, null, 4)}</pre> */}
     </div>
   );
 };

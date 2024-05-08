@@ -81,7 +81,8 @@ racquethub_app/
 - Close modal
 - Disable the submit button while processing the request
 - Show a success banner 
-- Rerender the proposal list component to display the new proposal
+- Rerender the proposal list component to display the new proposal 
+- THe new proposal is not showing after dialog is closed. <--------->
 
 ## Feature: Delete Proposal
 

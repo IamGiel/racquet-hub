@@ -45,10 +45,6 @@ const userAuthSlice = createSlice({
 
         // Access the response data directly from the action payload
         const responseData:any = action?.payload; // Assuming 'data' contains the response data
-
-      
-      
-
         // Update the Redux state with the response data
         if(responseData && JSON.parse(responseData)?.error){
           return {

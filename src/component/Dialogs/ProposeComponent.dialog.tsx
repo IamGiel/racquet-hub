@@ -73,7 +73,16 @@ export const ProposeComponent = ({ close, data }: any) => {
         .required("Date and time is required"),
     }),
     onSubmit(values, { resetForm }) {
-      console.log("ONSUBMIT FORM Form values:", JSON.stringify(values));
+
+      // Revalidate the form if it's dirty
+      if (formik.dirty) {
+        // This line should be changed
+        formik.validateForm(); // This line should be changed
+      }
+    },
+  });
+
+ const onSubmitProposal = () => {
       setIsLoading(true)
       const payload = {
         sport: formik.values.sportType,
@@ -90,35 +99,22 @@ export const ProposeComponent = ({ close, data }: any) => {
       };
       createProposal(payload).then((res)=>{
         console.log('create proposal res ', res)
-        // if(res.error){
-        //   setErrorMsg(res.error)
-
-        //   return false
-        // }
        
-        // close modal 
-        // show success banner
-        // rerender ProposalListV2 component to show new proposal added.
         
-        close()
         setIsLoading(false)
+        close(res)
       }).catch((err)=> {
         console.log('create proposal err ', err)
+        
         setIsLoading(false)
         // if error is is 400s reroute to landing 
         const errorThrown = JSON.stringify(err)
         setErrorMsg(String(errorThrown)); // Convert errorThrown to a string explicitly if necessary
+        window.location.reload()
         return false
 
       })
-
-      // Revalidate the form if it's dirty
-      if (formik.dirty) {
-        // This line should be changed
-        formik.validateForm(); // This line should be changed
-      }
-    },
-  });
+ }
 
   function handleSelectedSportType(selection: any) {
     console.log("sporttype here ", selection);
@@ -294,6 +290,11 @@ export const ProposeComponent = ({ close, data }: any) => {
                           !formik.isValid ? "opacity-50 cursor-not-allowed" : ""
                         }`}
                         disabled={!formik.isValid}
+                        onClick={(e)=> {
+                          e.preventDefault()
+                          onSubmitProposal()
+                        }}
+
                       >
                         Submit
                       </button>

@@ -43,7 +43,7 @@ export async function loginApiv2(userDets: any) {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  // console.log("raw ", raw);
+  console.log("raw ", raw);
 
   const requestOptions: any = {
     method: "POST",

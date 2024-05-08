@@ -37,7 +37,7 @@ export default function ProposalListv2({ proposals }: any) {
   });
 
   const columns = [
-    { id: `name`, label: `Name`, sortValue: `name` },
+    { id: `user_details.name`, label: `Name`, sortValue: `name` },
     { id: `sport`, label: `Sport`, sortValue: `sport` },
     { id: `type`, label: `Type`, sortValue: `type` },
     { id: `playTime`, label: `Time`, sortValue: `playTime` },
@@ -77,7 +77,7 @@ export default function ProposalListv2({ proposals }: any) {
   }
 
   const handleSort = (key: any) => {
-    // console.log("handle sort key ", key);
+    console.log("handle sort key ", key);
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
       direction = "desc";
@@ -89,34 +89,34 @@ export default function ProposalListv2({ proposals }: any) {
   };
 
   const sortColumns = (colname: string, direction: string) => {
-    // console.log();
-    // setfilteredList((prevList: any) => {
-    //   return [...prevList].sort((a, b) => {
-    //     if (colname.includes(".")) {
-    //       // Handle sorting for nested properties
-    //       const keys = colname.split(".");
-    //       const aValue = keys.reduce((obj, key) => obj[key], a);
-    //       const bValue = keys.reduce((obj, key) => obj[key], b);
-    //       if (typeof aValue === "string" && typeof bValue === "string") {
-    //         return direction === "asc"
-    //           ? aValue.localeCompare(bValue)
-    //           : bValue.localeCompare(aValue);
-    //       } else {
-    //         return direction === "asc" ? aValue - bValue : bValue - aValue;
-    //       }
-    //     } else if (colname === "time") {
-    //       const aTime = new Date(a[colname]).getTime();
-    //       const bTime = new Date(b[colname]).getTime();
-    //       return direction === "asc" ? aTime - bTime : bTime - aTime;
-    //     } else {
-    //       // Handle sorting for other columns
-    //       // Modify this part based on your specific column sorting logic
-    //       return direction === "asc"
-    //         ? String(a[colname]).localeCompare(String(b[colname]))
-    //         : String(b[colname]).localeCompare(String(a[colname]));
-    //     }
-    //   });
-    // });
+    console.log('colname ', colname);
+    setfilteredList((prevList: any) => {
+      return [...prevList].sort((a, b) => {
+        if (colname.includes(".")) {
+          // Handle sorting for nested properties
+          const keys = colname.split(".");
+          const aValue = keys.reduce((obj, key) => obj[key], a);
+          const bValue = keys.reduce((obj, key) => obj[key], b);
+          if (typeof aValue === "string" && typeof bValue === "string") {
+            return direction === "asc"
+              ? aValue.localeCompare(bValue)
+              : bValue.localeCompare(aValue);
+          } else {
+            return direction === "asc" ? aValue - bValue : bValue - aValue;
+          }
+        } else if (colname === "time") {
+          const aTime = new Date(a[colname]).getTime();
+          const bTime = new Date(b[colname]).getTime();
+          return direction === "asc" ? aTime - bTime : bTime - aTime;
+        } else {
+          // Handle sorting for other columns
+          // Modify this part based on your specific column sorting logic
+          return direction === "asc"
+            ? String(a[colname]).localeCompare(String(b[colname]))
+            : String(b[colname]).localeCompare(String(a[colname]));
+        }
+      });
+    });
   };
 
   const renderCaret = (key: any) => {
@@ -211,7 +211,7 @@ export default function ProposalListv2({ proposals }: any) {
     // console.log(event);
     dialogService.openDialog(ProposeComponent, {
       data: "testing data transfer",
-    });
+    })
   };
 
   function showPopoverForFiltering(msg: any) {
@@ -320,10 +320,10 @@ export default function ProposalListv2({ proposals }: any) {
                             }}
                           >
                             <span className="colLabel capitalize text-[#023047]">
-                              {column.label}
+                              {column.label} 
                             </span>{" "}
                             <div className="controller-container">
-                              {(column?.id === "name" ||
+                              {(column?.id === "user_details.name" ||
                                 column?.id === "location.distance" ||
                                 column?.id === "playTime") && (
                                 <span
@@ -351,7 +351,7 @@ export default function ProposalListv2({ proposals }: any) {
                   <tbody className="divide-y divide-gray-200">
                     {filteredList.map(
                       (proposalItem: any, proposalItemId: any) => (
-                        <tr key={proposalItem.domain}>
+                        <tr key={proposalItemId}>
                           <td
                             key={proposalItemId}
                             className={
@@ -426,11 +426,7 @@ export default function ProposalListv2({ proposals }: any) {
 
                             <div className="location-details">
                               <span>{proposalItem.location?.location}</span>
-                              <span>
-                                {proposalItem.location?.distance
-                                  ? `, ${proposalItem.location?.distance} miles away`
-                                  : ""}
-                              </span>
+                             
                             </div>
                           </td>
                           <td

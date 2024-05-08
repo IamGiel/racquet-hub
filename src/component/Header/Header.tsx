@@ -12,10 +12,12 @@ import { IconTennisMatch } from "../../../src/assets/svgs/🦆 icon _tennis matc
 import { Register } from "../Login/Register";
 import {  useLocation } from 'react-router-dom';
 import { useSelector } from "react-redux";
+import { authenticateAndGetUserProfile } from "../../actions/userProfileActions";
 
 export const Header = ({ loginStatus, onSuccessAuth }:any) => {
   const [activeLink, setActiveLink] = useState("Dashboard");
   const [openToolTip, setOpenToolTip] = useState(false);
+  const [user, setUser] = useState(null);
 
   const dispatch = useAppDispatch();
   const navigateTo = useNavigate();
@@ -29,6 +31,7 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
     // Handle the received data here
     console.log("Data received from dialog:", data);
     onSuccessAuth(data)
+    
   };
 
   const callToAuth = (actionToCall: any) => {
@@ -44,6 +47,16 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
   };
   const appName = "Racquet Hub";
   const location = useLocation();
+
+  useEffect(()=>{
+    if(userAuth?.isAuthenticated){
+      console.log('userAuth.isAuthenticated ', String(userAuth.isAuthenticated))
+      console.log('user Auth ', userAuth)
+      const userinfo = JSON.parse(userAuth.payload).data.name
+      setUser(userinfo)
+    }
+  },[userAuth])
+  
 
 
   return (
@@ -83,6 +96,7 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
                     >
                       <circle cx={3} cy={3} r={3} />
                     </svg>
+                    
                     {openToolTip && 
                          <p className="absolute w-48 px-5 py-3 text-center text-gray-600 truncate -translate-x-1/2 bg-white rounded-lg shadow-lg -bottom-12 left-1/2 dark:shadow-none shadow-gray-200 dark:bg-gray-800 dark:text-white">
                          {userAuth.isAuthenticated ? 'Your logged in' : 'Please login'}
@@ -90,27 +104,6 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
                     }
                   </span>
                 </div>
-
-                {/* <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
-                {navigation.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    onClick={() => setActiveLink(item.name)}
-                    className={classNames(
-                      item.name === activeLink
-                        ? "border-indigo-500 text-gray-900"
-                        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                      "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
-                    )}
-                    aria-current={
-                      item.name === activeLink ? "page" : undefined
-                    }
-                  >
-                    {item.name}
-                  </a>
-                ))}
-              </div> */}
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:items-center">
                 <button
@@ -146,6 +139,7 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
                           "#899752",
                         ]}
                       />
+                       {user && <span>Welcome, {user}</span>}
                     </Menu.Button>
                   </div>
                   <Transition

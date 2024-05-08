@@ -88,8 +88,8 @@ function Landing({authStatus}:any) {
                 proposalList?.proposals &&
                 proposalList?.proposals?.length > 0 && (
                   <div className="content-container">
-                    {/* <ProposalListv2 proposals={proposalList.proposals} /> */}
-                    <ProposalListv3 proposalList={proposalList.proposals}/>
+                    <ProposalListv2 proposals={proposalList.proposals} />
+                    {/* <ProposalListv3 proposalList={proposalList.proposals}/> */}
                   </div>
                 )}
 
