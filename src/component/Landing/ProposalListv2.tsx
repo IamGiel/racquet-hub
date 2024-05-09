@@ -543,21 +543,20 @@ export default function ProposalListv2({ proposals, onRefetch }: any) {
                           >
                             <button
                               type="button"
-                              className={styles["join-button"] + " join-button"}
+                              className={proposalItem.eventStatus?.status === "open" ? styles["edit-button"] : styles['closed-button'] + " edit-button"}
                               style={{
                                 display: isAuthenticated ? "flex" : "none",
                                 gap: "12px",
                                 alignItems: "center",
-                                background: "#e2715b",
-                                pointerEvents:
-                                  proposalItem.eventStatus?.status === "closed"
-                                    ? "none"
-                                    : undefined,
+                                // pointerEvents:
+                                //   proposalItem.eventStatus?.status === "closed"
+                                //     ? "none"
+                                //     : undefined,
                                 justifyContent: "center",
                               }}
                               onClick={() => onEditProposal(proposalItem)}
                             >
-                              Edit
+                              {proposalItem.eventStatus?.status === "closed" ? 'Closed' : 'Edit'}{' ' + proposalItem.eventStatus?.status}
                             </button>
                           </td>
                         )}

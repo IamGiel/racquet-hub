@@ -60,20 +60,18 @@
 }
 
 .join-button {
-  background-color: #7b9885; /* Blue-500 */
-  color: #fff; /* Text-white */
-  font-weight: bold; /* Font-bold */
-  padding-top: 0.5rem; /* Py-2 */
-  padding-bottom: 0.5rem; /* Py-2 */
-  padding-left: 1rem; /* Px-4 */
-  padding-right: 1rem; /* Px-4 */
-  border-radius: 0.375rem; /* Rounded */
+  display: inline-flex;
+  min-width: 72px;
+  padding: 7px 9px 7px 11px;
+  border-radius: 4px;
+  background: var(--Red-Tints-600, #eb5757);
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
 
   /* Hover state */
 }
 .join-button:hover {
   background-color: #fedc97; /* Hover:bg-blue-600 */
-  color: #7b9885;
+  color: #fff;
 }
 
 .eventsIntro {
