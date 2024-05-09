@@ -80,11 +80,11 @@ def create_proposal(current_user):
 def get_all_proposals():
   # Pagination parameters
   page = request.args.get('page', default=1, type=int)
-  per_page = request.args.get('per_page', default=10, type=int)
+  per_page = request.args.get('per_page', default=20, type=int)
   
   # Sorting parameters
   sort_by = request.args.get('sort_by', default='_id', type=str)
-  sort_order = request.args.get('sort_order', default='asc', type=str)
+  sort_order = request.args.get('sort_order', default='desc', type=str)
 
   # Validate sort order
   if sort_order.lower() not in ['asc', 'desc']:

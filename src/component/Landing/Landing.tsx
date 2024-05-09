@@ -67,12 +67,24 @@ function Landing({authStatus}:any) {
         navigateTo("/");
       });
   };
+  const [refetchProposals, setRefetchProposals] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     console.log("token in landing ", token);
     fetchData();
-  }, [authStatus]);
+  }, [authStatus, refetchProposals]);
+
+
+
+
+  const handleRefetch = (refetchVal:boolean) => {
+    console.log('refetchVal ', String(refetchVal))
+    if(refetchVal){
+
+      setRefetchProposals(!refetchProposals)
+    }
+  }
 
   return (
     <>
@@ -88,7 +100,7 @@ function Landing({authStatus}:any) {
                 proposalList?.proposals &&
                 proposalList?.proposals?.length > 0 && (
                   <div className="content-container">
-                    <ProposalListv2 proposals={proposalList.proposals} />
+                    <ProposalListv2 proposals={proposalList.proposals} onRefetch={handleRefetch}/>
                     {/* <ProposalListv3 proposalList={proposalList.proposals}/> */}
                   </div>
                 )}

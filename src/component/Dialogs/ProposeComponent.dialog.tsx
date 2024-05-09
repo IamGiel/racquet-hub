@@ -97,13 +97,14 @@ export const ProposeComponent = ({ close, data }: any) => {
         playTime: formik.values.date,
         createdAt: "{{moment.utc().format()}}",
       };
-      createProposal(payload).then((res)=>{
-        console.log('create proposal res ', res)
-       
-        
-        setIsLoading(false)
-        close(res)
-      }).catch((err)=> {
+      createProposal(payload)
+        .then((response) => response.text())
+        .then((result) => {
+          console.log('create proposal res ', result)
+          setIsLoading(false)
+          close({result, "data":formik.values})
+        })
+        .catch((err)=> {
         console.log('create proposal err ', err)
         
         setIsLoading(false)

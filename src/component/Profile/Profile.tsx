@@ -147,17 +147,18 @@ export const Profile = () => {
                 <div className="flex flex-row-reverse gap-[12px]">
                   {editMode && (
                     <button
-                      type="submit"
+                      type="button"
                       className={`${styles.saveBtn} editBtn`}
                       onClick={() => {
+                        console.log('open dialog for profile summary eidts')
                         dialogService.openDialog(
                           ProfileSummaryDialog,
                           formik.values
                         );
                       }}
-                      disabled={
-                        !formik.dirty || !formik.isValid || isSubmitting
-                      }
+                      // disabled={
+                      //   !formik.dirty || !formik.isValid || isSubmitting
+                      // }
                       style={{
                         background:
                           formik.dirty || !formik.isValid || isSubmitting

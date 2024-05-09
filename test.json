@@ -1,14 +1,30 @@
-{
-  "_id": { "$oid": "663706dae299f6066996e627" },
-  "createdAt": { "$date": "2024-05-05T04:11:06.656Z" },
-  "eventStatus": { "status": "open" },
-  "location": { "distance": 12, "location": "Knightdale" },
-  "playTime": "2024-05-08T19:00:00.000Z",
-  "sport": "Pickleball",
-  "type": "Doubles",
-  "user_details": {
-    "email": "Chester_d@mail.com",
-    "name": "Chester D",
-    "user_id": "662f0d9dad764031d9a2574d"
-  }
-}
+const myHeaders = new Headers();
+myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjYyZjkwZThhZDUxMjYwMWE4ZWIxNWE3IiwiZW1haWwiOiJyYW5kb21fZW1haWxAdGVzdHMuY29tIiwibmFtZSI6IkFscGhhIERlIEFzaXMiLCJleHAiOjE3MTUwOTM4MjV9.o3g4U71v_VxlUrpxqee8w4_Xx4-pNFSi6JkQ8oDj6yM");
+myHeaders.append("Content-Type", "application/json");
+
+const raw = JSON.stringify({
+  "sport": "pickleball",
+  "type": "singles",
+  "eventStatus": {
+    "status": "closed"
+  },
+  "location": {
+    "location": "Apex",
+    "distance": 10
+  },
+  "playTime": "12 May 2024",
+  "domain": "gep2.com",
+  "email": "someEmail2@mail.com"
+});
+
+const requestOptions = {
+  method: "PUT",
+  headers: myHeaders,
+  body: raw,
+  redirect: "follow"
+};
+
+fetch("http://localhost:5000/api/proposals/123?token=eyJhbGciOiJIUzI1NiJ9.e30.s9qA7TNHrpCV5urDMaEqiyR8ndRndNnh1tCMaU8ioOk", requestOptions)
+  .then((response) => response.text())
+  .then((result) => console.log(result))
+  .catch((error) => console.error(error));

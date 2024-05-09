@@ -55,7 +55,7 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
       const userinfo = JSON.parse(userAuth.payload).data.name
       setUser(userinfo)
     }
-  },[userAuth])
+  },[userAuth?.isAuthenticated])
   
 
 
