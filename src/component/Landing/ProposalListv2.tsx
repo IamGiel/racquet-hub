@@ -358,7 +358,7 @@ export default function ProposalListv2({ proposals, onRefetch }: any) {
                           }}
                         >
                           <span className="colLabel capitalize text-[#023047]">
-                            {column.label} {column?.id}
+                            {column.label}
                           </span>{" "}
                           <div className="controller-container">
                             {(column?.id === "user_details.name" ||

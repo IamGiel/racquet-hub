@@ -139,7 +139,7 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
                           "#899752",
                         ]}
                       />
-                       {user && <span>Welcome, {user}</span>}
+                       {user && userAuth.isAuthenticated  && <span>Welcome, {user}</span>}
                     </Menu.Button>
                   </div>
                   <Transition
