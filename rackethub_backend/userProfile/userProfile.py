@@ -87,6 +87,6 @@ def update_user_profile(current_user):
     )
     
     if result.modified_count == 1:
-        return jsonify({'message': 'User profile updated successfully'}), 200
+        return jsonify({'message': 'User profile updated successfully', 'response': updated_user_info}), 200
     else:
         return jsonify({'error': 'Failed to update user profile'}), 500

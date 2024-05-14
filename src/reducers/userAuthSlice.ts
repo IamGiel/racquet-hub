@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import { loginApiv2 } from "../apis/fetch";
 import { authenticateAndGetUserProfile } from "../actions/userProfileActions";
 
 interface UserAuthState {
@@ -24,6 +23,13 @@ export interface ICredentials {
   date: string;
 }
 
+export const isUserAuthenticated = () => {
+  // Check if the user is authenticated based on your authentication logic
+  // For example, you might check if there is a token in local storage
+  const token = localStorage.getItem('token');
+  return !!token; // Return true if token exists, indicating user is authenticated
+};
+
 const userAuthSlice = createSlice({
   name: "userAuth",
   initialState,
@@ -31,8 +37,15 @@ const userAuthSlice = createSlice({
     logout(state) {
       state.isAuthenticated = false;
       localStorage.clear();
-      window.location.reload()
+      window.location.reload();
       // Reset any additional state if needed
+    },
+    login(state) {
+      console.log('dispatched login ', state)
+      console.log('dispatched isUserAuthenticated ', isUserAuthenticated())
+      if (!isUserAuthenticated()) {
+        state.isAuthenticated = true;
+      }
     },
   },
   extraReducers(builder) {
@@ -42,30 +55,30 @@ const userAuthSlice = createSlice({
       })
       .addCase(authenticateAndGetUserProfile.fulfilled, (state, action) => {
         // Handle fulfilled state
-
+        console.log("fulfilled state ", state);
+        console.log("fulfilled action ", action);
         // Access the response data directly from the action payload
-        const responseData:any = action?.payload; // Assuming 'data' contains the response data
+        const payload: any = action?.payload; // Assuming 'data' contains the response data
         // Update the Redux state with the response data
-        if(responseData && JSON.parse(responseData)?.error){
+        if (payload && JSON.parse(payload)?.error) {
           return {
             ...state,
             isAuthenticated: false,
-            payload: responseData,
+            payload,
           };
-        } else if(responseData && JSON.parse(responseData)?.token){
+        } else if (payload && JSON.parse(payload)?.token) {
           return {
             ...state,
             isAuthenticated: true,
-            payload: responseData,
+            payload,
           };
         } else {
           return {
             ...state,
             isAuthenticated: true,
-            payload: action?.meta?.arg?.token,
+            payload,
           };
         }
-       
       })
 
       // Update the rejected case to store only the error message
@@ -87,6 +100,6 @@ const userAuthSlice = createSlice({
 
 export const userAuthReducer = userAuthSlice.reducer;
 
-export const { logout } = userAuthSlice.actions;
+export const { logout, login } = userAuthSlice.actions;
 
 // export default userAuthSlice.reducer;

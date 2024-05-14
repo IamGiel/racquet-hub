@@ -1,11 +1,8 @@
 from flask import Flask, request, jsonify, Blueprint
 from pymongo import MongoClient
 import bcrypt
-import re
-from bson import ObjectId
-import os
 import jwt
-from datetime import datetime, timedelta
+from datetime import datetime
 from utiils.helper import is_valid_password, token_required, generate_token
 from functools import wraps
 
@@ -82,14 +79,17 @@ def register():
 
 @auth_app.route('/api/login', methods=['POST'])
 def login():
+    print('login api called ')
     # Get data from request body
     data = request.json
+    print(f'this is data ===== {data}')
+
     print(f'data here api/login ===== {data}')
     email = data.get('email')
     password = data.get('password')
     token = data.get('token')
     
-    print(f'this is data ===== {data}')
+    # print(f'this is data ===== {data}')
 
     # Check if the request contains email/password or token
     if email and password:

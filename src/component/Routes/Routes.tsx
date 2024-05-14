@@ -9,45 +9,48 @@ import { useAppDispatch, useAppSelector } from "../../store";
 import { authenticateAndGetUserProfile } from "../../actions/userProfileActions";
 import { useSelector } from "react-redux";
 import { ProposalDetails } from "../Proposals/ProposalDetails";
+import { reauthenticateUser, selectIsAuthenticated, selectUser } from "../../reducers/authReducer";
+import ProposalListv2 from "../Landing/ProposalListv2";
 
 const RoutesComponent = () => {
   const dispatch = useAppDispatch();
   const navigateTo = useNavigate();
-  const userAuth = useSelector((state: any) => state?.userAuth);
-  const [authStatus, setAuthStatus] = useState<any>(null)
+  // const userAuth = useSelector((state: any) => state?.userAuth);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
+
+  // Listen for route changes and reload the page if the user is not authenticated
   useEffect(() => {
     const authToken = localStorage.getItem("authToken");
-    dispatch(authenticateAndGetUserProfile({ token: authToken }));
-  }, [dispatch, navigateTo]);
+    if (!isAuthenticated && authToken) {
+      navigateTo("/", { replace: true });
+      // window.location.reload(); // Reload the page
+    }
+  }, [isAuthenticated, navigateTo]);
+
 
   useEffect(() => {
-    if (userAuth.isAuthenticated === false) {
-      console.log("user auth ", userAuth);
-      navigateTo("/");
-    }
-  }, [userAuth]);
+    // Dispatch the reauthenticateUser action when the component mounts
+    console.log('DISPATCH RE_AUTHENTICATE USER ', user)
+    dispatch(reauthenticateUser());
+  }, [dispatch]);
 
   const handleSuccessAuth =(auth:any) => {
     console.log('handled success auth ', auth)
-    setAuthStatus(auth)
   }
 
   return (
     <div className="route-component-container">
-      <Header loginStatus={userAuth.isAuthenticated} onSuccessAuth={handleSuccessAuth}/>
-      {/* <span>TESTING USER: {isAuthenticated ? 'is authenticated' : 'is NOT authenticated'}</span> */}
-      {/* <Routes>
-        <Route path="/" element={<Landing />} />
-        <ProtectedRoute path="/profile" element={<Profile />} />
-      </Routes> */}
+      <Header loginStatus={isAuthenticated} onSuccessAuth={handleSuccessAuth}/>
 
       <div className="main-container min-h-800px">
         <Routes>
-          <Route index element={<Landing authStatus={authStatus}/>} />
-          {userAuth.isAuthenticated === true && (
+          <Route index element={<Landing authStatus={isAuthenticated}/>} />
+          {isAuthenticated === true && (
             <>
               <Route path="/profile" element={<Profile />} />
               <Route path="/proposal/:id/:type" element={<ProposalDetails />} />
+              <Route path="/proposals" element={<ProposalListv2 />} />
             </>
           )}
         </Routes>

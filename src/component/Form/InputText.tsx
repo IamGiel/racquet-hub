@@ -6,6 +6,7 @@ interface InputTextProps {
   label: string;
   placeholder?: string;
   onChange: (term: string) => void;
+  onBlur?: (term: any) => void;
 }
 
 export const InputText: React.FC<InputTextProps> = ({
@@ -14,6 +15,7 @@ export const InputText: React.FC<InputTextProps> = ({
   label,
   placeholder,
   onChange,
+  onBlur
 }) => {
   return (
     <div>
@@ -36,7 +38,7 @@ export const InputText: React.FC<InputTextProps> = ({
             console.log("event on input change ", event);
             onChange(event?.target?.value);
           }}
-          
+          onBlur={onBlur}
         />
       </div>
     </div>

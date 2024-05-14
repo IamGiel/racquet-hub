@@ -106,6 +106,10 @@ export const ProposalDetails = () => {
     formik.setFieldValue(fieldName, selection);
   }
 
+  const handleBlur = () => {
+    formik.resetForm();
+  };
+
   return (
     <div
       className={styles.proposalDetailContainer + " proposalDetailContainer"}
@@ -118,6 +122,7 @@ export const ProposalDetails = () => {
         <div className="input-for-sportType m-[12px]">
           <ListBoxOptions
             id="sportType"
+           
             label={`Select a sport:`}
             selections={sportTypeFilters}
             onSelect={(item: any) => {
@@ -135,6 +140,7 @@ export const ProposalDetails = () => {
         <div className="input-for-sportType m-[12px]">
           <ListBoxOptions
             id="categoryType"
+           
             label="Select a category"
             selections={sportCategoryFilters}
             onSelect={(item: any) => {
@@ -152,6 +158,7 @@ export const ProposalDetails = () => {
         <div className="input-for-sportType m-[12px]">
           <InputText
             id="location"
+           
             type="text"
             label="Provide a location"
             placeholder={formik.values.location.location ?? 'Select a location'}
@@ -188,7 +195,7 @@ export const ProposalDetails = () => {
             onClick={(event: any) => {
               event.preventDefault();
               console.log('cancel proposal clicked submit')
-              navigateTo('/')
+              navigateTo('/proposals')
             }}
           >
             Cancel
@@ -202,10 +209,10 @@ export const ProposalDetails = () => {
               // deleteProposal(state?.id).then((successRes)=>{
               deleteProposal(state?._id?.$oid).then((successRes)=>{
                 console.log('success res ', successRes)
-                navigateTo('/')
+                navigateTo('/proposals')
               }).catch(error=>{
                 console.log('catch error ', error)
-                navigateTo('/')
+                window.location.reload()
               })
               
             }}
@@ -236,7 +243,7 @@ export const ProposalDetails = () => {
               editProposal(payload, state?._id?.$oid).then((response) => response.text())
               .then((result) => {
                 console.log(result)
-                navigateTo('/')
+                navigateTo('/proposals')
               })
               .catch((error) => console.error(error));
             }}

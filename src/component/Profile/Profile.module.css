@@ -27,7 +27,7 @@
 
 .editBtn {
   border-radius: 12px;
-  background-color: #145c80; /* bg-indigo-600 */
+  /* background-color: #145c80; bg-indigo-600 */
   padding: 3px;
   justify-content: center;
   font-weight: 600;
@@ -38,28 +38,34 @@
   font-size: 12px;
   min-width: 87px;
   cursor: pointer;
+  /* background: none; */
+  color: #797981;
 }
 
 .editBtn:hover {
-  background-color: #023047; /* hover:bg-indigo-500 */
+  border-color: #78565612;
+  box-shadow: 0 0 0 1px #c7c8d5;
+  background: none;
+  color: #797981;
+  font-weight: 600;
 }
 
 .editBtn:focus-visible {
   outline: 2px solid transparent; /* focus-visible:outline */
   outline-offset: 2px; /* focus-visible:outline-offset */
-  outline-color: red;
+  outline-color: #013047;
 }
 
 .editBtn:focus-visible:focus-visible {
-  outline-color: red; /* focus-visible:outline-indigo-600 */
+  outline-color: #013047; /* focus-visible:outline-indigo-600 */
 }
 .saveBtn {
   border-radius: 12px;
-  background-color: #7d8b3c; /* bg-indigo-600 */
+  background-color: #8b9a54; /* bg-indigo-600 */
   padding: 3px;
   justify-content: center;
   font-weight: 600;
-  color: #ffffff;
+  color: #fff;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
@@ -75,11 +81,11 @@
 .saveBtn:focus-visible {
   outline: 2px solid transparent; /* focus-visible:outline */
   outline-offset: 2px; /* focus-visible:outline-offset */
-  outline-color: red;
+  outline-color: #013047;
 }
 
 .saveBtn:focus-visible:focus-visible {
-  outline-color: red; /* focus-visible:outline-indigo-600 */
+  outline-color: #013047; /* focus-visible:outline-indigo-600 */
 }
 
 .inputFieldsStyle {

@@ -10,6 +10,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { error } from "console";
 import { authenticateAndGetUserProfile } from "../../actions/userProfileActions";
+import { setUser } from "../../reducers/authReducer";
 
 export const Login = ({close}:any) => {
   const [open, setOpen] = useState(true);
@@ -46,6 +47,7 @@ export const Login = ({close}:any) => {
         //  means user is authenticated, close the modal
         // setOpen(false);
         // dialogService.close(resPayload);
+        dispatch(setUser(resPayload))
         close(resPayload)
         localStorage.setItem("authToken", resPayload.token);
       } else if (!resPayload.token) {
@@ -96,7 +98,7 @@ export const Login = ({close}:any) => {
       <Dialog as="div" className="relative z-10" onClose={(addedData:any) => {
           console.log('closing this login dialog ', addedData)
           handleDialogClose(addedData);
-          // setOpen(false);
+          setOpen(false);
         }} >
         <Transition.Child
           as={React.Fragment}

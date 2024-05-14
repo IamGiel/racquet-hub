@@ -15,7 +15,7 @@
   position: absolute;
   left: 50%;
   top: -600px;
-  transform: translate(-50%, 12px);
+  transform: translate(-50%, -50%);
 }
 
 .cancelBtn {
@@ -131,4 +131,19 @@
   font-family: "Inter";
   font-style: normal;
   line-height: 24px;
+}
+
+.userDetailLabel {
+  font-size: 13px;
+  font-family: "Inter";
+  font-style: normal;
+  line-height: 24px;
+  color: #6b7280;
+}
+.userDetailValue {
+  font-size: 14px;
+  font-family: "Inter";
+  font-style: normal;
+  line-height: 24px;
+  color: #181818;
 }

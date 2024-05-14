@@ -7,18 +7,70 @@ import { Login } from "./Login";
 import { IconTennisMatch } from "../../assets/svgs/🦆 icon _tennis match_";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { registrationApi } from "../../apis/fetch";
+import { useNavigate } from "react-router-dom";
+import { authenticateAndGetUserProfile } from "../../actions/userProfileActions";
+import { setUser } from "../../reducers/authReducer";
+import { logout } from "../../reducers/userAuthSlice";
 
-export const Register = () => {
+export const Register = ({close}:any) => {
   const [open, setOpen] = useState(true);
+  // const navigateTo = useNavigate();
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector(
     (state) => state.userAuth.isAuthenticated
   );
-  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); // Prevent the default form submission behavior
-    // dispatch(login()); // Dispatch the login action
-    setOpen(false);
+  // const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  //   event.preventDefault(); // Prevent the default form submission behavior
+  //   // dispatch(login()); // Dispatch the login action
+  //   console.log("formik registration values ", formik.values);
+  //   const payload = {
+  //     email: formik.values.email,
+  //     username: formik.values.email,
+  //     password: formik.values.password,
+  //     confirmPassword: formik.values.password,
+  //     name: formik.values.email,
+  //   };
+  //   registrationApi(payload)
+  //     .then((res) => {
+  //       console.log("registered res ", res);
+  //       if (res) {
+  //         // route user to landing for now
+  //         goLogin();
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log("registration err ", err);
+  //     });
+  //   setOpen(false);
+  // };
+
+  const handleRegistration = async (data: any) => {
+    setOpen(true);
+    const res: any = await dispatch(authenticateAndGetUserProfile(data));
+    console.log("res in dispatch authenticate and get userpofile ", res);
+    if (res) {
+      const resPayload: any = JSON.parse(res.payload);
+      console.log("parsed res.payload ", resPayload);
+      if (resPayload.token) {
+        //  means user is authenticated, close the modal
+        // setOpen(false);
+        // dialogService.close(resPayload);
+        dispatch(setUser(resPayload))
+        close(resPayload)
+        localStorage.setItem("authToken", resPayload.token);
+      } else if (!resPayload.token) {
+        // set failedLogin resPayload, keep the modal open
+        setOpen(true);
+        dispatch(logout());
+        // setFailedLogin(resPayload.error.message);
+      }
+    }
   };
+
+  // const goLogin =() => {
+  //   navigateTo('/')
+  // }
 
   const formik = useFormik({
     initialValues: {
@@ -40,7 +92,7 @@ export const Register = () => {
     }),
     onSubmit(values, { resetForm }) {
       console.log("ONSUBMIT FORM Form values:", values);
-
+      setOpen(false);
       // Revalidate the form if it's dirty
       if (formik.dirty) {
         // This line should be changed
@@ -51,7 +103,8 @@ export const Register = () => {
 
   return (
     <Transition.Root show={open} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setOpen}>
+      {/* <Dialog as="div" className="relative z-10" onClose={setOpen}> */}
+      <Dialog as="div" className="relative z-10" onClose={() => setOpen(false)}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -96,7 +149,7 @@ export const Register = () => {
                   </div>
 
                   <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                    <form className="space-y-6" onSubmit={handleFormSubmit}>
+                    <form className="space-y-6" onSubmit={handleRegistration}>
                       <div>
                         <label
                           htmlFor="email"
@@ -174,10 +227,10 @@ export const Register = () => {
                         <button
                           type="submit"
                           className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                          onSubmit={() => {
-                            // submit form
-                            setOpen(false);
-                          }}
+                          // onSubmit={() => {
+                          //   // submit form
+                          //   setOpen(false);
+                          // }}
                         >
                           Register
                         </button>

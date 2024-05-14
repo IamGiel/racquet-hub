@@ -22,34 +22,66 @@ import { GenPurposePopover } from "../Popovers/GenPurposePopover";
 import { ProposalStatus } from "../Proposals/ProposalStatus";
 import EmptyList from "./EmptyList";
 import { useNavigate } from "react-router-dom";
+import { createSelector } from "@reduxjs/toolkit";
+import {
+  clearUser,
+  selectIsAuthenticated,
+  selectUser,
+} from "../../reducers/authReducer";
+import { useSelector } from "react-redux";
+import { getAllProposals } from "../../apis/fetch";
 
-export default function ProposalListv2({ proposals, onRefetch }: any) {
-  const [listOfProposals, setListOfProposals] = useState(proposals || []);
+export default function ProposalListv2() {
+  const [listOfProposals, setListOfProposals] = useState<any>([]);
   const [refetchProposals, setRefetchProposals] = useState(false);
 
-  const [filteredList, setfilteredList] = useState(proposals || []);
+  const [filteredList, setfilteredList] = useState<any>([]);
   const [filterData, setFilterData] = useState<any>([]);
   const [selections, setSelections] = useState<any>([]);
   const [defaultFilter, setDefaultFilter] = useState<any>([]);
 
   const navigateTo = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
 
   useEffect(() => {
-    // Trigger the refetch of proposals when refetchProposals changes
-    if (refetchProposals) {
-      // Call the onRefetch function to trigger the refetch
-      onRefetch(refetchProposals);
-
-      // After triggering the refetch, set refetchProposals back to false to avoid infinite loop
-      setRefetchProposals(false);
+    console.log("USER in HEADER ", user);
+    if (user && user.data) {
+      console.log("user ", user);
+    } else {
+      // localStorage.clear();
+      dispatch(clearUser());
+      navigateTo("/");
     }
-    handleSelectedItemsChange([defaultFilter], true); // true to clear selected filters in the popover filter
-  }, [refetchProposals, onRefetch]);
+  }, [user]);
+
+  const fetchData = async () => {
+    console.log("fetchdta");
+
+    await getAllProposals()
+      .then((response) => {
+        console.log("response get all proposals", response);
+        setfilteredList(response.proposals);
+      })
+
+      .catch((error) => {
+        console.error("some error on get all proposals ", error);
+        setfilteredList(null);
+        // useDispatch
+        window.location.reload(); // Refresh the page
+        // navigateTo("/");
+      });
+  };
 
   useEffect(() => {
     // Update the list of proposals when the 'proposals' prop changes
-    setListOfProposals(proposals);
-  }, [proposals]);
+    if (listOfProposals && listOfProposals.length === 0) {
+      fetchData();
+    }
+    // setListOfProposals(proposals);
+  }, []);
 
   const [sortConfig, setSortConfig] = useState<any>({
     key: "playtime",
@@ -57,7 +89,7 @@ export default function ProposalListv2({ proposals, onRefetch }: any) {
   });
 
   const columns = [
-    { id: `user_details.name`, label: `Name`, sortValue: `name` },
+    { id: `user_details?.name`, label: `Name`, sortValue: `name` },
     { id: `sport`, label: `Sport`, sortValue: `sport` },
     { id: `type`, label: `Type`, sortValue: `type` },
     { id: `playTime`, label: `Time`, sortValue: `playTime` },
@@ -72,14 +104,6 @@ export default function ProposalListv2({ proposals, onRefetch }: any) {
       sortValue: `eventStatus.status`,
     },
   ];
-
-  const dispatch = useAppDispatch();
-  const isAuthenticated = useAppSelector(
-    (state) => state.userAuth.isAuthenticated
-  );
-  const userAuth = useAppSelector((state) =>
-    JSON.parse(state.userAuth.payload)
-  );
 
   const mainFontColor = `#023047`;
 
@@ -97,7 +121,6 @@ export default function ProposalListv2({ proposals, onRefetch }: any) {
   }
 
   const handleSort = (key: any) => {
-    console.log("handle sort key ", key);
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
       direction = "desc";
@@ -109,14 +132,34 @@ export default function ProposalListv2({ proposals, onRefetch }: any) {
   };
 
   const sortColumns = (colname: string, direction: string) => {
-    console.log("colname ", colname);
+    console.log("colname sorted ", colname);
+    console.log("direction sorted ", direction);
     setfilteredList((prevList: any) => {
       return [...prevList].sort((a, b) => {
         if (colname.includes(".")) {
           // Handle sorting for nested properties
-          const keys = colname.split(".");
-          const aValue = keys.reduce((obj, key) => obj[key], a);
-          const bValue = keys.reduce((obj, key) => obj[key], b);
+          const keys = colname.split("?.");
+
+          // Initialize aValue and bValue with the entire objects (a and b) initially
+          let aValue = a;
+          let bValue = b;
+
+          // Traverse the nested structure using the keys
+          for (const key of keys) {
+            // Check if aValue and bValue are defined
+            if (aValue && bValue) {
+              // Update aValue and bValue to the next nested object
+              aValue = aValue[key];
+              bValue = bValue[key];
+            } else {
+              // If any intermediate property is undefined, break out of the loop
+              aValue = undefined;
+              bValue = undefined;
+              break;
+            }
+          }
+
+          // Now you can safely compare aValue and bValue
           if (typeof aValue === "string" && typeof bValue === "string") {
             return direction === "asc"
               ? aValue.localeCompare(bValue)
@@ -128,6 +171,10 @@ export default function ProposalListv2({ proposals, onRefetch }: any) {
           const aTime = new Date(a[colname]).getTime();
           const bTime = new Date(b[colname]).getTime();
           return direction === "asc" ? aTime - bTime : bTime - aTime;
+        } else if (colname === "location") {
+          const aPlace =a[colname].location;
+          const bPlace =b[colname].location;
+          return direction === "asc" ? aPlace - bPlace : bPlace - aPlace;
         } else {
           // Handle sorting for other columns
           // Modify this part based on your specific column sorting logic
@@ -175,8 +222,6 @@ export default function ProposalListv2({ proposals, onRefetch }: any) {
   };
 
   function handleControl(columnId: string, val?: boolean) {
-    console.log("columnId ", columnId);
-
     handleSort(columnId);
   }
 
@@ -186,9 +231,9 @@ export default function ProposalListv2({ proposals, onRefetch }: any) {
   ) => {
     // Set the current selection
     // setSelections(filterBy?.name);
-    console.log("filterBy ", filterBy);
+
     const namesOfFilters: any = [];
-    const copyOfList = [...proposals];
+    const copyOfList = [...listOfProposals];
 
     // Initialize the filtered list with the original list of items
     let filteredList = [...copyOfList];
@@ -200,8 +245,6 @@ export default function ProposalListv2({ proposals, onRefetch }: any) {
       // Apply the current filter to the filtered list
       if (aFilter?.type === "TYPE_SPORT") {
         filteredList = filteredList.filter((listItem: any) => {
-          // console.log("listItem ", listItem);
-          // console.log("aFilter ", aFilter);
           return listItem.sport.toLowerCase() === aFilter?.name.toLowerCase();
         });
       }
@@ -224,7 +267,6 @@ export default function ProposalListv2({ proposals, onRefetch }: any) {
       // Add more conditions for other filter types if needed
     });
 
-    // console.log("a namesOfFilters ", namesOfFilters);
     if (clearSelectedFilter) {
       setSelections([]);
     } else {
@@ -235,24 +277,27 @@ export default function ProposalListv2({ proposals, onRefetch }: any) {
 
   const handleMakeProposal = (event: any) => {
     event.preventDefault();
-    // console.log(event);
-    dialogService.openDialog(ProposeComponent, {}, (data: any) => {
-      console.log("data =  = = = ", data);
-      const defaultFilter = {
-        name: "Pickleball",
-        descriptiom: "",
-        href: "",
-        type: "",
-      };
 
-      setDefaultFilter(defaultFilter);
-      setRefetchProposals(!refetchProposals);
-    });
+    // dispatch(authenticateAndGetUserProfile)
+    if (isAuthenticated && user) {
+      dialogService.openDialog(ProposeComponent, {}, (data: any) => {
+        const defaultFilter = {
+          name: "Pickleball",
+          descriptiom: "",
+          href: "",
+          type: "",
+        };
+
+        setDefaultFilter(defaultFilter);
+        setRefetchProposals(!refetchProposals);
+      });
+    } else {
+      alert("please login");
+    }
   };
 
   function showPopoverForFiltering(msg: any) {
     // open popover that allows for filtering this column
-    // console.log("column to filter ", msg);
 
     // setFilterData(sportTypeFilters);
     setFilterData([
@@ -262,12 +307,9 @@ export default function ProposalListv2({ proposals, onRefetch }: any) {
     ]);
   }
 
-  function onOpenStatusInfo(status: any) {
-    console.log(`on open status `, status);
-  }
+  function onOpenStatusInfo(status: any) {}
 
   function onEditProposal(proposalItem: any) {
-    console.log(`on open proposalItem `, proposalItem);
     if (isAuthenticated) {
       navigateTo(`/proposal/${proposalItem?._id?.["$oid"]}/edit`, {
         state: proposalItem,
@@ -277,7 +319,7 @@ export default function ProposalListv2({ proposals, onRefetch }: any) {
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
-      <pre>{JSON.stringify(proposals.length, null, 4)} TEST</pre>
+      {/* <pre>{JSON.stringify(proposals.length, null, 4)} TEST</pre> */}
       <div className="mt-2 flow-root">
         <div
           className={
@@ -361,7 +403,7 @@ export default function ProposalListv2({ proposals, onRefetch }: any) {
                             {column.label}
                           </span>{" "}
                           <div className="controller-container">
-                            {(column?.id === "user_details.name" ||
+                            {(column?.id === "user_details?.name" ||
                               column?.id === "location" ||
                               column?.id === "playTime") && (
                               <span
@@ -387,101 +429,103 @@ export default function ProposalListv2({ proposals, onRefetch }: any) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {filteredList.map(
-                    (proposalItem: any, proposalItemId: any) => (
-                      <tr key={proposalItemId}>
-                        <td
-                          key={proposalItemId}
-                          className={
-                            styles.tdAlignment +
-                            " tdAlignment whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0"
-                          }
-                          style={{
-                            display: "flex",
-                            gap: "12px",
-                            alignItems: "center",
-                          }}
-                        >
-                          {/* <pre>{JSON.stringify(proposalItem, null, 4)}</pre> */}
+                  {filteredList &&
+                    filteredList.length &&
+                    filteredList.map(
+                      (proposalItem: any, proposalItemId: any) => (
+                        <tr key={proposalItemId}>
+                          <td
+                            key={proposalItemId}
+                            className={
+                              styles.tdAlignment +
+                              " tdAlignment whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0"
+                            }
+                            style={{
+                              display: "flex",
+                              gap: "12px",
+                              alignItems: "center",
+                            }}
+                          >
+                            {/* <pre>{JSON.stringify(proposalItem, null, 4)}</pre> */}
 
-                          <span>
-                            <Avatar
-                              size={40}
-                              name={proposalItem.user_details.name}
-                              square={true}
-                              variant="beam"
-                              colors={[
-                                // #033f63 // #28666e // #7c9885 // #b5b682 // #fedc97
-                                "#033f63",
-                                "#28666e",
-                                "#7c9885",
-                                "#b5b682",
-                                "#fedc97",
-                              ]}
-                            />
-                          </span>
-                          <span className="td_info text-[#023047]">
-                            {proposalItem.user_details.name}
-                          </span>
-                        </td>
-                        <td
-                          className={
-                            styles.tdAlignment +
-                            " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
-                          }
-                        >
-                          {proposalItem.sport}
-                        </td>
-                        <td
-                          className={
-                            styles.tdAlignment +
-                            " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
-                          }
-                        >
-                          {proposalItem.type}
-                        </td>
-                        {/* <td
+                            <span>
+                              <Avatar
+                                size={40}
+                                name={proposalItem?.user_details?.name}
+                                square={true}
+                                variant="beam"
+                                colors={[
+                                  // #033f63 // #28666e // #7c9885 // #b5b682 // #fedc97
+                                  "#033f63",
+                                  "#28666e",
+                                  "#7c9885",
+                                  "#b5b682",
+                                  "#fedc97",
+                                ]}
+                              />
+                            </span>
+                            <span className="td_info text-[#023047]">
+                              {proposalItem?.user_details?.name}
+                            </span>
+                          </td>
+                          <td
+                            className={
+                              styles.tdAlignment +
+                              " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
+                            }
+                          >
+                            {proposalItem?.sport}
+                          </td>
+                          <td
+                            className={
+                              styles.tdAlignment +
+                              " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
+                            }
+                          >
+                            {proposalItem?.type}
+                          </td>
+                          {/* <td
                       className={
                         styles.tdAlignment +
                         " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
                       }
                     >
-                      {proposalItem.email}
+                      {proposalItem?.email}
                     </td> */}
-                        <td
-                          className={`${styles.tdAlignment} tdAlignment whitespace-nowrap py-4 text-sm text-gray-500`}
-                          style={{ maxWidth: "200px" }}
-                        >
-                          {makeReadableTimePlace(proposalItem.playTime)}
-                        </td>
-                        <td
-                          className={
-                            styles.tdAlignment +
-                            " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
-                          }
-                        >
-                          {/* {JSON.stringify(proposalItem)} */}
+                          <td
+                            className={`${styles.tdAlignment} tdAlignment whitespace-nowrap py-4 text-sm text-gray-500`}
+                            style={{ maxWidth: "200px" }}
+                          >
+                            {makeReadableTimePlace(proposalItem?.playTime)}
+                          </td>
+                          <td
+                            className={
+                              styles.tdAlignment +
+                              " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
+                            }
+                          >
+                            {/* {JSON.stringify(proposalItem)} */}
 
-                          <div className="location-details">
-                            <span>{proposalItem.location?.location}</span>
-                          </div>
-                        </td>
-                        <td
-                          className={
-                            styles.tdAlignment +
-                            " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500 flex gap-[8px]"
-                          }
-                          style={{
-                            display: "flex",
-                            justifyContent: "left",
-                            alignItems: "center",
-                            marginBottom: "22px",
-                          }}
-                        >
-                          <div className="status w-[75px]">
-                            {proposalItem.eventStatus?.status}{" "}
-                          </div>
-                          <div>
+                            <div className="location-details">
+                              <span>{proposalItem?.location?.location}</span>
+                            </div>
+                          </td>
+                          <td
+                            className={
+                              styles.tdAlignment +
+                              " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500 flex gap-[8px]"
+                            }
+                            style={{
+                              display: "flex",
+                              justifyContent: "left",
+                              alignItems: "center",
+                              marginBottom: "22px",
+                            }}
+                          >
+                            <div className="status w-[75px]">
+                              {proposalItem?.eventStatus?.status}{" "}
+                            </div>
+                            {/* <div>
                             <GenPurposePopover
                               popoverBtnLabel=""
                               openPopover={onOpenStatusInfo}
@@ -495,74 +539,86 @@ export default function ProposalListv2({ proposals, onRefetch }: any) {
                               }
                               topPosition="40%"
                             />
-                          </div>
-                        </td>
-                        {userAuth?.data._id !==
-                          proposalItem?.user_details?.user_id && (
-                          <td
-                            className={
-                              styles.tdAlignment +
-                              " tdAlignment relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
-                            }
-                          >
-                            <button
-                              type="button"
-                              className={styles["join-button"] + " join-button"}
-                              style={{
-                                display: isAuthenticated ? "flex" : "none",
-                                gap: "12px",
-                                alignItems: "center",
-                                background:
-                                  proposalItem.eventStatus?.status === "closed"
-                                    ? "lightgrey"
-                                    : "",
-                                pointerEvents:
-                                  proposalItem.eventStatus?.status === "closed"
-                                    ? "none"
-                                    : undefined,
-                                justifyContent: "center",
-                              }}
-                            >
-                              {proposalItem.eventStatus?.status === "closed"
-                                ? "Full"
-                                : "Join"}
-                              <span className="sr-only">
-                                , {proposalItem.name}
-                              </span>
-                            </button>
+                          </div> */}
                           </td>
-                        )}
+                          {/* {userAuth?.data._id !== */}
+                          {user?.data?._id !==
+                            proposalItem?.user_details?.user_id && (
+                            <td
+                              className={
+                                styles.tdAlignment +
+                                " tdAlignment relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
+                              }
+                            >
+                              <button
+                                type="button"
+                                className={
+                                  styles["join-button"] + " join-button"
+                                }
+                                style={{
+                                  display: isAuthenticated ? "flex" : "none",
+                                  gap: "12px",
+                                  alignItems: "center",
+                                  background:
+                                    proposalItem?.eventStatus?.status ===
+                                    "closed"
+                                      ? "lightgrey"
+                                      : "",
+                                  pointerEvents:
+                                    proposalItem?.eventStatus?.status ===
+                                    "closed"
+                                      ? "none"
+                                      : undefined,
+                                  justifyContent: "center",
+                                }}
+                              >
+                                {proposalItem?.eventStatus?.status === "closed"
+                                  ? "Full"
+                                  : "Join"}
+                                <span className="sr-only">
+                                  , {proposalItem?.name}
+                                </span>
+                              </button>
+                            </td>
+                          )}
 
-                        {userAuth?.data._id ===
-                          proposalItem?.user_details?.user_id && (
-                          <td
-                            className={
-                              styles.tdAlignment +
-                              " tdAlignment relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
-                            }
-                          >
-                            <button
-                              type="button"
-                              className={proposalItem.eventStatus?.status === "open" ? styles["edit-button"] : styles['closed-button'] + " edit-button"}
-                              style={{
-                                display: isAuthenticated ? "flex" : "none",
-                                gap: "12px",
-                                alignItems: "center",
-                                // pointerEvents:
-                                //   proposalItem.eventStatus?.status === "closed"
-                                //     ? "none"
-                                //     : undefined,
-                                justifyContent: "center",
-                              }}
-                              onClick={() => onEditProposal(proposalItem)}
+                          {/* {userAuth?.data._id === */}
+                          {user?.data?._id ===
+                            proposalItem?.user_details?.user_id && (
+                            <td
+                              className={
+                                styles.tdAlignment +
+                                " tdAlignment relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
+                              }
                             >
-                              {proposalItem.eventStatus?.status === "closed" ? 'Closed' : 'Edit'}{' ' + proposalItem.eventStatus?.status}
-                            </button>
-                          </td>
-                        )}
-                      </tr>
-                    )
-                  )}
+                              <button
+                                type="button"
+                                className={
+                                  proposalItem?.eventStatus?.status === "open"
+                                    ? styles["edit-button"]
+                                    : styles["closed-button"] + " edit-button"
+                                }
+                                style={{
+                                  display: isAuthenticated ? "flex" : "none",
+                                  gap: "12px",
+                                  alignItems: "center",
+                                  // pointerEvents:
+                                  //   proposalItem?.eventStatus?.status === "closed"
+                                  //     ? "none"
+                                  //     : undefined,
+                                  justifyContent: "center",
+                                }}
+                                onClick={() => onEditProposal(proposalItem)}
+                              >
+                                {proposalItem?.eventStatus?.status === "closed"
+                                  ? "Closed"
+                                  : "Edit"}
+                              </button>
+                            </td>
+                          )}
+                        </tr>
+                      )
+                    )}
                 </tbody>
               </table>
             )}

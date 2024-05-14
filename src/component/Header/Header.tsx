@@ -7,21 +7,24 @@ import { useNavigate } from "react-router";
 import Avatar from "boring-avatars";
 import { Login } from "../Login/Login";
 import { dialogService } from "../Services/dialog-service";
-import { logout } from "../../reducers/userAuthSlice";
+import { login, logout } from "../../reducers/userAuthSlice";
 import { IconTennisMatch } from "../../../src/assets/svgs/🦆 icon _tennis match_";
 import { Register } from "../Login/Register";
 import {  useLocation } from 'react-router-dom';
 import { useSelector } from "react-redux";
-import { authenticateAndGetUserProfile } from "../../actions/userProfileActions";
+import { clearUser, selectIsAuthenticated, selectUser } from "../../reducers/authReducer";
+import { IUserDetails } from "../Profile/Profile";
 
 export const Header = ({ loginStatus, onSuccessAuth }:any) => {
   const [activeLink, setActiveLink] = useState("Dashboard");
   const [openToolTip, setOpenToolTip] = useState(false);
-  const [user, setUser] = useState(null);
+  const [userDetails, setUserDetails] = useState<IUserDetails | null>(null); // Initialize userDetails state
 
   const dispatch = useAppDispatch();
   const navigateTo = useNavigate();
-  const userAuth = useSelector((state:any) => state?.userAuth);
+  // const userAuth = useSelector((state:any) => state);
+    const isAuthenticated = useSelector(selectIsAuthenticated);
+    const user = useSelector(selectUser);
 
   function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
@@ -29,18 +32,19 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
 
   const handleLoginDialogClose = (data: any) => {
     // Handle the received data here
-    console.log("Data received from dialog:", data);
+
     onSuccessAuth(data)
     
   };
 
   const callToAuth = (actionToCall: any) => {
-    console.log("action to call ", actionToCall);
+
     if (actionToCall === "logout") {
       localStorage.removeItem("authToken");
       dispatch(logout());
     }
     if (actionToCall === "login") {
+      dispatch(login())
       dialogService.openDialog(Login, null, handleLoginDialogClose)
       // dispatch(login()); // Dispatch the login action
     }
@@ -48,14 +52,19 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
   const appName = "Racquet Hub";
   const location = useLocation();
 
-  useEffect(()=>{
-    if(userAuth?.isAuthenticated){
-      console.log('userAuth.isAuthenticated ', String(userAuth.isAuthenticated))
-      console.log('user Auth ', userAuth)
-      const userinfo = JSON.parse(userAuth.payload).data.name
-      setUser(userinfo)
+  useEffect(() => {
+
+
+    if (user && user.data) {
+
+      setUserDetails(user.data);
+    } else {
+      // localStorage.clear();
+      dispatch(clearUser())
+      navigateTo("/");
     }
-  },[userAuth?.isAuthenticated])
+  }, [user, userDetails]);
+  
   
 
 
@@ -69,11 +78,12 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
         <>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 justify-between">
+              {/* <pre>isAuthenticated {String(isAuthenticated)}</pre> */}
               <div
                 className="flex gap-[12px] cursor-pointer"
                 onClick={() => {
-                  console.log('checking authStatus ', userAuth)
-                  if(!userAuth.isAuthenticated){
+
+                  if(!userDetails){
                     dispatch(logout())
                   }
                   navigateTo("/")
@@ -90,7 +100,7 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
                   onMouseLeave={()=>setOpenToolTip(false)}
                   >
                     <svg
-                      className={`h-1.5 w-1.5 ${userAuth.isAuthenticated ? 'fill-green-500' : 'fill-red-500'}`}
+                      className={`h-1.5 w-1.5 ${userDetails ? 'fill-green-500' : 'fill-red-500'}`}
                       viewBox="0 0 6 6"
                       aria-hidden="true"
                     >
@@ -99,7 +109,7 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
                     
                     {openToolTip && 
                          <p className="absolute w-48 px-5 py-3 text-center text-gray-600 truncate -translate-x-1/2 bg-white rounded-lg shadow-lg -bottom-12 left-1/2 dark:shadow-none shadow-gray-200 dark:bg-gray-800 dark:text-white">
-                         {userAuth.isAuthenticated ? 'Your logged in' : 'Please login'}
+                         {userDetails ? 'Your logged in' : 'Please login'}
                      </p>
                     }
                   </span>
@@ -139,7 +149,7 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
                           "#899752",
                         ]}
                       />
-                       {user && userAuth.isAuthenticated  && <span>Welcome, {user}</span>}
+                       {userDetails && userDetails  && <span>Welcome, {userDetails.name}</span>}
                     </Menu.Button>
                   </div>
                   <Transition
@@ -152,13 +162,13 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      {userAuth.isAuthenticated && (
+                      {userDetails && (
                         <Menu.Item>
                           {({ active }) => (
                             <a
                               onClick={(event) => {
                                 event.preventDefault();
-                                console.log("open it here");
+
                                 setActiveLink("profile");
                                 navigateTo("/profile");
                               }}
@@ -179,12 +189,12 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
                             onClick={() => {
                               setActiveLink(
                                 `${
-                                  userAuth.isAuthenticated === true ? "logout" : "login"
+                                  isAuthenticated === true ? "logout" : "login"
                                 }`
                               );
                               callToAuth(
                                 `${
-                                  userAuth.isAuthenticated === true ? "logout" : "login"
+                                  isAuthenticated === true ? "logout" : "login"
                                 }`
                               );
                             }}
@@ -194,20 +204,20 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
                             )}
                           >
                             {`${
-                              userAuth.isAuthenticated === true
+                              isAuthenticated === true
                                 ? "logout"
                                 : "Your Logged out - login"
                             }`}
                           </a>
                         )}
                       </Menu.Item>
-                      {!userAuth.isAuthenticated && (
+                      {!userDetails && (
                         <Menu.Item>
                           {({ active }) => (
                             <a
                               onClick={(event) => {
                                 event.preventDefault();
-                                console.log("open it here");
+
                                 // setActiveLink("profile")
                                 dialogService.openDialog(Register);
                               }}

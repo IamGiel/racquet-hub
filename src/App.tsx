@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Provider, useDispatch } from "react-redux";
+import { Provider } from "react-redux";
 import {
   BrowserRouter as Router,
   Routes,

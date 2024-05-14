@@ -1,10 +1,11 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import { userProfileReducer } from "./userProfileSlice";
 import { userAuthReducer } from "./userAuthSlice";
-/* jhipster-needle-add-reducer-import - JHipster will add reducer here */
+import authReducer from "./authReducer";
 
 // Combine your reducers into a root reducer
 const rootReducer = combineReducers({
+  auth:authReducer,
   userAuth: userAuthReducer,
   userProfile: userProfileReducer,
 });

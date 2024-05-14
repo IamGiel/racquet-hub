@@ -15,6 +15,8 @@ import { ProfileSummaryDialog } from "../Dialogs/ProfileSummaryDialog";
 import { useSelector } from "react-redux";
 import { Membership } from "./Membership";
 import { Billing } from "./Billing";
+import { isUserAuthenticated } from "../../reducers/userAuthSlice";
+import { selectIsAuthenticated, selectUser } from "../../reducers/authReducer";
 
 export interface IUserDetails {
   _id: string;
@@ -40,8 +42,9 @@ export const Profile = () => {
   // const userProfile = useAppSelector((state) => state);
   const dispatch = useAppDispatch();
   const navigateTo = useNavigate();
-  const userAuth = useSelector((state: any) => state?.userAuth);
-
+  // const userAuth = useSelector((state: any) => state?.userAuth);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
   const [userDetails, setUserDetails] = useState<IUserDetails | null>(null); // Initialize userDetails state
   const [editMode, setEditMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -59,17 +62,17 @@ export const Profile = () => {
   const [editedName, setEditedName] = useState(null);
 
   const initialValues = {
-    name: editedName,
-    email: null,
+    name: userDetails?.name,
+    email: userDetails?.email,
     playerInfo: {
-      gear: null,
-      leftyOrRighty: null,
-      playingStyle: null,
+      gear: userDetails?.playerInfo.gear,
+      leftyOrRighty: userDetails?.playerInfo.leftyOrRighty,
+      playingStyle: userDetails?.playerInfo.playingStyle,
     },
   };
 
   const formik = useFormik({
-    initialValues,
+    initialValues, 
     validationSchema,
     onSubmit: async (values) => {
       setIsSubmitting(true);
@@ -81,31 +84,36 @@ export const Profile = () => {
 
   const toggleEditMode = () => {
     setEditMode(!editMode);
+    formik.values.name = userDetails?.name
+    formik.values.email = userDetails?.email
+    formik.values.playerInfo.gear = userDetails?.playerInfo.gear
+    formik.values.playerInfo.leftyOrRighty = userDetails?.playerInfo.leftyOrRighty
+    formik.values.playerInfo.playingStyle = userDetails?.playerInfo.playingStyle
   };
-  useEffect(() => {
-    const authToken = localStorage.getItem("authToken");
-    const userProfileData = dispatch(
-      authenticateAndGetUserProfile({ token: authToken })
-    );
-    if (userAuth.isAuthenticated) {
-      userProfileData.then(
-        (res: any) => {
-          if (res && res.payload) {
-            console.log("user profile data res ", res);
 
-            const parsedRes = JSON.parse(res?.payload);
-            setUserDetails(parsedRes.data);
-          }
-        },
-        (err: any) => {
-          console.log("user profile data err ", err);
-        }
-      );
+
+  useEffect(() => {
+
+    console.log('USER in profile ', user)
+    if (user && user.data) {
+      console.log('user ', user)
+      // setFormikValuesInit({
+      //   name: user?.data?.name,
+      //   email: user?.data?.email,
+      //   playerInfo: {
+      //     gear: user?.data?.playerInfo.gear,
+      //     leftyOrRighty: user?.data?.playerInfo.leftyOrRighty,
+      //     playingStyle: user?.data?.playerInfo.playingStyle,
+      //   },
+      // })
+      setUserDetails(user.data);
+    } else if(user && !user.data) {
+      setUserDetails(user)
     } else {
       // localStorage.clear();
-      navigateTo("/landing");
+      navigateTo("/");
     }
-  }, [dispatch, userAuth.isAuthenticated]);
+  }, [user, userDetails]);
 
   const handleInputChange = (label: any, newValue: any) => {
     // Handle the change and update the userDetails object
@@ -124,6 +132,7 @@ export const Profile = () => {
   return (
     <div className={styles.profilePageContainer + " profile-page-container"}>
      <div className={styles.subprofilePageContainer + " sub-container-profilepage"}>
+      {/* <pre>TEST {JSON.stringify(userDetails,null,4)}</pre> */}
      <div className="profile-details-section">
         {userDetails && (
           <div
@@ -150,7 +159,7 @@ export const Profile = () => {
                       type="button"
                       className={`${styles.saveBtn} editBtn`}
                       onClick={() => {
-                        console.log('open dialog for profile summary eidts')
+                        console.log('open dialog for profile summary eidts ', formik.values)
                         dialogService.openDialog(
                           ProfileSummaryDialog,
                           formik.values
@@ -159,12 +168,7 @@ export const Profile = () => {
                       // disabled={
                       //   !formik.dirty || !formik.isValid || isSubmitting
                       // }
-                      style={{
-                        background:
-                          formik.dirty || !formik.isValid || isSubmitting
-                            ? ""
-                            : "lightgrey",
-                      }}
+                     
                     >
                       Save
                     </button>

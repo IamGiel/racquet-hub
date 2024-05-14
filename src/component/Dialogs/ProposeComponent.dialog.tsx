@@ -263,6 +263,7 @@ export const ProposeComponent = ({ close, data }: any) => {
                     </div> */}
                     <div className="input-for-sportType">
                       <ReactDatePicker onDateSelect={handleSelectedDateTime} prevValue={formik.values.date}/>
+                      <pre>{JSON.stringify(formik.values.date)}</pre>
                       {/* <DatePicker onSelectDate={handleSelectedDateTime} /> */}
                       {formik.errors.date && formik.touched.date && (
                         <p className={styles.errorMessge + " sportype-err-msg"}>

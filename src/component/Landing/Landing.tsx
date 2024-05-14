@@ -7,8 +7,8 @@ import Avatar from "boring-avatars";
 import { getAllProposals } from "../../apis/fetch";
 import ProposalListv2 from "./ProposalListv2";
 import { IconTennisMatch } from "../../assets/svgs/🦆 icon _tennis match_";
-import { useSelector } from "react-redux";
-import { useAppDispatch, useAppSelector } from "../../store";
+import { useDispatch, useSelector } from "react-redux";
+// import { useAppDispatch, useAppSelector } from "../../store";
 import { ICredentials, logout } from "../../reducers/userAuthSlice";
 import { dialogService } from "../Services/dialog-service";
 import { Login } from "../Login/Login";
@@ -16,6 +16,7 @@ import { Profile } from "../Profile/Profile";
 import { useNavigate } from "react-router-dom";
 import EmptyList from "./EmptyList";
 import { ProposalListv3 } from "./ProposalListV3";
+import { selectIsAuthenticated, selectUser } from "../../reducers/authReducer";
 
 const user = {
   name: "Tom Cook",
@@ -40,72 +41,83 @@ function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-function Landing({authStatus}:any) {
+function Landing({ authStatus }: any) {
   const [activeLink, setActiveLink] = useState("Dashboard");
   const [proposalList, setProposalList] = useState<any>({});
   const [credentials, setCredentials] = useState<any>(null);
 
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
   const navigateTo = useNavigate();
-  const userAuth = useSelector((state: any) => state?.userAuth);
-  // const proposals = useSelector((state:any) => state?.proposalList);
+  // const userAuth = useSelector((state: any) => state?.userAuth);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
+  const proposals = useSelector((state: any) => state?.proposalList);
 
   const appName = "Racquet Hub";
 
-  const fetchData = async () => {
-    console.log("fetchdta");
+  // const fetchData = async () => {
+  //   console.log("fetchdta");
 
-    await getAllProposals()
-      .then((response) => {
-        console.log("response get all proposals", response);
-        setProposalList(response);
-      })
+  //   await getAllProposals()
+  //     .then((response) => {
+  //       console.log("response get all proposals", response);
+  //       setProposalList(response);
+  //     })
 
-      .catch((error) => {
-        console.error("some error on get all proposals ", error);
-        setProposalList(null);
-        navigateTo("/");
-      });
-  };
+  //     .catch((error) => {
+  //       console.error("some error on get all proposals ", error);
+  //       setProposalList(null);
+  //       // useDispatch
+  //       // window.location.reload(); // Refresh the page
+  //       // navigateTo("/");
+  //     });
+  // };
   const [refetchProposals, setRefetchProposals] = useState(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    console.log("token in landing ", token);
-    fetchData();
-  }, [authStatus, refetchProposals]);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("authToken");
+  //   console.log("token in landing ", token);
+  //   console.log("isAuthenticated in landing ", isAuthenticated);
+  //   fetchData();
+  // }, [isAuthenticated, refetchProposals]);
 
+  // useEffect(() => {
+  //   const token = localStorage.getItem("authToken");
+  //   console.log("token in landing ", token);
+  //   console.log("authStatus in landing ", authStatus); // Use authStatus instead of isAuthenticated
+  //   fetchData();
+  // }, [authStatus, refetchProposals]);
 
-
-
-  const handleRefetch = (refetchVal:boolean) => {
-    console.log('refetchVal ', String(refetchVal))
-    if(refetchVal){
-
-      setRefetchProposals(!refetchProposals)
-    }
-  }
+  // const handleRefetch = (refetchVal: boolean) => {
+  //   // console.log('refetchVal ', String(refetchVal))
+  //   if (refetchVal) {
+  //     setRefetchProposals(!refetchProposals);
+  //   }
+  // };
 
   return (
     <>
       {/* <pre>test</pre> */}
-     
+
       <div className="min-h-full">
         <div className="py-10">
-         
           <main>
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 min-h-[800px]">
               {/* Your content */}
-              {proposalList &&
+              {/* <pre>TEST LIST{JSON.stringify(proposalList)}</pre> */}
+              {/* {proposalList &&
                 proposalList?.proposals &&
                 proposalList?.proposals?.length > 0 && (
                   <div className="content-container">
-                    <ProposalListv2 proposals={proposalList.proposals} onRefetch={handleRefetch}/>
-                    {/* <ProposalListv3 proposalList={proposalList.proposals}/> */}
+                    <ProposalListv2
+                      proposals={proposalList.proposals}
+                      onRefetch={handleRefetch}
+                    />
                   </div>
-                )}
+                )} */}
 
-              {!proposalList && <EmptyList />}
+              {/* {!proposalList && <EmptyList />} */}
+              <EmptyList />
             </div>
           </main>
         </div>
