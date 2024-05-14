@@ -484,19 +484,13 @@ export default function ProposalListv2() {
                           >
                             {proposalItem?.type}
                           </td>
-                          {/* <td
-                      className={
-                        styles.tdAlignment +
-                        " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
-                      }
-                    >
-                      {proposalItem?.email}
-                    </td> */}
+                         
                           <td
                             className={`${styles.tdAlignment} tdAlignment whitespace-nowrap py-4 text-sm text-gray-500`}
-                            style={{ maxWidth: "200px" }}
+                            style={{ maxWidth: "200px" }} 
                           >
-                            {makeReadableTimePlace(proposalItem?.playTime)}
+                            {/* {makeReadableTimePlace(proposalItem?.playTime)} */}
+                            {`${new Date(proposalItem?.playTime).toLocaleString('en-US', { timeZone: 'America/New_York' })}`}
                           </td>
                           <td
                             className={

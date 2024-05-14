@@ -18,7 +18,8 @@ export const ProfileSummaryDialog = ({ close, data = {} }: any) => {
     console.log('user reducer info in ', JSON.stringify(user.data._id))
     // loading handles here
     // updateUserDetails(data, user?.data?._id)
-    updateUserDetails({ ...user?.data, ...data }, user?.data?._id)
+    // updateUserDetails({ ...user?.data, ...data }, user?.data?._id)
+    updateUserDetails({ ...data }, user?.data?._id)
     .then((res: Response) => {
       if (res.ok) {
         // If the response is successful (status code 200-299),

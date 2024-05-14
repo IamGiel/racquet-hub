@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import DatePicker, { CalendarContainer } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./ReactDatePicker.css";
+import moment from "moment";
 
 export const ReactDatePicker = ({ onDateSelect, prevValue = null }: any) => {
-  const [startDate, setStartDate] = useState(null);
+  const [startDate, setStartDate] = useState<any>(null);
   const MyContainer = ({ className, children }: any) => {
     return (
       <div className={" some-date-picker-wrapper"}>
@@ -16,7 +17,7 @@ export const ReactDatePicker = ({ onDateSelect, prevValue = null }: any) => {
   };
 
   // Calculate the max date as today + 14 days
-  const maxDate = new Date();
+  const maxDate = new Date(prevValue);
   maxDate.setDate(maxDate.getDate() + 14);
   return (
     <>
@@ -31,15 +32,16 @@ export const ReactDatePicker = ({ onDateSelect, prevValue = null }: any) => {
       <DatePicker
         selected={prevValue ? new Date(prevValue) : new Date()}
         onChange={(date: any) => {
-          setStartDate(date);
+        
+          // setStartDate(formattedDateTime);
           onDateSelect(date);
         }}
-        minDate={startDate} // Set minimum date to today
+        minDate={new Date()} // Set minimum date to today
         maxDate={maxDate} // Set maximum date to today + 14 days
         calendarContainer={MyContainer}
-        wrapperClassName={!startDate ? "datePickerGrayed": "datePicker"}
+        wrapperClassName={!startDate ? "datePickerGrayed" : "datePicker"}
         showTimeSelect
-        dateFormat="EEE, MMM dd 'at'  p"
+        dateFormat="y-MM-dd h:mm:ss a" // Specify the date format explicitly
       />
     </>
   );

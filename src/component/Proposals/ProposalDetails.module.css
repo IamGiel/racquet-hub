@@ -2,7 +2,7 @@
   width: 650px;
   display: flex;
   flex-direction: column;
-  margin: 32px;
+  margin: 32px auto;
 }
 
 .sportType {

@@ -2,7 +2,8 @@ import json
 from flask import Flask, request, jsonify, Blueprint
 from pymongo import MongoClient
 from bson import ObjectId
-from datetime import datetime
+# from datetime import datetime
+from datetime import datetime, timezone
 from bson import json_util, ObjectId
 from utiils.helper import verify_token, token_required
 
@@ -37,11 +38,9 @@ def create_proposal(current_user):
     name = decoded_token.get('name')
     
     # Get the current timestamp
-    current_time = datetime.utcnow()
-    
-    # Retrieve data from the request body
-    data = request.json
-    
+    # current_time = datetime.utcnow()
+    # current_time = datetime.now(timezone.utc)
+    current_utc_time = datetime.naive_utcnow()  
     # Check if required fields are present
     if not data.get('sport') or not data.get('type') or not data.get('playTime'):
         return jsonify({'error': 'Missing required fields'}), 400
@@ -204,6 +203,8 @@ def update_proposal(current_user, proposal_id):
     existing_proposal = proposals_collection.find_one({'_id': ObjectId(proposal_id)})
     if not existing_proposal:
       return jsonify({'error': 'Proposal not found'}), 404
+    
+    print(f'request json ============ {request.json}')
     
     # Ensure that the user_details field remains unchanged
     updated_proposal_data = request.json

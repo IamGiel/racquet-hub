@@ -9,11 +9,12 @@ import { ListBoxOptions } from "../Form/ListBoxOptions";
 import { sportCategoryFilters, sportTypeFilters } from "../Configs/Options";
 import { InputText } from "../Form/InputText";
 import { ReactDatePicker } from "../Form/ReactDatePicker/ReactDatePicker";
+import moment from "moment";
 
 export const ProposalDetails = () => {
   const params = useParams();
   const { state } = useLocation();
-  const navigateTo = useNavigate()
+  const navigateTo = useNavigate();
 
   let [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -110,6 +111,16 @@ export const ProposalDetails = () => {
     formik.resetForm();
   };
 
+  // Function to convert a datetime string to UTC
+  function toUTC(datetimeString: any) {
+    return moment.utc(datetimeString);
+  }
+
+  // Function to convert a UTC datetime string to the user's local timezone
+  function toLocalTime(utcDatetimeString: any) {
+    return moment.utc(utcDatetimeString).local();
+  }
+
   return (
     <div
       className={styles.proposalDetailContainer + " proposalDetailContainer"}
@@ -117,12 +128,20 @@ export const ProposalDetails = () => {
       {/* <p>ProposalDetails</p>
       <p>{JSON.stringify(params)}</p>
       <p>{JSON.stringify(state)}</p> */}
-      <h4>Update proposal</h4>
+      <h4
+        style={{
+          fontWeight: "700",
+          fontSize: "23px",
+          fontFamily: "Inter",
+          margin: "0px 9px",
+        }}
+      >
+        Update proposal
+      </h4>
       <form className="proposal-form m-[30px 12px 30px 12px]">
         <div className="input-for-sportType m-[12px]">
           <ListBoxOptions
             id="sportType"
-           
             label={`Select a sport:`}
             selections={sportTypeFilters}
             onSelect={(item: any) => {
@@ -140,7 +159,6 @@ export const ProposalDetails = () => {
         <div className="input-for-sportType m-[12px]">
           <ListBoxOptions
             id="categoryType"
-           
             label="Select a category"
             selections={sportCategoryFilters}
             onSelect={(item: any) => {
@@ -158,10 +176,9 @@ export const ProposalDetails = () => {
         <div className="input-for-sportType m-[12px]">
           <InputText
             id="location"
-           
             type="text"
             label="Provide a location"
-            placeholder={formik.values.location.location ?? 'Select a location'}
+            placeholder={formik.values.location.location ?? "Select a location"}
             onChange={(item: any) => {
               console.log(item);
               handleFieldChange(item, "location");
@@ -177,9 +194,15 @@ export const ProposalDetails = () => {
           <ReactDatePicker
             onDateSelect={(item: any) => {
               console.log(item);
+              // const utcDatetime = toUTC(item);
+              // console.log('UTC Datetime:', utcDatetime.format());
               handleFieldChange(item, "date");
             }}
             prevValue={formik.values.date}
+            // onChange={(item: any) => {
+            //   console.log(item);
+            //   handleFieldChange(item, "date");
+            // }}
           />
           {/* <DatePicker onSelectDate={handleSelectedDateTime} /> */}
           {formik.errors.date && formik.touched.date && (
@@ -194,8 +217,8 @@ export const ProposalDetails = () => {
             className={styles.cancelBtn + ` cancelBtn`}
             onClick={(event: any) => {
               event.preventDefault();
-              console.log('cancel proposal clicked submit')
-              navigateTo('/proposals')
+              console.log("cancel proposal clicked submit");
+              navigateTo("/proposals");
             }}
           >
             Cancel
@@ -205,27 +228,32 @@ export const ProposalDetails = () => {
             className={styles.deleteBtn + ` deleteBtn`}
             onClick={(event: any) => {
               event.preventDefault();
-              console.log('delete proposal clicked submit ', state)
+              console.log("delete proposal clicked submit ", state);
               // deleteProposal(state?.id).then((successRes)=>{
-              deleteProposal(state?._id?.$oid).then((successRes)=>{
-                console.log('success res ', successRes)
-                navigateTo('/proposals')
-              }).catch(error=>{
-                console.log('catch error ', error)
-                window.location.reload()
-              })
-              
+              deleteProposal(state?._id?.$oid)
+                .then((successRes) => {
+                  console.log("success res ", successRes);
+                  navigateTo("/proposals");
+                })
+                .catch((error) => {
+                  console.log("catch error ", error);
+                  window.location.reload();
+                });
             }}
           >
             Delete
           </button>
           <button
             type="submit"
-            className={formik.isValid && formik.dirty ? `${styles.submitValid}` : `${styles.submitInValid}`}
-            disabled={formik.isValid === false || formik.dirty == false}
+            className={
+              formik.isValid && formik.dirty
+                ? `${styles.submitValid}`
+                : `${styles.submitInValid}`
+            }
+            disabled={!formik.dirty}
             onClick={(event: any) => {
               event.preventDefault();
-              console.log('edit proposal clicked submit')
+              console.log("edit proposal clicked submit ");
               const payload = {
                 sport: formik.values.sportType,
                 type: formik.values.categoryType,
@@ -236,16 +264,18 @@ export const ProposalDetails = () => {
                   location: formik.values.location,
                   distance: 12,
                 },
-                playTime: formik.values.date,
-                createdAt: "{{moment.utc().format()}}",
+                playTime: new Date(formik.values.date),
+                createdAt: new Date(),
               };
               // editProposal(payload, state.id).then((response) => response.text())
-              editProposal(payload, state?._id?.$oid).then((response) => response.text())
-              .then((result) => {
-                console.log(result)
-                navigateTo('/proposals')
-              })
-              .catch((error) => console.error(error));
+              console.log("payload in submit edit proposal ", payload);
+              editProposal(payload, state?._id?.$oid)
+                .then((response) => response.text())
+                .then((result) => {
+                  console.log(result);
+                  navigateTo("/proposals");
+                })
+                .catch((error) => console.error(error));
             }}
           >
             Update
@@ -253,6 +283,7 @@ export const ProposalDetails = () => {
         </div>
       </form>
       <hr />
+      {/* <pre>{JSON.stringify(formik.values, null, 4)}</pre> */}
       {/* <pre>{JSON.stringify(state, null, 4)}</pre> */}
     </div>
   );

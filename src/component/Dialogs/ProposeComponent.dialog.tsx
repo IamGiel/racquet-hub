@@ -95,8 +95,9 @@ export const ProposeComponent = ({ close, data }: any) => {
           distance: 12,
         },
         playTime: formik.values.date,
-        createdAt: "{{moment.utc().format()}}",
+        createdAt: `${moment.utc().format()}`,
       };
+      console.log('payload ', payload)
       createProposal(payload)
         .then((response) => response.text())
         .then((result) => {
