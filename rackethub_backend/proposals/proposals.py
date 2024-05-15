@@ -36,13 +36,15 @@ def create_proposal(current_user):
     user_id = decoded_token.get('user_id')
     email = decoded_token.get('email')
     name = decoded_token.get('name')
+    sportType = decoded_token.get('name')
+    playTime = decoded_token.get('name')
     
     # Get the current timestamp
-    # current_time = datetime.utcnow()
+    current_time = datetime.utcnow()
     # current_time = datetime.now(timezone.utc)
-    current_utc_time = datetime.naive_utcnow()  
+    # current_utc_time = datetime.utcnow()  
     # Check if required fields are present
-    if not data.get('sport') or not data.get('type') or not data.get('playTime'):
+    if not sportType or not playTime:
         return jsonify({'error': 'Missing required fields'}), 400
     
     # Include user details from the token payload
@@ -55,7 +57,7 @@ def create_proposal(current_user):
     
     # Merge user details with the proposal data
     proposal_data = {
-        **data,  # Include all data from the request body
+        **request.json,  # Include all data from the request body
         'user_details': user_details,
         'createdAt':current_time
     }

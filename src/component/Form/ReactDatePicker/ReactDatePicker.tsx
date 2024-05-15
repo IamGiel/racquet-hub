@@ -17,7 +17,7 @@ export const ReactDatePicker = ({ onDateSelect, prevValue = null }: any) => {
   };
 
   // Calculate the max date as today + 14 days
-  const maxDate = new Date(prevValue);
+  const maxDate = new Date();
   maxDate.setDate(maxDate.getDate() + 14);
   return (
     <>

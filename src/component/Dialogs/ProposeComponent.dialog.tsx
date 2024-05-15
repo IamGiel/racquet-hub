@@ -103,7 +103,10 @@ export const ProposeComponent = ({ close, data }: any) => {
         .then((result) => {
           console.log('create proposal res ', result)
           setIsLoading(false)
-          close({result, "data":formik.values})
+          if(result){
+            close({result, "data":formik.values})
+          }
+          
         })
         .catch((err)=> {
         console.log('create proposal err ', err)
@@ -140,14 +143,14 @@ export const ProposeComponent = ({ close, data }: any) => {
     debouncedHandleLocationChange(loc);
   };
 
-  useEffect(() => {
-    getZipcode(formik?.values?.location)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => console.log(err));
-    console.log("formik ", formik);
-  }, [formik?.values?.location]);
+  // useEffect(() => {
+  //   getZipcode(formik?.values?.location)
+  //     .then((res) => {
+  //       console.log(res);
+  //     })
+  //     .catch((err) => console.log(err));
+  //   console.log("formik ", formik);
+  // }, [formik?.values?.location]);
 
   return (
     <>
@@ -264,7 +267,7 @@ export const ProposeComponent = ({ close, data }: any) => {
                     </div> */}
                     <div className="input-for-sportType">
                       <ReactDatePicker onDateSelect={handleSelectedDateTime} prevValue={formik.values.date}/>
-                      <pre>{JSON.stringify(formik.values.date)}</pre>
+                      {/* <pre>{JSON.stringify(formik.values.date)}</pre> */}
                       {/* <DatePicker onSelectDate={handleSelectedDateTime} /> */}
                       {formik.errors.date && formik.touched.date && (
                         <p className={styles.errorMessge + " sportype-err-msg"}>

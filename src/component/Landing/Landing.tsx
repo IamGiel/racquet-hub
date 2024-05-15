@@ -10,7 +10,6 @@ import { IconTennisMatch } from "../../assets/svgs/🦆 icon _tennis match_";
 import { useDispatch, useSelector } from "react-redux";
 // import { useAppDispatch, useAppSelector } from "../../store";
 import { ICredentials, logout } from "../../reducers/userAuthSlice";
-import { dialogService } from "../Services/dialog-service";
 import { Login } from "../Login/Login";
 import { Profile } from "../Profile/Profile";
 import { useNavigate } from "react-router-dom";

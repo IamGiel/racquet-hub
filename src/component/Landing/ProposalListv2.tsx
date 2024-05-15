@@ -36,6 +36,7 @@ export default function ProposalListv2() {
   const [refetchProposals, setRefetchProposals] = useState(false);
 
   const [filteredList, setfilteredList] = useState<any>([]);
+  const [originalList, setOriginalList] = useState<any>([]);
   const [filterData, setFilterData] = useState<any>([]);
   const [selections, setSelections] = useState<any>([]);
   const [defaultFilter, setDefaultFilter] = useState<any>([]);
@@ -50,12 +51,13 @@ export default function ProposalListv2() {
     console.log("USER in HEADER ", user);
     if (user && user.data) {
       console.log("user ", user);
+      fetchData();
     } else {
       // localStorage.clear();
       dispatch(clearUser());
       navigateTo("/");
     }
-  }, [user]);
+  }, [user, navigateTo]);
 
   const fetchData = async () => {
     console.log("fetchdta");
@@ -64,6 +66,7 @@ export default function ProposalListv2() {
       .then((response) => {
         console.log("response get all proposals", response);
         setfilteredList(response.proposals);
+        setOriginalList(response.proposals);
       })
 
       .catch((error) => {
@@ -75,13 +78,10 @@ export default function ProposalListv2() {
       });
   };
 
-  useEffect(() => {
-    // Update the list of proposals when the 'proposals' prop changes
-    if (listOfProposals && listOfProposals.length === 0) {
-      fetchData();
-    }
-    // setListOfProposals(proposals);
-  }, []);
+  // useEffect(() => {
+  //   // Update the list of proposals when the 'proposals' prop changes
+  //   fetchData();
+  // }, [navigateTo]);
 
   const [sortConfig, setSortConfig] = useState<any>({
     key: "playtime",
@@ -172,8 +172,8 @@ export default function ProposalListv2() {
           const bTime = new Date(b[colname]).getTime();
           return direction === "asc" ? aTime - bTime : bTime - aTime;
         } else if (colname === "location") {
-          const aPlace =a[colname].location;
-          const bPlace =b[colname].location;
+          const aPlace = a[colname].location;
+          const bPlace = b[colname].location;
           return direction === "asc" ? aPlace - bPlace : bPlace - aPlace;
         } else {
           // Handle sorting for other columns
@@ -225,18 +225,25 @@ export default function ProposalListv2() {
     handleSort(columnId);
   }
 
-  const handleSelectedItemsChange = (
+  const handleSelectFilters = (
     filterBy?: IFilter[],
     clearSelectedFilter?: boolean
   ) => {
-    // Set the current selection
-    // setSelections(filterBy?.name);
 
-    const namesOfFilters: any = [];
-    const copyOfList = [...listOfProposals];
 
     // Initialize the filtered list with the original list of items
-    let filteredList = [...copyOfList];
+    let filteredList_ = [...originalList];
+
+    console.log("filter by ", filterBy);
+
+    // If there are no filters or clearSelectedFilter is true, reset the filtered list
+    if (!filterBy || clearSelectedFilter) {
+      setSelections([]);
+      setfilteredList(filteredList_);
+      return;
+    }
+
+    const namesOfFilters: any = [];
 
     // Iterate through each filter
     filterBy?.forEach((aFilter: IFilter) => {
@@ -244,19 +251,19 @@ export default function ProposalListv2() {
 
       // Apply the current filter to the filtered list
       if (aFilter?.type === "TYPE_SPORT") {
-        filteredList = filteredList.filter((listItem: any) => {
+        filteredList_ = filteredList_.filter((listItem: any) => {
           return listItem.sport.toLowerCase() === aFilter?.name.toLowerCase();
         });
       }
 
       if (aFilter?.type === "TYPE_CATEGORY") {
-        filteredList = filteredList.filter((listItem: any) => {
+        filteredList_ = filteredList_.filter((listItem: any) => {
           return listItem.type.toLowerCase() === aFilter?.name.toLowerCase();
         });
       }
 
       if (aFilter?.type === "TYPE_STATUS") {
-        filteredList = filteredList.filter((listItem: any) => {
+        filteredList_ = filteredList_.filter((listItem: any) => {
           return (
             listItem.eventStatus.status.toLowerCase() ===
             aFilter?.name.toLowerCase()
@@ -266,13 +273,8 @@ export default function ProposalListv2() {
 
       // Add more conditions for other filter types if needed
     });
-
-    if (clearSelectedFilter) {
-      setSelections([]);
-    } else {
-      setSelections(namesOfFilters);
-    }
-    setfilteredList(filteredList);
+    setSelections(namesOfFilters);
+    setfilteredList(filteredList_);
   };
 
   const handleMakeProposal = (event: any) => {
@@ -283,13 +285,18 @@ export default function ProposalListv2() {
       dialogService.openDialog(ProposeComponent, {}, (data: any) => {
         const defaultFilter = {
           name: "Pickleball",
-          descriptiom: "",
+          description: "",
           href: "",
           type: "",
         };
 
+        console.log("data after dialog service closed ", data);
+
         setDefaultFilter(defaultFilter);
         setRefetchProposals(!refetchProposals);
+
+        navigateTo("/");
+        // alert('stop')
       });
     } else {
       alert("please login");
@@ -370,7 +377,7 @@ export default function ProposalListv2() {
               <div className={styles.filterPopDiv + " filterPopDiv"}>
                 <FilterPopover
                   filterData={filterData}
-                  onSelectedItemsChange={handleSelectedItemsChange}
+                  onSelectedItemsChange={handleSelectFilters}
                   selectedItems={selections}
                   onClickFilter={showPopoverForFiltering}
                 />
@@ -443,7 +450,8 @@ export default function ProposalListv2() {
                             style={{
                               display: "flex",
                               gap: "12px",
-                              alignItems: "center",
+                              flexDirection: "column",
+                              justifyContent: "start",
                             }}
                           >
                             {/* <pre>{JSON.stringify(proposalItem, null, 4)}</pre> */}
@@ -484,13 +492,16 @@ export default function ProposalListv2() {
                           >
                             {proposalItem?.type}
                           </td>
-                         
+
                           <td
                             className={`${styles.tdAlignment} tdAlignment whitespace-nowrap py-4 text-sm text-gray-500`}
-                            style={{ maxWidth: "200px" }} 
+                            style={{ maxWidth: "200px" }}
                           >
                             {/* {makeReadableTimePlace(proposalItem?.playTime)} */}
-                            {`${new Date(proposalItem?.playTime).toLocaleString('en-US', { timeZone: 'America/New_York' })}`}
+                            {`${new Date(proposalItem?.playTime).toLocaleString(
+                              "en-US",
+                              { timeZone: "America/New_York" }
+                            )}`}
                           </td>
                           <td
                             className={

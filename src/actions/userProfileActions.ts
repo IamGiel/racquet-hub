@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import { editUserDetals, loginApiv2 } from "../apis/fetch";
+import { editUserDetals, getAllProposals, loginApiv2 } from "../apis/fetch";
 
 interface UserAuthState {
   isAuthenticated: boolean;
@@ -61,7 +61,20 @@ export const { logout } = userAuthSlice.actions;
 export const authenticateAndGetUserProfile = createAsyncThunk(
   "userProfile/authenticate_and_fetch",
   async (payload: ICredentials) => {
-    return await loginApiv2(payload, undefined);
+    return await loginApiv2(payload, undefined); // call api
+  }
+);
+
+
+export const fetchProposalsApi = createAsyncThunk(
+  "listOfProposals/fetchProposals",
+  async (_, { rejectWithValue }) => {
+    try {
+      return await getAllProposals()
+    } catch (error) {
+     
+      return rejectWithValue(error);
+    }
   }
 );
 
