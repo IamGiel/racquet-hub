@@ -43,6 +43,41 @@
   cursor: pointer;
 }
 
+.adminsSandbox {
+  border-radius: 4px;
+  border: 1px solid var(--Slate-Tints-300, #cbd1e2);
+  background: var(--Slate-Tints-100, #eef0f5);
+
+  /* shadow/sm */
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+
+  color: var(--Slate-Tints-800, #444752);
+
+  /* In-App/text-xs/Medium */
+  font-family: Inter;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px; /* 133.333% */
+  display: flex;
+  min-width: 72px;
+  padding: 7px 11px;
+  justify-content: center;
+  align-items: center;
+  height: fit-content;
+  margin: 20px auto;
+}
+
+.adminsSandbox:hover {
+  border-radius: 4px;
+  border: 1px solid var(--Slate-Tints-300, #cbd1e2);
+  background: var(--Primary-Colors-White, #fff);
+
+  /* /shadow/sm/focus:ring-2/focus:ring-offset-2 focus:ring-offset-white focus:ring-indigo-500 */
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05), 0px 0px 0px 2px #fff,
+    0px 0px 0px 4px #6366f1;
+}
+
 .filtersub {
   display: flex;
   flex-direction: row;

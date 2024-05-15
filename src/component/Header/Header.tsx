@@ -10,12 +10,16 @@ import { dialogService } from "../Services/dialog-service";
 import { login, logout } from "../../reducers/userAuthSlice";
 import { IconTennisMatch } from "../../../src/assets/svgs/🦆 icon _tennis match_";
 import { Register } from "../Login/Register";
-import {  useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { clearUser, selectIsAuthenticated, selectUser } from "../../reducers/authReducer";
+import {
+  clearUser,
+  selectIsAuthenticated,
+  selectUser,
+} from "../../reducers/authReducer";
 import { IUserDetails } from "../Profile/Profile";
 
-export const Header = ({ loginStatus, onSuccessAuth }:any) => {
+export const Header = ({ loginStatus, onSuccessAuth }: any) => {
   const [activeLink, setActiveLink] = useState("Dashboard");
   const [openToolTip, setOpenToolTip] = useState(false);
   const [userDetails, setUserDetails] = useState<IUserDetails | null>(null); // Initialize userDetails state
@@ -23,8 +27,8 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
   const dispatch = useAppDispatch();
   const navigateTo = useNavigate();
   // const userAuth = useSelector((state:any) => state);
-    const isAuthenticated = useSelector(selectIsAuthenticated);
-    const user = useSelector(selectUser);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
 
   function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
@@ -33,19 +37,17 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
   const handleLoginDialogClose = (data: any) => {
     // Handle the received data here
 
-    onSuccessAuth(data)
-    
+    onSuccessAuth(data);
   };
 
   const callToAuth = (actionToCall: any) => {
-
     if (actionToCall === "logout") {
       localStorage.removeItem("authToken");
       dispatch(logout());
     }
     if (actionToCall === "login") {
-      dispatch(login())
-      dialogService.openDialog(Login, null, handleLoginDialogClose)
+      dispatch(login());
+      dialogService.openDialog(Login, null, handleLoginDialogClose);
       // dispatch(login()); // Dispatch the login action
     }
   };
@@ -53,20 +55,14 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
   const location = useLocation();
 
   useEffect(() => {
-
-
     if (user && user.data) {
-
       setUserDetails(user.data);
     } else {
       // localStorage.clear();
-      dispatch(clearUser())
+      dispatch(clearUser());
       navigateTo("/");
     }
   }, [user, userDetails]);
-  
-  
-
 
   return (
     <Disclosure
@@ -82,11 +78,10 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
               <div
                 className="flex gap-[12px] cursor-pointer"
                 onClick={() => {
-
-                  if(!userDetails){
-                    dispatch(logout())
+                  if (!userDetails) {
+                    dispatch(logout());
                   }
-                  navigateTo("/")
+                  navigateTo("/");
                 }}
               >
                 <div className="flex flex-shrink-0 items-center">
@@ -94,27 +89,44 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
                 </div>
                 <div className={styles.playPal + " playPal appName"}>
                   {appName}
-                  <span 
-                  className={styles.badgeStyle + " badgeStyle inline-flex items-center gap-x-1.5 rounded-full px-1 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200"}
-                  onMouseEnter={()=>setOpenToolTip(true)}
-                  onMouseLeave={()=>setOpenToolTip(false)}
+                  <span
+                    className={
+                      styles.badgeStyle +
+                      " badgeStyle inline-flex items-center gap-x-1.5 rounded-full px-1 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200"
+                    }
+                    onMouseEnter={() => setOpenToolTip(true)}
+                    onMouseLeave={() => setOpenToolTip(false)}
                   >
                     <svg
-                      className={`h-1.5 w-1.5 ${userDetails ? 'fill-green-500' : 'fill-red-500'}`}
+                      className={`h-1.5 w-1.5 ${
+                        userDetails ? "fill-green-500" : "fill-red-500"
+                      }`}
                       viewBox="0 0 6 6"
                       aria-hidden="true"
                     >
                       <circle cx={3} cy={3} r={3} />
                     </svg>
-                    
-                    {openToolTip && 
-                         <p className="absolute w-48 px-5 py-3 text-center text-gray-600 truncate -translate-x-1/2 bg-white rounded-lg shadow-lg -bottom-12 left-1/2 dark:shadow-none shadow-gray-200 dark:bg-gray-800 dark:text-white">
-                         {userDetails ? 'Your logged in' : 'Please login'}
-                     </p>
-                    }
+
+                    {openToolTip && (
+                      <p className="absolute w-48 px-5 py-3 text-center text-gray-600 truncate -translate-x-1/2 bg-white rounded-lg shadow-lg -bottom-12 left-1/2 dark:shadow-none shadow-gray-200 dark:bg-gray-800 dark:text-white">
+                        {userDetails ? "Your logged in" : "Please login"}
+                      </p>
+                    )}
                   </span>
                 </div>
               </div>
+              {userDetails?.email === "allqa@aricent.com" && (
+                <button
+                  type="button"
+                  className={styles.adminsSandbox + " adminsSandbox "} 
+                  onClick={(e)=>{
+                    e?.preventDefault()
+                    navigateTo('/sandbox')
+                  }}
+                >
+                  <span className="admins-sandbox">admin's sandbox</span>
+                </button>
+              )}
               <div className="hidden sm:ml-6 sm:flex sm:items-center">
                 <button
                   type="button"
@@ -149,7 +161,9 @@ export const Header = ({ loginStatus, onSuccessAuth }:any) => {
                           "#899752",
                         ]}
                       />
-                       {userDetails && userDetails  && <span>Welcome, {userDetails.name}</span>}
+                      {userDetails && userDetails && (
+                        <span>Welcome, {userDetails.name}</span>
+                      )}
                     </Menu.Button>
                   </div>
                   <Transition

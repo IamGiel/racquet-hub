@@ -1,17 +1,22 @@
 // RoutesComponent.tsx
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
-import { Header } from "../Header/Header";
-import Landing from "../Landing/Landing";
-import { Profile } from "../Profile/Profile";
-import ProtectedRoute from "./ProtectedRoutes";
-import { useAppDispatch, useAppSelector } from "../../store";
-import { authenticateAndGetUserProfile } from "../../actions/userProfileActions";
+import Landing from "../component/Landing/Landing";
+import ProposalListv2 from "../component/Landing/ProposalListv2";
+import { ProposalDetails } from "../component/Proposals/ProposalDetails";
+import { Profile } from "../component/Profile/Profile";
 import { useSelector } from "react-redux";
-import { ProposalDetails } from "../Proposals/ProposalDetails";
-import { reauthenticateUser, selectIsAuthenticated, selectUser } from "../../reducers/authReducer";
-import ProposalListv2 from "../Landing/ProposalListv2";
-import { Sandbox } from "../../sandbox/sandbox";
+import { reauthenticateUser, selectIsAuthenticated, selectUser } from "../reducers/authReducer";
+import { Header } from "../component/Header/Header";
+import { useAppDispatch } from "../store";
+import { Sandbox } from "../sandbox/sandbox";
+// import { Profile } from "../Profile/Profile";
+// import ProtectedRoute from "./ProtectedRoutes";
+// import { useAppDispatch, useAppSelector } from "../../store";
+// import { authenticateAndGetUserProfile } from "../../actions/userProfileActions";
+// import { useSelector } from "react-redux";
+// import { ProposalDetails } from "../Proposals/ProposalDetails";
+// import { reauthenticateUser, selectIsAuthenticated, selectUser } from "../../reducers/authReducer";
 
 const RoutesComponent = () => {
   const dispatch = useAppDispatch();
