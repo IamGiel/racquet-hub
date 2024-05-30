@@ -12,6 +12,7 @@ import { selectIsAuthenticated, selectUser } from "../../reducers/authReducer";
 import { dialogService } from "../Services/dialog-service";
 import { Login } from "../Login/Login";
 import { Register } from "../Login/Register";
+import { PersonStandingIcon } from "lucide-react";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -69,6 +70,15 @@ export default function EmptyList() {
       authStatus: isAuthenticated,
       callBack: ()=>goToRoute('/proposals')
     },
+    {
+      title: "Admin",
+      description: "Get the admins view.",
+      icon: PersonStandingIcon,
+      background: "bg-purple-500",
+      route: "/sandbox",
+      authStatus: isAuthenticated && user?.data?.email === 'allqa@aricent.com',
+      callBack: ()=>goToRoute('/sandbox')
+    },
   ];
 
   function goToRoute(route:string) {
@@ -81,9 +91,13 @@ export default function EmptyList() {
     if(route ==='/proposals'){
       navigateTo('/proposals')
     }
+    if(route ==='/sandbox'){
+      navigateTo('/sandbox')
+    }
   }
   return (
     <div>
+      {/* <pre>{JSON.stringify(user)}</pre> */}
       <h2 className="text-base font-semibold leading-6 text-gray-900 flex gap-[8px]">
         Welcome{" "}
         <span>

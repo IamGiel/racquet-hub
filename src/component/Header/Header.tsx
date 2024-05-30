@@ -115,7 +115,7 @@ export const Header = ({ loginStatus, onSuccessAuth }: any) => {
                   </span>
                 </div>
               </div>
-              {userDetails?.email === "allqa@aricent.com" && (
+              {/* {userDetails?.email === "allqa@aricent.com" && (
                 <button
                   type="button"
                   className={styles.adminsSandbox + " adminsSandbox "} 
@@ -126,7 +126,7 @@ export const Header = ({ loginStatus, onSuccessAuth }: any) => {
                 >
                   <span className="admins-sandbox">admin's sandbox</span>
                 </button>
-              )}
+              )} */}
               <div className="hidden sm:ml-6 sm:flex sm:items-center">
                 <button
                   type="button"
