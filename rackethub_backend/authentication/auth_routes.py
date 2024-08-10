@@ -86,7 +86,7 @@ def login():
 
     print(f'data here api/login ===== {data}')
     email = data.get('email')
-    password = data.get('password')
+    password = data.get('password') 
     token = data.get('token')
     
     # print(f'this is data ===== {data}')
