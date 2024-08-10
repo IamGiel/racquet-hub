@@ -272,6 +272,8 @@ export async function editProposal(payload: any, id: any) {
 }
 
 // join and unjoin a proposal
+
+// JOIN
 export async function joinProposal(currentUser: any) {
   console.log("currentUser ", currentUser);
   const authToken = localStorage.getItem("authToken");
@@ -295,6 +297,34 @@ export async function joinProposal(currentUser: any) {
 
   return fetch(
     `http://localhost:5000/api/proposals/${currentUser?._id?.$oid}/join`,
+    requestOptions
+  );
+}
+
+// UNJOIN
+export async function unJoinProposal(currentUser: any) {
+  console.log("currentUser ", currentUser);
+  const authToken = localStorage.getItem("authToken");
+  const raw = JSON.stringify(currentUser);
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("Authorization", `Bearer ${authToken}`);
+  const requestOptions: any = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+  // Check if payload exists and token is not expired
+  if (!currentUser || isTokenExpired()) {
+    // You might want to handle this case based on your application logic
+    // For example, you could return a rejected Promise or handle it differently
+    refreshPageAndClearLocalStorage();
+    return Promise.reject("Invalid payload or token expired");
+  }
+
+  return fetch(
+    `http://localhost:5000/api/proposals/${currentUser?._id?.$oid}/unjoin`,
     requestOptions
   );
 }

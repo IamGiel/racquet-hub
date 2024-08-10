@@ -29,7 +29,11 @@ import {
   selectUser,
 } from "../../reducers/authReducer";
 import { useSelector } from "react-redux";
-import { getAllProposals, joinProposal } from "../../apis/fetch";
+import {
+  getAllProposals,
+  joinProposal,
+  unJoinProposal,
+} from "../../apis/fetch";
 
 export default function ProposalListv2() {
   const [listOfProposals, setListOfProposals] = useState<any>([]);
@@ -342,6 +346,26 @@ export default function ProposalListv2() {
         console.error("Error:", error.message);
       });
   }
+  function onUnjoinProposal(proposalOwner: any) {
+    // fetch api to join proposal (required id)
+    console.log("current user ", { ...proposalOwner, currentUser: user });
+    unJoinProposal({ ...proposalOwner, currentUser: user })
+      .then((response) => {
+        // Check if the response status is not OK (status code 200)
+        if (!response.ok) {
+          return response.json().then((errorData) => {
+            throw new Error(errorData.error); // Throw the error with the custom message
+          });
+        }
+        return response.json(); // Otherwise, parse the response as JSON
+      })
+      .then((result) => {
+        console.log("Success:", result);
+      })
+      .catch((error) => {
+        console.error("Error:", error.message);
+      });
+  }
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
@@ -604,7 +628,7 @@ export default function ProposalListv2() {
                                       "unjoin a proposal ",
                                       proposalItem
                                     );
-                                    // onUnjoinProposal(proposalItem);
+                                    onUnjoinProposal(proposalItem);
                                   }}
                                 >
                                   Unjoin
