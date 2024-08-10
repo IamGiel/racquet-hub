@@ -1,3 +1,20 @@
+# Reminder how to start the APP
+
+1. cd to rackethub_backend
+2. `python app.py`
+3. open another terminal
+  - npm start
+4. make sure the backend database mongodb is running
+  - start another terminal 
+  - open to:
+  ```
+    Path
+    ----
+    C:\Program Files\MongoDB\Server\7.0\bin
+  ```
+  - `mongod` on that terminal.
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

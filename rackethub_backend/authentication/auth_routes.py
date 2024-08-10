@@ -120,6 +120,7 @@ def login():
 
         # Generate JWT token
         token = generate_token(email)
+        token = token.decode('utf-8')  # Decode the token to a string
 
         # Return the token in the response
         return jsonify({'token': token, "data": user}), 200 
@@ -147,6 +148,7 @@ def login():
 
         # Convert ObjectId to string for JSON serialization
         user['_id'] = str(user['_id'])
+        token = token.decode('utf-8')  # Decode the token to a string
 
         return jsonify({'token': token, "data": user}), 200
     else:

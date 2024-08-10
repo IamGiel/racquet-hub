@@ -255,3 +255,84 @@ def delete_proposal(current_user, proposal_id):
       return jsonify({'error': 'Failed to delete proposal'}), 500
     
 
+# Route for joining a proposal
+@proposal_app.route('/api/proposals/<proposal_id>/join', methods=['POST'])
+@token_required
+def join_proposal(current_user, proposal_id):
+    proposal_id = ObjectId(proposal_id)
+
+    # Fetch the proposal from the database
+    proposal = proposals_collection.find_one({'_id': proposal_id})
+
+    # Check if the proposal exists
+    if not proposal:
+        return jsonify({'error': 'Proposal not found'}), 404
+
+    # Determine the maximum number of participants
+    max_participants = 3 if proposal['type'] == 'Doubles' else 1
+
+    # Check if the current user has already joined the proposal
+    for participant in proposal.get('participants', []):
+        if participant['user_id'] == current_user['user_id']:
+            return jsonify({'error': 'You have already joined this proposal'}), 400
+
+    # Check if the maximum number of participants has been reached
+    if len(proposal.get('participants', [])) >= max_participants:
+        return jsonify({'error': 'The proposal has reached the maximum number of participants'}), 400
+
+    # Get the user's name from the request body
+    data = request.get_json()
+    name = data.get('name', 'Anonymous User')
+
+    # Add the current user to the participants list
+    proposals_collection.update_one(
+        {'_id': proposal_id},
+        {'$push': {
+            'participants': {
+                'user_id': current_user['user_id'],
+                'email': current_user['email'],
+                'name': name
+            }
+        }}
+    )
+
+    return jsonify({'message': 'Successfully joined the proposal'}), 200
+
+
+# route to UNJOIN current user from a proposal
+@proposal_app.route('/api/proposals/<proposal_id>/unjoin', methods=['POST'])
+@token_required
+def unjoin_proposal(current_user, proposal_id):
+    try:
+        # Attempt to convert the proposal_id into an ObjectId
+        proposal_id = ObjectId(proposal_id)
+    except Exception as e:
+        return jsonify({'error': 'Invalid proposal ID'}), 400
+
+    # Fetch the proposal from the database
+    proposal = proposals_collection.find_one({'_id': proposal_id})
+
+    # Check if the proposal exists
+    if not proposal:
+        return jsonify({'error': 'Proposal not found'}), 404
+
+    # Check if the current user is a participant in the proposal
+    participants = proposal.get('participants', [])
+    participant_ids = [participant['user_id'] for participant in participants]
+
+    if current_user['user_id'] not in participant_ids:
+        return jsonify({'error': 'You are not a participant in this proposal'}), 400
+
+    # Remove the current user from the participants list
+    updated_participants = [participant for participant in participants if participant['user_id'] != current_user['user_id']]
+    
+    # Update the proposal in the database
+    result = proposals_collection.update_one(
+        {'_id': proposal_id},
+        {'$set': {'participants': updated_participants}}
+    )
+
+    if result.modified_count == 1:
+        return jsonify({'message': 'Successfully unjoined the proposal'}), 200
+    else:
+        return jsonify({'error': 'Failed to unjoin the proposal'}), 500

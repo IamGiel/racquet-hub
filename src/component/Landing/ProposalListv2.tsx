@@ -229,8 +229,6 @@ export default function ProposalListv2() {
     filterBy?: IFilter[],
     clearSelectedFilter?: boolean
   ) => {
-
-
     // Initialize the filtered list with the original list of items
     let filteredList_ = [...originalList];
 
@@ -575,6 +573,9 @@ export default function ProposalListv2() {
                                       ? "none"
                                       : undefined,
                                   justifyContent: "center",
+                                }}
+                                onClick={() => {
+                                  console.log("on join");
                                 }}
                               >
                                 {proposalItem?.eventStatus?.status === "closed"
