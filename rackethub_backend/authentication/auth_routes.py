@@ -120,7 +120,7 @@ def login():
 
         # Generate JWT token
         token = generate_token(email)
-        token = token.decode('utf-8')  # Decode the token to a string
+        # token = token.decode('utf-8')  # Decode the token to a string
 
         # Return the token in the response
         return jsonify({'token': token, "data": user}), 200 

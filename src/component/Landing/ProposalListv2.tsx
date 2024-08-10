@@ -29,7 +29,7 @@ import {
   selectUser,
 } from "../../reducers/authReducer";
 import { useSelector } from "react-redux";
-import { getAllProposals } from "../../apis/fetch";
+import { getAllProposals, joinProposal } from "../../apis/fetch";
 
 export default function ProposalListv2() {
   const [listOfProposals, setListOfProposals] = useState<any>([]);
@@ -322,6 +322,27 @@ export default function ProposalListv2() {
     }
   }
 
+  function onJoinProposal(proposalOwner: any) {
+    // fetch api to join proposal (required id)
+    console.log("current user ", { ...proposalOwner, currentUser: user });
+    joinProposal({ ...proposalOwner, currentUser: user })
+      .then((response) => {
+        // Check if the response status is not OK (status code 200)
+        if (!response.ok) {
+          return response.json().then((errorData) => {
+            throw new Error(errorData.error); // Throw the error with the custom message
+          });
+        }
+        return response.json(); // Otherwise, parse the response as JSON
+      })
+      .then((result) => {
+        console.log("Success:", result);
+      })
+      .catch((error) => {
+        console.error("Error:", error.message);
+      });
+  }
+
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       {/* <pre>{JSON.stringify(proposals.length, null, 4)} TEST</pre> */}
@@ -553,38 +574,79 @@ export default function ProposalListv2() {
                                 " tdAlignment relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
                               }
                             >
-                              <button
-                                type="button"
-                                className={
-                                  styles["join-button"] + " join-button"
-                                }
-                                style={{
-                                  display: isAuthenticated ? "flex" : "none",
-                                  gap: "12px",
-                                  alignItems: "center",
-                                  background:
-                                    proposalItem?.eventStatus?.status ===
-                                    "closed"
-                                      ? "lightgrey"
-                                      : "",
-                                  pointerEvents:
-                                    proposalItem?.eventStatus?.status ===
-                                    "closed"
-                                      ? "none"
-                                      : undefined,
-                                  justifyContent: "center",
-                                }}
-                                onClick={() => {
-                                  console.log("on join");
-                                }}
-                              >
-                                {proposalItem?.eventStatus?.status === "closed"
-                                  ? "Full"
-                                  : "Join"}
-                                <span className="sr-only">
-                                  , {proposalItem?.name}
-                                </span>
-                              </button>
+                              {proposalItem?.participants?.some(
+                                (participant: any) =>
+                                  participant.user_id === user?.data?._id
+                              ) ? (
+                                <button
+                                  type="button"
+                                  className={
+                                    styles["unjoin-button"] + " unjoin-button"
+                                  }
+                                  style={{
+                                    display: isAuthenticated ? "flex" : "none",
+                                    gap: "12px",
+                                    alignItems: "center",
+                                    background:
+                                      proposalItem?.eventStatus?.status ===
+                                      "closed"
+                                        ? "lightgrey"
+                                        : "",
+                                    pointerEvents:
+                                      proposalItem?.eventStatus?.status ===
+                                      "closed"
+                                        ? "none"
+                                        : undefined,
+                                    justifyContent: "center",
+                                  }}
+                                  onClick={() => {
+                                    console.log(
+                                      "unjoin a proposal ",
+                                      proposalItem
+                                    );
+                                    // onUnjoinProposal(proposalItem);
+                                  }}
+                                >
+                                  Unjoin
+                                  <span className="sr-only">
+                                    , {proposalItem?.name}
+                                  </span>
+                                </button>
+                              ) : (
+                                <button
+                                  type="button"
+                                  className={
+                                    styles["join-button"] + " join-button"
+                                  }
+                                  style={{
+                                    display: isAuthenticated ? "flex" : "none",
+                                    gap: "12px",
+                                    alignItems: "center",
+                                    background:
+                                      proposalItem?.eventStatus?.status ===
+                                      "closed"
+                                        ? "lightgrey"
+                                        : "",
+                                    pointerEvents:
+                                      proposalItem?.eventStatus?.status ===
+                                      "closed"
+                                        ? "none"
+                                        : undefined,
+                                    justifyContent: "center",
+                                  }}
+                                  onClick={() => {
+                                    onJoinProposal(proposalItem);
+                                  }}
+                                >
+                                  {proposalItem?.eventStatus?.status ===
+                                  "closed"
+                                    ? "Full"
+                                    : "Join"}
+                                  <span className="sr-only">
+                                    , {proposalItem?.name}
+                                  </span>
+                                </button>
+                              )}
                             </td>
                           )}
 

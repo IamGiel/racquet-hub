@@ -22,7 +22,7 @@ export async function loginApiv2(userDets?: any, token?: string) {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  console.log('appended headers ', myHeaders)
+  console.log("appended headers ", myHeaders);
 
   // Append Authorization header if token is provided
   if (token) {
@@ -40,7 +40,7 @@ export async function loginApiv2(userDets?: any, token?: string) {
     requestOptions.body = JSON.stringify(userDets);
   }
   if (token) {
-    requestOptions.body =  JSON.stringify({token})
+    requestOptions.body = JSON.stringify({ token });
   }
 
   // Log the requestOptions and headers
@@ -64,7 +64,7 @@ export async function registrationApi(userDets?: any, token?: string) {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  console.log('appended headers ', myHeaders)
+  console.log("appended headers ", myHeaders);
 
   // Append Authorization header if token is provided
   if (token) {
@@ -82,7 +82,7 @@ export async function registrationApi(userDets?: any, token?: string) {
     requestOptions.body = JSON.stringify(userDets);
   }
   if (token) {
-    requestOptions.body =  JSON.stringify({token})
+    requestOptions.body = JSON.stringify({ token });
   }
 
   // Log the requestOptions and headers
@@ -119,7 +119,7 @@ export async function editUserDetals(payload: any) {
   if (!payload || isTokenExpired()) {
     // You might want to handle this case based on your application logic
     // For example, you could return a rejected Promise or handle it differently
-    refreshPageAndClearLocalStorage()
+    refreshPageAndClearLocalStorage();
     return Promise.reject("Invalid payload or token expired");
   }
 
@@ -148,14 +148,13 @@ export async function updateUserDetails(payload: any, id: any) {
   if (!payload || isTokenExpired()) {
     // You might want to handle this case based on your application logic
     // For example, you could return a rejected Promise or handle it differently
-    refreshPageAndClearLocalStorage()
+    refreshPageAndClearLocalStorage();
     return Promise.reject("Invalid payload or token expired");
   }
 
   // return fetch(`http://localhost:5000/api/proposals/${id}`, requestOptions);
-  return fetch("http://localhost:5000/api/userProfile", requestOptions)
+  return fetch("http://localhost:5000/api/userProfile", requestOptions);
 }
-
 
 // PROPOSALS API
 export async function getAllProposals() {
@@ -205,14 +204,17 @@ export async function deleteProposal(payload: any) {
   if (!payload || isTokenExpired()) {
     // You might want to handle this case based on your application logic
     // For example, you could return a rejected Promise or handle it differently
-    refreshPageAndClearLocalStorage()
+    refreshPageAndClearLocalStorage();
     return Promise.reject("Invalid payload or token expired");
   }
 
-  return fetch(`http://localhost:5000/api/proposals/${payload}`, requestOptions)
-    // .then((response) => response.text())
-    // .then((result) => console.log(result))
-    // .catch((error) => console.error(error));
+  return fetch(
+    `http://localhost:5000/api/proposals/${payload}`,
+    requestOptions
+  );
+  // .then((response) => response.text())
+  // .then((result) => console.log(result))
+  // .catch((error) => console.error(error));
 }
 
 export async function createProposal(payload: any) {
@@ -231,7 +233,7 @@ export async function createProposal(payload: any) {
   if (!payload || isTokenExpired()) {
     // You might want to handle this case based on your application logic
     // For example, you could return a rejected Promise or handle it differently
-    refreshPageAndClearLocalStorage()
+    refreshPageAndClearLocalStorage();
     return Promise.reject("Invalid payload or token expired");
   }
   return fetch("http://localhost:5000/api/proposals", requestOptions);
@@ -262,13 +264,40 @@ export async function editProposal(payload: any, id: any) {
   if (!payload || isTokenExpired()) {
     // You might want to handle this case based on your application logic
     // For example, you could return a rejected Promise or handle it differently
-    refreshPageAndClearLocalStorage()
+    refreshPageAndClearLocalStorage();
     return Promise.reject("Invalid payload or token expired");
   }
 
   return fetch(`http://localhost:5000/api/proposals/${id}`, requestOptions);
 }
 
+// join and unjoin a proposal
+export async function joinProposal(currentUser: any) {
+  console.log("currentUser ", currentUser);
+  const authToken = localStorage.getItem("authToken");
+  const raw = JSON.stringify(currentUser);
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("Authorization", `Bearer ${authToken}`);
+  const requestOptions: any = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+  // Check if payload exists and token is not expired
+  if (!currentUser || isTokenExpired()) {
+    // You might want to handle this case based on your application logic
+    // For example, you could return a rejected Promise or handle it differently
+    refreshPageAndClearLocalStorage();
+    return Promise.reject("Invalid payload or token expired");
+  }
+
+  return fetch(
+    `http://localhost:5000/api/proposals/${currentUser?._id?.$oid}/join`,
+    requestOptions
+  );
+}
 
 // ZIPCODE API
 export async function getZipcode(term: any) {

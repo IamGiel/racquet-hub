@@ -260,6 +260,7 @@ def delete_proposal(current_user, proposal_id):
 @token_required
 def join_proposal(current_user, proposal_id):
     proposal_id = ObjectId(proposal_id)
+    print('current user ========= ', current_user)
 
     # Fetch the proposal from the database
     proposal = proposals_collection.find_one({'_id': proposal_id})
@@ -279,10 +280,17 @@ def join_proposal(current_user, proposal_id):
     # Check if the maximum number of participants has been reached
     if len(proposal.get('participants', [])) >= max_participants:
         return jsonify({'error': 'The proposal has reached the maximum number of participants'}), 400
-
+        # Get the data from the request body
+    data = request.get_json()
+    
+    # Print the entire data object
+    print("Received data:", data)
+    
+    
     # Get the user's name from the request body
     data = request.get_json()
-    name = data.get('name', 'Anonymous User')
+    # Access the user's name from the nested structure
+    name = data.get('currentUser', {}).get('data', {}).get('name', 'Anonymous user')
 
     # Add the current user to the participants list
     proposals_collection.update_one(
