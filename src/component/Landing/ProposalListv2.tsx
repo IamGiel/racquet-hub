@@ -46,7 +46,7 @@ export default function ProposalListv2() {
   const [selections, setSelections] = useState<any>([]);
   const [defaultFilter, setDefaultFilter] = useState<any>([]);
 
-  const [hasJoined, setHasJoined] = useState<any>({});
+  const [proposalsState, setProposalsState] = useState<any[]>([]);
 
   const navigateTo = useNavigate();
   const dispatch = useAppDispatch();
@@ -66,19 +66,23 @@ export default function ProposalListv2() {
     }
   }, [user, navigateTo]);
 
-  // This effect will run whenever the list of proposals is updated
   useEffect(() => {
-    const initialJoinedState = listOfProposals.reduce(
-      (acc: any, proposal: any) => {
-        acc[proposal._id] = proposal.participants.some(
-          (participant: any) => participant.user_id === user?.data?._id
-        );
-        return acc;
-      },
-      {}
-    );
-    setHasJoined(initialJoinedState);
-  }, [listOfProposals]);
+    const updatedProposals = filteredList.map((proposalItem: any) => {
+      const currentUsersProposal =
+        user?.data?._id === proposalItem?.user_details?.user_id;
+      const hasJoined = proposalItem?.participants?.some(
+        (participant: any) => participant.email === user?.data?.email
+      );
+
+      return {
+        ...proposalItem,
+        currentUsersProposal,
+        hasJoined,
+      };
+    });
+    console.log("updatedProposals ", updatedProposals);
+    setProposalsState(updatedProposals);
+  }, [filteredList, user]);
 
   const fetchData = async () => {
     console.log("fetchdta");
@@ -343,65 +347,26 @@ export default function ProposalListv2() {
     }
   }
 
-  function handleJoinProposal(proposalOwner: any) {
-    console.log("current user ", { ...proposalOwner, currentUser: user });
-    joinProposal({ ...proposalOwner, currentUser: user })
-      .then((response) => {
-        if (!response.ok) {
-          return response.json().then((errorData) => {
-            throw new Error(errorData.error);
-          });
-        }
-        return response.json();
-      })
-      .then((result) => {
-        console.log("Success:", result);
+  const handleJoinProposal = async (proposalItem: any) => {
+    try {
+      await joinProposal(proposalItem); // Join the proposal
+      fetchData(); // Refresh data after join
+    } catch (error) {
+      console.error("Error joining proposal", error);
+    }
+  };
 
-        // Update the specific proposal in the state
-        setfilteredList((prevList: any) =>
-          prevList.map((proposal: any) =>
-            proposal._id["$oid"] === proposalOwner._id["$oid"]
-              ? { ...proposal, joined: true } // Update the joined status only for the specific proposal
-              : proposal
-          )
-        );
-      })
-      .catch((error) => {
-        console.error("Error:", error.message);
-      });
-  }
-
-  function handleUnjoinProposal(proposalOwner: any) {
-    console.log("current user ", { ...proposalOwner, currentUser: user });
-    unJoinProposal({ ...proposalOwner, currentUser: user })
-      .then((response) => {
-        if (!response.ok) {
-          return response.json().then((errorData) => {
-            throw new Error(errorData.error);
-          });
-        }
-        return response.json();
-      })
-      .then((result) => {
-        console.log("Success:", result);
-
-        // Update the specific proposal in the state
-        setfilteredList((prevList: any) =>
-          prevList.map((proposal: any) =>
-            proposal._id["$oid"] === proposalOwner._id["$oid"]
-              ? { ...proposal, joined: false } // Update the joined status only for the specific proposal
-              : proposal
-          )
-        );
-      })
-      .catch((error) => {
-        console.error("Error:", error.message);
-      });
-  }
+  const handleUnjoinProposal = async (proposalItem: any) => {
+    try {
+      await unJoinProposal(proposalItem); // Unjoin the proposal
+      fetchData(); // Refresh data after unjoin
+    } catch (error) {
+      console.error("Error unjoining proposal", error);
+    }
+  };
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
-      {/* <pre>{JSON.stringify(proposals.length, null, 4)} TEST</pre> */}
       <div className="mt-2 flow-root">
         <div
           className={
@@ -447,7 +412,6 @@ export default function ProposalListv2() {
         </div>
         <div className="-mx-4 my-2 sm:-mx-6 lg:-mx-8 h-[100vh]">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            {/* {listOfProposals.length > 0 && ( */}
             <div className={styles.filtersub + " filtersub"}>
               <div className={styles.filterPopDiv + " filterPopDiv"}>
                 <FilterPopover
@@ -458,10 +422,7 @@ export default function ProposalListv2() {
                 />
               </div>
             </div>
-            {/* )} */}
             <hr style={{ margin: "24px 0px 0px" }} />
-            {/* <pre>{JSON.stringify(filteredList, null, 4)}</pre> */}
-            {/* <pre>{JSON.stringify(proposals, null, 4)}</pre> */}
             {filteredList && filteredList.length > 0 && (
               <table className="min-w-full divide-y divide-gray-300">
                 <thead>
@@ -511,16 +472,12 @@ export default function ProposalListv2() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {filteredList &&
-                    filteredList.length > 0 &&
-                    filteredList.map((proposalItem: any) => {
-                      const hasJoined = proposalItem?.participants?.some(
-                        (participant: any) =>
-                          participant.user_id === user?.data?._id
-                      );
-
+                  {proposalsState &&
+                    proposalsState.length > 0 &&
+                    proposalsState.map((proposalItem: any, proposalItemID) => {
                       return (
-                        <tr key={proposalItem._id}>
+                        <tr key={proposalItemID}>
+                          {/* Render Proposal Data */}
                           <td
                             className={`${styles.tdAlignment} whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0`}
                             style={{
@@ -561,7 +518,6 @@ export default function ProposalListv2() {
                           </td>
                           <td
                             className={`${styles.tdAlignment} whitespace-nowrap py-4 text-sm text-gray-500`}
-                            style={{ maxWidth: "200px" }}
                           >
                             {new Date(proposalItem?.playTime).toLocaleString(
                               "en-US",
@@ -577,23 +533,16 @@ export default function ProposalListv2() {
                           </td>
                           <td
                             className={`${styles.tdAlignment} whitespace-nowrap py-4 text-sm text-gray-500 flex gap-[8px]`}
-                            style={{
-                              display: "flex",
-                              justifyContent: "left",
-                              alignItems: "center",
-                              marginBottom: "22px",
-                            }}
                           >
                             <div className="status w-[75px]">
                               {proposalItem?.eventStatus?.status}
                             </div>
                           </td>
-                          {user?.data?._id !==
-                            proposalItem?.user_details?.user_id && (
+                          {!proposalItem.currentUsersProposal && (
                             <td
                               className={`${styles.tdAlignment} relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0`}
                             >
-                              {hasJoined ? (
+                              {proposalItem.hasJoined ? (
                                 <JoinUnjoinButton
                                   buttonStyle={`${styles["unjoin-button"]} unjoin-button`}
                                   isAuthenticated={isAuthenticated}
@@ -603,8 +552,8 @@ export default function ProposalListv2() {
                                   onClick={() =>
                                     handleUnjoinProposal(proposalItem)
                                   }
-                                  text={proposalItem?.user_details?.name}
-                                  isJoinButton={false} // Set to false for "Unjoin"
+                                  text="Unjoin"
+                                  isJoinButton={false}
                                 />
                               ) : (
                                 <JoinUnjoinButton
@@ -616,14 +565,13 @@ export default function ProposalListv2() {
                                   onClick={() =>
                                     handleJoinProposal(proposalItem)
                                   }
-                                  text={proposalItem?.user_details?.name}
-                                  isJoinButton={true} // Set to true for "Join"
+                                  text="Join"
+                                  isJoinButton={true}
                                 />
                               )}
                             </td>
                           )}
-                          {user?.data?._id ===
-                            proposalItem?.user_details?.user_id && (
+                          {proposalItem.currentUsersProposal && (
                             <td
                               className={`${styles.tdAlignment} relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0`}
                             >

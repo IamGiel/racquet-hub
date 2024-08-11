@@ -34,7 +34,7 @@
 
 .tdAlignment {
   /* display: flex; */
-  /* max-width: 138px !important; */
+  width: 230px !important;
   /* overflow-x: scroll; */
 }
 
