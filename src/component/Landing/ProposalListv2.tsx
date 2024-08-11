@@ -34,6 +34,7 @@ import {
   joinProposal,
   unJoinProposal,
 } from "../../apis/fetch";
+import { JoinUnjoinButton } from "../JoinUnjoinButton";
 
 export default function ProposalListv2() {
   const [listOfProposals, setListOfProposals] = useState<any>([]);
@@ -44,6 +45,8 @@ export default function ProposalListv2() {
   const [filterData, setFilterData] = useState<any>([]);
   const [selections, setSelections] = useState<any>([]);
   const [defaultFilter, setDefaultFilter] = useState<any>([]);
+
+  const [hasJoined, setHasJoined] = useState<any>({});
 
   const navigateTo = useNavigate();
   const dispatch = useAppDispatch();
@@ -62,6 +65,20 @@ export default function ProposalListv2() {
       navigateTo("/");
     }
   }, [user, navigateTo]);
+
+  // This effect will run whenever the list of proposals is updated
+  useEffect(() => {
+    const initialJoinedState = listOfProposals.reduce(
+      (acc: any, proposal: any) => {
+        acc[proposal._id] = proposal.participants.some(
+          (participant: any) => participant.user_id === user?.data?._id
+        );
+        return acc;
+      },
+      {}
+    );
+    setHasJoined(initialJoinedState);
+  }, [listOfProposals]);
 
   const fetchData = async () => {
     console.log("fetchdta");
@@ -326,41 +343,56 @@ export default function ProposalListv2() {
     }
   }
 
-  function onJoinProposal(proposalOwner: any) {
-    // fetch api to join proposal (required id)
+  function handleJoinProposal(proposalOwner: any) {
     console.log("current user ", { ...proposalOwner, currentUser: user });
     joinProposal({ ...proposalOwner, currentUser: user })
       .then((response) => {
-        // Check if the response status is not OK (status code 200)
         if (!response.ok) {
           return response.json().then((errorData) => {
-            throw new Error(errorData.error); // Throw the error with the custom message
+            throw new Error(errorData.error);
           });
         }
-        return response.json(); // Otherwise, parse the response as JSON
+        return response.json();
       })
       .then((result) => {
         console.log("Success:", result);
+
+        // Update the specific proposal in the state
+        setfilteredList((prevList: any) =>
+          prevList.map((proposal: any) =>
+            proposal._id["$oid"] === proposalOwner._id["$oid"]
+              ? { ...proposal, joined: true } // Update the joined status only for the specific proposal
+              : proposal
+          )
+        );
       })
       .catch((error) => {
         console.error("Error:", error.message);
       });
   }
-  function onUnjoinProposal(proposalOwner: any) {
-    // fetch api to join proposal (required id)
+
+  function handleUnjoinProposal(proposalOwner: any) {
     console.log("current user ", { ...proposalOwner, currentUser: user });
     unJoinProposal({ ...proposalOwner, currentUser: user })
       .then((response) => {
-        // Check if the response status is not OK (status code 200)
         if (!response.ok) {
           return response.json().then((errorData) => {
-            throw new Error(errorData.error); // Throw the error with the custom message
+            throw new Error(errorData.error);
           });
         }
-        return response.json(); // Otherwise, parse the response as JSON
+        return response.json();
       })
       .then((result) => {
         console.log("Success:", result);
+
+        // Update the specific proposal in the state
+        setfilteredList((prevList: any) =>
+          prevList.map((proposal: any) =>
+            proposal._id["$oid"] === proposalOwner._id["$oid"]
+              ? { ...proposal, joined: false } // Update the joined status only for the specific proposal
+              : proposal
+          )
+        );
       })
       .catch((error) => {
         console.error("Error:", error.message);
@@ -480,16 +512,17 @@ export default function ProposalListv2() {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {filteredList &&
-                    filteredList.length &&
-                    filteredList.map(
-                      (proposalItem: any, proposalItemId: any) => (
-                        <tr key={proposalItemId}>
+                    filteredList.length > 0 &&
+                    filteredList.map((proposalItem: any) => {
+                      const hasJoined = proposalItem?.participants?.some(
+                        (participant: any) =>
+                          participant.user_id === user?.data?._id
+                      );
+
+                      return (
+                        <tr key={proposalItem._id}>
                           <td
-                            key={proposalItemId}
-                            className={
-                              styles.tdAlignment +
-                              " tdAlignment whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0"
-                            }
+                            className={`${styles.tdAlignment} whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0`}
                             style={{
                               display: "flex",
                               gap: "12px",
@@ -497,8 +530,6 @@ export default function ProposalListv2() {
                               justifyContent: "start",
                             }}
                           >
-                            {/* <pre>{JSON.stringify(proposalItem, null, 4)}</pre> */}
-
                             <span>
                               <Avatar
                                 size={40}
@@ -506,7 +537,6 @@ export default function ProposalListv2() {
                                 square={true}
                                 variant="beam"
                                 colors={[
-                                  // #033f63 // #28666e // #7c9885 // #b5b682 // #fedc97
                                   "#033f63",
                                   "#28666e",
                                   "#7c9885",
@@ -520,49 +550,33 @@ export default function ProposalListv2() {
                             </span>
                           </td>
                           <td
-                            className={
-                              styles.tdAlignment +
-                              " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
-                            }
+                            className={`${styles.tdAlignment} whitespace-nowrap py-4 text-sm text-gray-500`}
                           >
                             {proposalItem?.sport}
                           </td>
                           <td
-                            className={
-                              styles.tdAlignment +
-                              " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
-                            }
+                            className={`${styles.tdAlignment} whitespace-nowrap py-4 text-sm text-gray-500`}
                           >
                             {proposalItem?.type}
                           </td>
-
                           <td
-                            className={`${styles.tdAlignment} tdAlignment whitespace-nowrap py-4 text-sm text-gray-500`}
+                            className={`${styles.tdAlignment} whitespace-nowrap py-4 text-sm text-gray-500`}
                             style={{ maxWidth: "200px" }}
                           >
-                            {/* {makeReadableTimePlace(proposalItem?.playTime)} */}
-                            {`${new Date(proposalItem?.playTime).toLocaleString(
+                            {new Date(proposalItem?.playTime).toLocaleString(
                               "en-US",
                               { timeZone: "America/New_York" }
-                            )}`}
+                            )}
                           </td>
                           <td
-                            className={
-                              styles.tdAlignment +
-                              " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500"
-                            }
+                            className={`${styles.tdAlignment} whitespace-nowrap py-4 text-sm text-gray-500`}
                           >
-                            {/* {JSON.stringify(proposalItem)} */}
-
                             <div className="location-details">
                               <span>{proposalItem?.location?.location}</span>
                             </div>
                           </td>
                           <td
-                            className={
-                              styles.tdAlignment +
-                              " tdAlignment whitespace-nowrap py-4 text-sm text-gray-500 flex gap-[8px]"
-                            }
+                            className={`${styles.tdAlignment} whitespace-nowrap py-4 text-sm text-gray-500 flex gap-[8px]`}
                             style={{
                               display: "flex",
                               justifyContent: "left",
@@ -571,133 +585,59 @@ export default function ProposalListv2() {
                             }}
                           >
                             <div className="status w-[75px]">
-                              {proposalItem?.eventStatus?.status}{" "}
+                              {proposalItem?.eventStatus?.status}
                             </div>
-                            {/* <div>
-                            <GenPurposePopover
-                              popoverBtnLabel=""
-                              openPopover={onOpenStatusInfo}
-                              children={<ProposalStatus />}
-                              icon={
-                                <InformationCircleIcon
-                                  height={`24px`}
-                                  width={`24px`}
-                                  stroke="#a89b9b"
-                                />
-                              }
-                              topPosition="40%"
-                            />
-                          </div> */}
                           </td>
-                          {/* {userAuth?.data._id !== */}
                           {user?.data?._id !==
                             proposalItem?.user_details?.user_id && (
                             <td
-                              className={
-                                styles.tdAlignment +
-                                " tdAlignment relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
-                              }
+                              className={`${styles.tdAlignment} relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0`}
                             >
-                              {proposalItem?.participants?.some(
-                                (participant: any) =>
-                                  participant.user_id === user?.data?._id
-                              ) ? (
-                                <button
-                                  type="button"
-                                  className={
-                                    styles["unjoin-button"] + " unjoin-button"
+                              {hasJoined ? (
+                                <JoinUnjoinButton
+                                  buttonStyle={`${styles["unjoin-button"]} unjoin-button`}
+                                  isAuthenticated={isAuthenticated}
+                                  eventStatus={
+                                    proposalItem?.eventStatus?.status
                                   }
-                                  style={{
-                                    display: isAuthenticated ? "flex" : "none",
-                                    gap: "12px",
-                                    alignItems: "center",
-                                    background:
-                                      proposalItem?.eventStatus?.status ===
-                                      "closed"
-                                        ? "lightgrey"
-                                        : "",
-                                    pointerEvents:
-                                      proposalItem?.eventStatus?.status ===
-                                      "closed"
-                                        ? "none"
-                                        : undefined,
-                                    justifyContent: "center",
-                                  }}
-                                  onClick={() => {
-                                    console.log(
-                                      "unjoin a proposal ",
-                                      proposalItem
-                                    );
-                                    onUnjoinProposal(proposalItem);
-                                  }}
-                                >
-                                  Unjoin
-                                  <span className="sr-only">
-                                    , {proposalItem?.name}
-                                  </span>
-                                </button>
+                                  onClick={() =>
+                                    handleUnjoinProposal(proposalItem)
+                                  }
+                                  text={proposalItem?.user_details?.name}
+                                  isJoinButton={false} // Set to false for "Unjoin"
+                                />
                               ) : (
-                                <button
-                                  type="button"
-                                  className={
-                                    styles["join-button"] + " join-button"
+                                <JoinUnjoinButton
+                                  buttonStyle={`${styles["join-button"]} join-button`}
+                                  isAuthenticated={isAuthenticated}
+                                  eventStatus={
+                                    proposalItem?.eventStatus?.status
                                   }
-                                  style={{
-                                    display: isAuthenticated ? "flex" : "none",
-                                    gap: "12px",
-                                    alignItems: "center",
-                                    background:
-                                      proposalItem?.eventStatus?.status ===
-                                      "closed"
-                                        ? "lightgrey"
-                                        : "",
-                                    pointerEvents:
-                                      proposalItem?.eventStatus?.status ===
-                                      "closed"
-                                        ? "none"
-                                        : undefined,
-                                    justifyContent: "center",
-                                  }}
-                                  onClick={() => {
-                                    onJoinProposal(proposalItem);
-                                  }}
-                                >
-                                  {proposalItem?.eventStatus?.status ===
-                                  "closed"
-                                    ? "Full"
-                                    : "Join"}
-                                  <span className="sr-only">
-                                    , {proposalItem?.name}
-                                  </span>
-                                </button>
+                                  onClick={() =>
+                                    handleJoinProposal(proposalItem)
+                                  }
+                                  text={proposalItem?.user_details?.name}
+                                  isJoinButton={true} // Set to true for "Join"
+                                />
                               )}
                             </td>
                           )}
-
-                          {/* {userAuth?.data._id === */}
                           {user?.data?._id ===
                             proposalItem?.user_details?.user_id && (
                             <td
-                              className={
-                                styles.tdAlignment +
-                                " tdAlignment relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
-                              }
+                              className={`${styles.tdAlignment} relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0`}
                             >
                               <button
                                 type="button"
                                 className={
                                   proposalItem?.eventStatus?.status === "open"
                                     ? styles["edit-button"]
-                                    : styles["closed-button"] + " edit-button"
+                                    : `${styles["closed-button"]} edit-button`
                                 }
                                 style={{
                                   display: isAuthenticated ? "flex" : "none",
                                   gap: "12px",
                                   alignItems: "center",
-                                  // pointerEvents:
-                                  //   proposalItem?.eventStatus?.status === "closed"
-                                  //     ? "none"
-                                  //     : undefined,
                                   justifyContent: "center",
                                 }}
                                 onClick={() => onEditProposal(proposalItem)}
@@ -709,8 +649,8 @@ export default function ProposalListv2() {
                             </td>
                           )}
                         </tr>
-                      )
-                    )}
+                      );
+                    })}
                 </tbody>
               </table>
             )}
