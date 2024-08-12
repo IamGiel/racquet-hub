@@ -1,4 +1,5 @@
 import React from "react";
+import { checkIcon_green } from "../assets/svgs/checkIcon_green";
 
 interface ButtonProps {
   type?: "button" | "submit" | "reset";
@@ -35,7 +36,11 @@ export const JoinUnjoinButton: React.FC<ButtonProps> = ({
       onClick={onClick}
       disabled={disabled}
     >
-      {`${isJoinButton ? "Join" : "Unjoin"}, ${text}`}
+      <span className="text-btn-label">{`${
+        isJoinButton ? "unaccept" : "accept"
+      }`}</span>
+      {/* <span>{text}</span> */}
+      {/* {!isJoinButton && checkIcon_green()} */}
     </button>
   );
 };

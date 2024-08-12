@@ -35,10 +35,12 @@ import {
   unJoinProposal,
 } from "../../apis/fetch";
 import { JoinUnjoinButton } from "../JoinUnjoinButton";
+import DotLoader from "../../assets/loaders/DotLoader";
 
 export default function ProposalListv2() {
   const [listOfProposals, setListOfProposals] = useState<any>([]);
   const [refetchProposals, setRefetchProposals] = useState(false);
+  const [isFetchingList, setIsFetchingList] = useState(null);
 
   const [filteredList, setfilteredList] = useState<any>([]);
   const [originalList, setOriginalList] = useState<any>([]);
@@ -97,6 +99,7 @@ export default function ProposalListv2() {
       .catch((error) => {
         console.error("some error on get all proposals ", error);
         setfilteredList(null);
+
         // useDispatch
         window.location.reload(); // Refresh the page
         // navigateTo("/");
@@ -348,8 +351,17 @@ export default function ProposalListv2() {
   }
 
   const handleJoinProposal = async (proposalItem: any) => {
+    setIsFetchingList(proposalItem?._id?.$oid);
     try {
-      await joinProposal(proposalItem); // Join the proposal
+      await joinProposal(proposalItem)
+        .then((res: any) => {
+          console.log(res);
+          setIsFetchingList(null);
+        })
+        .catch((e: any) => {
+          console.log(e);
+          setIsFetchingList(null);
+        });
       fetchData(); // Refresh data after join
     } catch (error) {
       console.error("Error joining proposal", error);
@@ -357,8 +369,17 @@ export default function ProposalListv2() {
   };
 
   const handleUnjoinProposal = async (proposalItem: any) => {
+    setIsFetchingList(proposalItem?._id?.$oid);
     try {
-      await unJoinProposal(proposalItem); // Unjoin the proposal
+      await unJoinProposal(proposalItem)
+        .then((res: any) => {
+          console.log(res);
+          setIsFetchingList(null);
+        })
+        .catch((e: any) => {
+          console.log(e);
+          setIsFetchingList(null);
+        });
       fetchData(); // Refresh data after unjoin
     } catch (error) {
       console.error("Error unjoining proposal", error);
@@ -542,9 +563,11 @@ export default function ProposalListv2() {
                             <td
                               className={`${styles.tdAlignment} relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0`}
                             >
-                              {proposalItem.hasJoined ? (
+                              {isFetchingList === proposalItem._id.$oid ? (
+                                <DotLoader />
+                              ) : proposalItem.hasJoined ? (
                                 <JoinUnjoinButton
-                                  buttonStyle={`${styles["unjoin-button"]} unjoin-button`}
+                                  buttonStyle={`${styles["unaccept-button"]} ${styles["button-base"]} accept-button`}
                                   isAuthenticated={isAuthenticated}
                                   eventStatus={
                                     proposalItem?.eventStatus?.status
@@ -557,7 +580,7 @@ export default function ProposalListv2() {
                                 />
                               ) : (
                                 <JoinUnjoinButton
-                                  buttonStyle={`${styles["join-button"]} join-button`}
+                                  buttonStyle={`${styles["accept-button"]} ${styles["button-base"]} accept-button`}
                                   isAuthenticated={isAuthenticated}
                                   eventStatus={
                                     proposalItem?.eventStatus?.status
@@ -571,6 +594,7 @@ export default function ProposalListv2() {
                               )}
                             </td>
                           )}
+
                           {proposalItem.currentUsersProposal && (
                             <td
                               className={`${styles.tdAlignment} relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0`}
@@ -578,9 +602,10 @@ export default function ProposalListv2() {
                               <button
                                 type="button"
                                 className={
-                                  proposalItem?.eventStatus?.status === "open"
+                                  `${styles["button-base"]} ` +
+                                  (proposalItem?.eventStatus?.status === "open"
                                     ? styles["edit-button"]
-                                    : `${styles["closed-button"]} edit-button`
+                                    : `${styles["closed-button"]} edit-button`)
                                 }
                                 style={{
                                   display: isAuthenticated ? "flex" : "none",

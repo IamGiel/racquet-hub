@@ -1,10 +1,10 @@
 # Reminder how to start the APP
 
-1. cd to rackethub_backend
+1. cd to rackethub_backend (start the backend)
 2. `python app.py`
-3. open another terminal
+3. open another terminal (start the client side)
   - npm start
-4. make sure the backend database mongodb is running
+4. make sure the backend database mongodb is running (start the mongodb database)
   - start another terminal 
   - open to:
   ```

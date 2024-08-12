@@ -58,53 +58,60 @@
   font-weight: 600;
 }
 
-.join-button {
-  display: inline-flex;
-  min-width: 72px;
-  padding: 7px 9px 7px 11px;
-  border-radius: 4px;
-  background: var(--Red-Tints-600, #86aacd);
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
-  color: #fff;
-
-  /* font */
-  color: var(--Primary-Colors-White, #fff);
-
-  /* In-App/text-xs/Medium */
-  font-family: Inter;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 16px; /* 133.333% */
-
-  /* Hover state */
-}
-.join-button:hover {
-  border-radius: 4px;
-  background: var(--Red-Tints-600, #2268ac);
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05), 0px 0px 0px 2px #fff,
-    0px 0px 0px 4px #2268ac;
-}
-
-.edit-button,
-.closed-button {
+/* Base button styles */
+.button-base {
   display: inline-flex;
   min-width: 72px;
   padding: 7px 9px 7px 11px;
   border-radius: 4px;
   background: #e1ac88;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
-  color: #fff;
-
-  /* font */
-  color: var(--Primary-Colors-White, #fff);
 
   /* In-App/text-xs/Medium */
   font-family: Inter;
-  font-size: 12px;
+  font-size: 16px;
   font-style: normal;
   font-weight: 500;
   line-height: 16px; /* 133.333% */
+}
+
+/* accept button specific colors */
+.accept-button {
+  background: var(--Red-Tints-600, #fff);
+  color: #355996;
+  border: 2px solid #355996;
+  opacity: 0.5;
+}
+
+.accept-button:hover {
+  background: #2268ac;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05), 0px 0px 0px 2px #fff,
+    0px 0px 0px 4px #2268ac;
+  color: white;
+  opacity: 1 !important;
+}
+
+/* Unaccept button specific colors */
+.unaccept-button {
+  background: var(--Red-Tints-600, #fff);
+  color: #181818;
+  border: 2px solid #2268ac;
+}
+
+.unaccept-button:hover {
+  background: var(--Gray-Tints-700, #2268ac);
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05), 0px 0px 0px 2px #fff,
+    0px 0px 0px 4px #2268ac;
+  color: #fff;
+}
+
+.edit-button,
+.closed-button {
+  color: #fff;
+  background: #e1ac88;
+
+  /* font */
+  color: var(--Primary-Colors-White, #fff);
 
   /* Hover state */
 }
